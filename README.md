@@ -1,5 +1,5 @@
 
-![Logo](https://i.ibb.co/MMtJBbY/Logo.png)
+![Logo](https://i.ibb.co/nMnksYc/Logo.png)
 
 
 # Votee
