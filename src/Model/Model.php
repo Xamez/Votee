@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Covoiturage\Model;
+namespace App\Votee\Model;
 
-use App\Covoiturage\Config\BDDConf;
+use App\Votee\Config\BDDConf;
 use PDO;
 
 class Model {

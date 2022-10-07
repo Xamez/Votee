@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Covoiturage\Config;
+namespace App\Votee\Config;
 
 class BDDConf {
 
