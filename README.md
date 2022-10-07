@@ -1,6 +1,4 @@
-
-![Logo](https://i.ibb.co/MMtJBbY/Logo.png)
-
+<p align="center"><img src="https://i.ibb.co/nMnksYc/Logo.png"></p>
 
 # Votee
 
