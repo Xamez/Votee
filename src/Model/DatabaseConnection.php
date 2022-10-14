@@ -5,8 +5,8 @@ namespace App\Votee\Model;
 use App\Votee\Config\BDDConf;
 use PDO;
 
-class Model {
-    private static ?Model $instance = null;
+class DatabaseConnection {
+    private static ?DatabaseConnection $instance = null;
 
     private PDO $pdo;
 
@@ -25,9 +25,9 @@ class Model {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    private static function getInstance(): Model {
+    private static function getInstance(): DatabaseConnection {
         if (is_null(static::$instance))
-            static::$instance = new Model();
+            static::$instance = new DatabaseConnection();
         return static::$instance;
     }
 }
