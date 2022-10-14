@@ -12,4 +12,4 @@ SAE S3 (RACDV) - Outil de décision collective
 - Maxence Tourniayre
 - Julie Chevallier
 - Thomas Nalix
-- Alexandre Alfonso
+- Alexandre Afonso
