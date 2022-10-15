@@ -2,7 +2,7 @@
 
 namespace App\Votee\Model;
 
-use App\Votee\Config\BDDConf;
+use App\Votee\Config\Conf;
 use PDO;
 
 class DatabaseConnection {
@@ -15,10 +15,10 @@ class DatabaseConnection {
     }
 
     public function __construct() {
-        $hostname = BDDConf::getHostname();
-        $databaseName = BDDConf::getDatabase();
-        $login = BDDConf::getLogin();
-        $password = BDDConf::getPassword();
+        $hostname = Conf::getHostname();
+        $databaseName = Conf::getDatabase();
+        $login = Conf::getLogin();
+        $password = Conf::getPassword();
 
         //  Connexion base de donnée
         $this->pdo = new PDO("mysql:host=$hostname;dbname=$databaseName", $login, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));

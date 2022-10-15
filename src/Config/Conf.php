@@ -2,7 +2,7 @@
 
 namespace App\Votee\Config;
 
-class BDDConf {
+class Conf {
 
     static private array $databases = array(
         'hostname' => 'webinfo',
