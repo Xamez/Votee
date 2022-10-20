@@ -3,33 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title><?php echo $pagetitle; ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../web/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script type="text/javascript" src="../../web/js/nav-burger.js"></script> 
 </head>
 <body>
 <header>
-    <nav class="flex items-center gap-10 p-2 mx-10 border-b-2 border-[#8E88C1]">
+    <nav class="flex justify-between items-center gap-10 p-2 mx-10 border-b-2">
         <div class="flex gap-3 items-center">
-            <img class="w-14" src="https://i.ibb.co/nMnksYc/Logo.png" alt="logo">
-            <span class="text-xl font-semibold">Votee</span>
+            <img class="w-14" src="../../resources/logo_votee.png" alt="logo">
+            <span class="text-xl font-semibold color-dark">Votee</span>
         </div>
-        <div class="flex gap-10">
+
+        <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 color-dark">
+            <a href=""><span class="link link-underline link-underline-color">Accueil</span></a>
+            <a href=""><span class="link link-underline link-underline-color">Vote</span></a>
+            <a href=""><span class="link link-underline link-underline-color">Contact</span></a>
+        </div>
+
+        <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="">Se connecter</a>
+
+        <div class="flex md:hidden gap-4 items-center">
+            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" href="">Se connecter</a>
             <div>
-                <a href="">Accueil</a>
+                <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center color-dark"></i>
+                <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center color-dark"></i>
             </div>
-            <div>
-                <a href="">Vote</a>
-            </div>
-            <div>
-                <a href="">Contact</a>
+            <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">
+                <a href=""><span class="link-underline link-underline-color">Accueil</span></a>
+                <a href=""><span class="link-underline link-underline-color">Vote</span></a>
+                <a href=""><span class="link-underline link-underline-color">Contact</span></a>
             </div>
         </div>
     </nav>
 </header>
 <main>
-<!--    --><?php
-//    require __DIR__ . "/{$cheminVueBody}";
-//    ?>
+<!--<?php
+    require __DIR__ . "/{$cheminVueBody}";
+?>-->
 </main>
 <footer>
     <svg class="w-full" viewBox="0 0 1200 197" height="197" fill="none" xmlns="http://www.w3.org/2000/svg">
