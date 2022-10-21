@@ -1,9 +1,24 @@
 <?php
 
 namespace App\Votee\Model\Repository;
+use App\Votee\Model\DataObject\AbstractDataObject;
 use App\Votee\Model\Repository\DatabaseConnection as DatabaseConnection;
+use PDOException;
 
 abstract class AbstractRepository {
+
+    public function sauvegarder(AbstractDataObject $object): bool {
+        $sql = "INSERT INTO " . $this->getNomTable() . " (". implode(', ', $this->getNomsColonnes())
+            . ") VALUES (:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $values = $object->formatTableau();
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
 
     public function selectAll(): array {
         $object = [];

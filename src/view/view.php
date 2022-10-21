@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title><?php echo $pagetitle; ?></title>
-    <link rel="stylesheet" type="text/css" href="../../web/css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-    <script type="text/javascript" src="../../web/js/nav-burger.js"></script> 
+    <script type="text/javascript" src="js/nav-burger.js"></script>
 </head>
 <body>
 <header>
     <nav class="flex justify-between items-center gap-10 p-2 mx-10 border-b-2">
         <div class="flex gap-3 items-center">
-            <img class="w-14" src="../../resources/logo_votee.png" alt="logo">
+            <img class="w-14" src="../resources/logo_votee.png" alt="logo">
             <span class="text-xl font-semibold color-dark">Votee</span>
         </div>
 
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 color-dark">
             <a href=""><span class="link link-underline link-underline-color">Accueil</span></a>
-            <a href=""><span class="link link-underline link-underline-color">Vote</span></a>
+            <a href="./frontController.php?action=readAll"><span class="link link-underline link-underline-color">Vote</span></a>
             <a href=""><span class="link link-underline link-underline-color">Contact</span></a>
         </div>
 

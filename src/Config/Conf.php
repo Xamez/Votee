@@ -5,7 +5,7 @@ namespace App\Votee\Config;
 class Conf {
 
     static private array $databases = array(
-        'hostname' => 'webinfo',
+        'hostname' => 'webinfo.iutmontp.univ-montp2.fr',
         'database' => 'cazauxl',
         'login' => 'cazauxl',
         'password' => 'NA2Lz@-m0T0v1DSk'

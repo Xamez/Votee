@@ -58,7 +58,7 @@ class Question extends AbstractDataObject {
     }
 
 
-    public function getIdQuestion(): int { return $this->idQuestion; }
+    public function getIdQuestion(): ?int { return $this->idQuestion; }
 
     public function setIdQuestion(int $idQuestion): void { $this->idQuestion = $idQuestion; }
 
