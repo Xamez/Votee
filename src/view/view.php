@@ -39,9 +39,9 @@
     </nav>
 </header>
 <main>
-<!--<?php
+<?php
     require __DIR__ . "/{$cheminVueBody}";
-?>-->
+?>
 </main>
 <footer>
     <svg class="w-full" viewBox="0 0 1200 197" height="197" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Votee\Model;
+namespace App\Votee\Model\Repository;
 
 use App\Votee\Config\Conf;
 use PDO;
