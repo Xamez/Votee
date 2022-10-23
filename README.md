@@ -13,3 +13,9 @@ SAE S3 (RACDV) - Outil de décision collective
 - Julie Chevallier
 - Thomas Nalix
 - Alexandre Afonso
+
+## Liens
+
+<a href="https://trello.com/w/sae510">Trello</a></br>
+<a href="https://www.figma.com/file/UtxqSLYFLuAlYaP5EOfOL7/VotingSystem?node-id=0%3A1">Figma</a></br>
+<a href="https://moodle.umontpellier.fr/enrol/index.php?id=28067">Cahier des charges</a></br>
