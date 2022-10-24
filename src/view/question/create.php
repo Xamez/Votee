@@ -1,44 +1,78 @@
 <form method="post" action="frontController.php?&action=created">
-    <fieldset>
-        <legend>Créer une question :</legend>
-        <p>
-            <label for="visibilite_id">visibilite</label> :
-            <input type="text" placeholder="visible" name="visibilite" id="visibilite_id" required/>
-        </p>
-        <p>
-            <label for="systeme_vote_id">systemeVoteQuestion</label> :
-            <input type="text" placeholder="Question" name="systemeVoteQuestion" id="systeme_vote_id" required/>
-        </p>
-        <p>
-            <label for="plan_texte_id">planTexteQuestion</label> :
-            <input type="text" placeholder="Plan" name="planTexteQuestion" id="plan_texte_id" required/>
-        </p>
-        <p>
-            <label for="date_debut_question_id<_id">dateDebutQuestion</label> :
-            <input type="date" name="dateDebutQuestion" id="date_debut_question_id" required/>
-        </p>
-        <p>
-            <label for="date_fin_question_id">dateFinQuestion</label> :
-            <input type="date" name="dateFinQuestion" id="date_fin_question_id" required/>
-        </p>
-        <p>
-            <label for="date_debut_vote_id">dateDebutVote</label> :
-            <input type="date" name="dateDebutVote" id="date_debut_vote_id" required/>
-        </p>
-        <p>
-            <label for="date_fin_vote_id">dateFinVote</label> :
-            <input type="date" name="dateFinVote" id="date_fin_vote_id" required/>
-        </p>
-        <p>
-            <label for="categorie_id">idCategorie</label> :
-            <input type="number" placeholder="1" name="idCategorie" id="categorie_id" required/>
-        </p>
+    <div class="bg-light p-10 rounded-3xl">
+<!--        <p>-->
+<!--            <label for="visibilite_id">visibilite</label> :-->
+<!--            <input type="text" placeholder="visible" name="visibilite" id="visibilite_id" required/>-->
+<!--        </p>-->
+        <div class="flex flex-col">
+            <label for="systeme_vote_id">Titre :</label>
+            <input type="text" placeholder="Question" name="titreQuestion" id="systeme_vote_id" required/>
+        </div>
+        <div class="flex flex-col">
+            <label for="vote_desc_id">Description :</label>
+            <textarea class="max-h-52" type="text" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
+        </div>
+
+        <p class="text-center my-6">Organisation</p>
+        <div class="flex flex-col">
+            <label for="systeme_vote_id">Section 1 :</label>
+            <input type="text" placeholder="Activité" name="section1" id="systeme_vote_id" required/>
+        </div>
+        <div class="flex flex-col">
+            <label for="systeme_vote_id">Section 2 :</label>
+            <input type="text" placeholder="Organisation" name="section2" id="systeme_vote_id"/>
+        </div>
+        <div class="flex flex-col">
+            <label for="systeme_vote_id">Section 3 :</label>
+            <input type="text" placeholder="..." name="section3" id="systeme_vote_id"/>
+        </div>
+        <div class="flex flex-col">
+            <label for="systeme_vote_id">Section 4 :</label>
+            <input type="text" placeholder="..." name="section4" id="systeme_vote_id"/>
+        </div>
+        <div class="flex flex-col">
+            <label for="systeme_vote_id">Section 5 :</label>
+            <input type="text" placeholder="..." name="section5" id="systeme_vote_id"/>
+        </div>
+
+        <p class="text-center my-6">Calendrier</p>
+        <div class="flex gap-10 items-end">
+            <p class="w-36 font-semibold">Période d'écriture :</p>
+            <div class="flex flex-col">
+                <label for="date_debut_question_id<_id">Débute le </label>
+                <input type="date" name="dateDebutQuestion" id="date_debut_question_id" required/>
+            </div>
+            <div class="flex flex-col">
+                <label for="date_fin_question_id">Termine le</label>
+                <input type="date" name="dateFinQuestion" id="date_fin_question_id" required/>
+            </div>
+        </div>
+        <div class="flex gap-10 items-end">
+            <p class="w-36 font-semibold">Période de vote :</p>
+            <div class="flex flex-col">
+                <label for="date_debut_vote_id">Débute le </label>
+                <input type="date" name="dateDebutVote" id="date_debut_vote_id" required/>
+            </div>
+            <div class="flex flex-col">
+                <label for="date_fin_vote_id">Termine le</label>
+                <input type="date" name="dateFinVote" id="date_fin_vote_id" required/>
+            </div>
+        </div>
+
+<!--        <p>-->
+<!--            <label for="categorie_id">idCategorie</label> :-->
+<!--            <input type="number" placeholder="1" name="idCategorie" id="categorie_id" required/>-->
+<!--        </p>-->
+        <p class="text-center my-6">Votant</p>
         <p>
             <label for="login_id">login</label> :
             <input type="text" placeholder="tjean" name="login" id="login_id" required/>
         </p>
-        <p>
-            <input type="submit" value="Envoyer" />
-        </p>
-    </fieldset>
+    </div>
+    <p>
+        <input type="number" hidden value="1" placeholder="1" name="idCategorie" id="categorie_id" required/>
+        <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
+        <input class="p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
+    </p>
+
 </form>

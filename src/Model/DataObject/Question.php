@@ -4,11 +4,10 @@ namespace App\Votee\Model\DataObject;
 
 class Question extends AbstractDataObject {
 
-
     private ?int $idQuestion;
     private string $visibilite;
-    private string $systemeVoteQuestion;
-    private string $planTexteQuestion;
+    private string $titre;
+    private string $description;
     private string $dateDebutQuestion;
     private string $dateFinQuestion;
     private string $dateDebutVote;
@@ -18,21 +17,21 @@ class Question extends AbstractDataObject {
 
 
     public function __construct(
-        ?int $idQuestion,
+        ?int   $idQuestion,
         string $visibilite,
-        string $systemeVoteQuestion,
-        string $planTexteQuestion,
+        string $titre,
+        string $description,
         string $dateDebutQuestion,
         string $dateFinQuestion,
         string $dateDebutVote,
         string $dateFinVote,
-        int $idCategorie,
+        int    $idCategorie,
         string $login)
     {
         $this->idQuestion = $idQuestion;
         $this->visibilite = $visibilite;
-        $this->systemeVoteQuestion = $systemeVoteQuestion;
-        $this->planTexteQuestion = $planTexteQuestion;
+        $this->titre = $titre;
+        $this->description = $description;
         $this->dateDebutQuestion = $dateDebutQuestion;
         $this->dateFinQuestion = $dateFinQuestion;
         $this->dateDebutVote = $dateDebutVote;
@@ -46,8 +45,8 @@ class Question extends AbstractDataObject {
         return array(
             "idQuestion" => $this->getIdQuestion(),
             "visibilite" => $this->getVisibilite(),
-            "systemeVoteQuestion" => $this->getSystemeVoteQuestion(),
-            "planTexteQuestion" => $this->getPlanTexteQuestion(),
+            "titre" => $this->getTitre(),
+            "description" => $this->getDescription(),
             "dateDebutQuestion" => $this->getDateDebutQuestion(),
             "dateFinQuestion" => $this->getDateFinQuestion(),
             "dateDebutVote" => $this->getDateDebutVote(),
@@ -66,13 +65,13 @@ class Question extends AbstractDataObject {
 
     public function setVisibilite(string $visibilite): void { $this->visibilite = $visibilite; }
 
-    public function getSystemeVoteQuestion(): string { return $this->systemeVoteQuestion; }
+    public function getTitre(): string { return $this->titre; }
 
-    public function setSystemeVoteQuestion(string $systemeVoteQuestion): void { $this->systemeVoteQuestion = $systemeVoteQuestion; }
+    public function setTitre(string $titre): void { $this->titre = $titre; }
 
-    public function getPlanTexteQuestion(): string { return $this->planTexteQuestion; }
+    public function getDescription(): string { return $this->description; }
 
-    public function setPlanTexteQuestion(string $planTexteQuestion): void { $this->planTexteQuestion = $planTexteQuestion; }
+    public function setDescription(string $description): void { $this->description = $description; }
 
     public function getDateDebutQuestion(): string { return $this->dateDebutQuestion; }
 

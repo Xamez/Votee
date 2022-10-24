@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script type="text/javascript" src="js/nav-burger.js"></script>
 </head>
 <body>
@@ -38,7 +40,11 @@
         </div>
     </nav>
 </header>
-<main>
+<main class="mx-auto w-8/12">
+    <div class="flex flex-col items-center">
+        <h1 class="text-4xl font-bold"><?php echo $title; ?></h1>
+        <p class="text-main"><?php echo $subtitle; ?></p>
+    </div>
 <?php
     require __DIR__ . "/{$cheminVueBody}";
 ?>

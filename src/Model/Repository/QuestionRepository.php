@@ -9,8 +9,8 @@ class QuestionRepository extends AbstractRepository {
         return array(
             'idQuestion',
             'visibilite',
-            'systemeVoteQuestion',
-            'planTexteQuestion',
+            'titre',
+            'description',
             'dateDebutQuestion',
             'dateFinQuestion',
             'dateDebutVote',
@@ -34,14 +34,14 @@ class QuestionRepository extends AbstractRepository {
         return new Question(
             $questionFormatTableau['idQuestion'],
             $questionFormatTableau['visibilite'],
-            $questionFormatTableau['systemeVoteQuestion'],
-            $questionFormatTableau['planTexteQuestion'],
+            $questionFormatTableau['titre'],
+            $questionFormatTableau['description'],
             $questionFormatTableau['dateDebutQuestion'],
             $questionFormatTableau['dateFinQuestion'],
             $questionFormatTableau['dateDebutVote'],
             $questionFormatTableau['dateFinVote'],
             $questionFormatTableau['idCategorie'],
-            $questionFormatTableau['login']
+            $questionFormatTableau['login'],
         );
     }
 }
