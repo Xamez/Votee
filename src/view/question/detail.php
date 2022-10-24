@@ -2,8 +2,8 @@
 echo "<ul>
         <li> idQuestion : " . htmlspecialchars($question->getIdQuestion()). "</li>
         <li> visibilite : " . htmlspecialchars($question->getVisibilite()). "</li>
-        <li> systemeVoteQuestion : " . htmlspecialchars($question->getSystemeVoteQuestion()). "</li>
-        <li> planTexteQuestion : " . htmlspecialchars($question->getPlanTexteQuestion()). "</li>
+        <li> Titre : " . htmlspecialchars($question->getTitre()). "</li>
+        <li> Description : " . htmlspecialchars($question->getDescription()). "</li>
         <li> dateDebutQuestion : " . htmlspecialchars($question->getDateDebutQuestion()). "</li>
         <li> dateFinQuestion : " . htmlspecialchars($question->getDateFinQuestion()). "</li>
         <li> dateDebutVote : " . htmlspecialchars($question->getDateDebutVote()). "</li>

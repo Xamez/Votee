@@ -1,12 +1,13 @@
 <?php
-echo '<p><a href="./frontController.php?action=create">Créer une question</a></p>';
 echo '<div class="flex flex-col gap-3">';
 foreach ($questions as $question) {
-    $questionHTML = htmlspecialchars($question->getIdQuestion());
-    $questionURL = rawurlencode($question->getIdQuestion());
-    echo '<div class="bg-[#50d71e]"> Question : ' . '<a href="./frontController.php?action=read&idQuestion=' .
-        $questionURL . '">' . $questionHTML . '</a>' . ' <a href="./frontController.php?action=delete&idQuestion=' .
-        $questionURL . '">' . 'Supprimer' . '</a>' . ' <a href="./frontController.php?action=update&idQuestion=' .
-        $questionURL . '">' . 'Modifier' . '</a></div>';
+    $questionTitreHTML = htmlspecialchars($question->getTitre());
+    $questionIdURL = rawurlencode($question->getIdQuestion());
+
+    echo '<a href="./frontController.php?action=read&idQuestion=' . $questionIdURL . '">
+        <div class="flex justify-between bg-light p-2 rounded">' . $questionTitreHTML . '<span class="material-symbols-outlined">arrow_forward_ios</span></div></a>';
 }
-echo '</div>';
+echo '</div><a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=create">Créer un vote</a>';
+
+
+
