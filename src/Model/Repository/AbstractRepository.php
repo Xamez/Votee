@@ -32,6 +32,19 @@ abstract class AbstractRepository {
         return $object;
     }
 
+    public function selectAllByKey($valeurClePrimaire): array {
+        $object = [];
+        $sql = "SELECT * FROM {$this->getNomTable()}  WHERE {$this->getNomClePrimaire() } = :valueTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("valueTag" => $valeurClePrimaire);
+        $pdoStatement->execute($values);
+
+        foreach ($pdoStatement as $FormatTableau) {
+            $object[] = $this->construire($FormatTableau);
+        }
+        return $object;
+    }
+
     public function select($valeurClePrimaire) {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);

@@ -10,7 +10,8 @@ class SectionRepository extends AbstractRepository {
         return array(
             'idTexte',
             'titre',
-            'description',
+            'texte',
+            'idQuestion',
             );
     }
     function getNomTable(): string {
@@ -18,18 +19,19 @@ class SectionRepository extends AbstractRepository {
     }
 
     function getNomClePrimaire(): string {
-        return "idTexte";
+        return "idQuestion";
     }
 
     function getProcedureInsert(): string {
         return "";
     }
 
-    public function construire(array $questionFormatTableau) : Section {
+    public function construire(array $sectionFormatTableau) : Section {
         return new Section(
-            $questionFormatTableau['idTexte'],
-            $questionFormatTableau['titre'],
-            $questionFormatTableau['description'],
+            $sectionFormatTableau['idTexte'],
+            $sectionFormatTableau['titre'],
+            $sectionFormatTableau['texte'],
+            $sectionFormatTableau['idQuestion'],
         );
     }
 
