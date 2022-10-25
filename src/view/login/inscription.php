@@ -2,14 +2,20 @@
     <form class="flex flex-col gap-10 items-center" method="post" action="">
         <div class="flex flex-col gap-2">
             <div>
-                <input class="w-80 border-2" type="text" placeholder="cazauxl" name="login"/>
+                <input class="w-80 border-2" type="text" placeholder="Identifiant" name="login" required/>
             </div>
             <div>
-                <input class="w-80 border-2" type="password" name="password"/>
+                <input class="w-80 border-2" type="text" placeholder="Prénom" name="prenom" required/>
+            </div>
+            <div>
+                <input class="w-80 border-2" type="text" placeholder="Nom" name="nom" required/>
+            </div>
+            <div>
+                <input class="w-80 border-2" type="password" placeholder="Mot de passe" name="password" required/>
             </div>
         </div>
         <div>
-            <input class="p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Inscription" />
+            <input class="p-2 w-48 text-white bg-main font-semibold rounded-lg" type="submit" value="Inscription" />
         </div>
     </form>
     <div class="flex gap-1">
