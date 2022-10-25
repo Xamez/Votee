@@ -8,4 +8,14 @@ class AbstractController {
         extract($parametres); // Crée des variables à partir du tableau $parametres
         require __DIR__ . "/../view/$cheminVue"; // Charge la vue
     }
+
+    public static function pageIntrouvable(): void {
+        http_response_code(404);
+        self::afficheVue('view.php',
+                        ["pagetitle" => "Page introuvable",
+                            "cheminVueBody" => "404.php",
+                            "title" => "Page introuvable",
+                            "subtitle" => ""
+                        ]);
+    }
 }
