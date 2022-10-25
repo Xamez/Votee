@@ -74,5 +74,18 @@ class ControllerQuestion extends AbstractController {
             ["errorMessage" => $errorMessage,"pagetitle" => "Erreur", "cheminVueBody" => "question/error.php","title" => "",
                 "subtitle" => ""]);
     }
+
+    // -----------------------------
+    // POUR TESTER LES PAGES LOGINS
+    public static function connexion():void {
+        self::afficheVue("view.php",
+            ["pagetitle" => "Connexion", "cheminVueBody" => "login/connexion.php","title" => "Se connecter",
+                "subtitle" => ""]);
+    }
+    public static function inscription():void {
+        self::afficheVue("view.php",
+            ["pagetitle" => "Inscription", "cheminVueBody" => "login/inscription.php","title" => "S'inscrire",
+                "subtitle" => ""]);
+    }
 }
 
