@@ -18,7 +18,6 @@ class ControllerQuestion extends AbstractController {
             $_POST['dateFinQuestion'],
             $_POST['dateDebutVote'],
             $_POST['dateFinVote'],
-            $_POST['idCategorie'],
             $_POST['login'],
         );
         (new QuestionRepository())->sauvegarder($question);
@@ -33,11 +32,22 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function create(): void {
+        $nbSections = $_POST['nbSections'];
         self::afficheVue('view.php',
-            ["pagetitle" => "Creation",
+            ["nbSections" => $nbSections,
+                "pagetitle" => "Creation",
                 "cheminVueBody" => "question/create.php",
                 "title" => "Créer un vote",
                 "subtitle" => ""
+            ]);
+    }
+
+    public static function section(): void {
+        self::afficheVue('view.php',
+            ["pagetitle" => "Nombre de sections",
+                "cheminVueBody" => "question/section.php",
+                "title" => "Créer un vote",
+                "subtitle" => "Définissez un nombre de section pour votre vote."
             ]);
     }
 
