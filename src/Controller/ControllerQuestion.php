@@ -31,6 +31,16 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
+    public static function home(): void {
+        self::afficheVue('view.php',
+            ["pagetitle" => "Pgae d'accueil",
+                "footerType" => 1,
+                "cheminVueBody" => "home.php",
+                "title" => "",
+                "subtitle" => ""
+            ]);
+    }
+
     public static function create(): void {
         self::afficheVue('view.php',
             ["pagetitle" => "Creation",
