@@ -4,6 +4,7 @@ namespace App\Votee\Controller;
 
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\Repository\QuestionRepository;
+use App\Votee\Model\Repository\SectionRepository;
 
 class ControllerQuestion extends AbstractController {
 
@@ -18,7 +19,6 @@ class ControllerQuestion extends AbstractController {
             $_POST['dateFinVote'],
             $_POST['idCategorie'],
             $_POST['login'],
-            $_POST['sections'],
         );
         (new QuestionRepository())->sauvegarder($question);
         $questions = (new QuestionRepository())->selectAll();
@@ -52,10 +52,13 @@ class ControllerQuestion extends AbstractController {
 
     public static function read(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         if ($question) {
             self::afficheVue('view.php',
-                ["question" => $question, "pagetitle" =>
-                    "Question", "cheminVueBody" => "question/detail.php",
+                ["question" => $question,
+                    "sections" => $sections,
+                    "pagetitle" => "Question",
+                    "cheminVueBody" => "question/detail.php",
                     "title" => $question->getTitre(),
                     "subtitle" => $question->getDescription()]);
         } else {

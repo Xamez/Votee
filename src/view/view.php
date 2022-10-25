@@ -40,14 +40,14 @@
         </div>
     </nav>
 </header>
-<main class="mx-auto w-8/12">
+<main class="flex flex-col gap-5 mx-auto w-8/12">
     <div class="flex flex-col items-center">
         <h1 class="text-4xl font-bold"><?php echo $title; ?></h1>
         <p class="text-main"><?php echo $subtitle; ?></p>
     </div>
-<?php
-    require __DIR__ . "/{$cheminVueBody}";
-?>
+    <?php
+        require __DIR__ . "/{$cheminVueBody}";
+    ?>
 </main>
 <footer>
     <svg class="w-full" viewBox="0 0 1200 197" height="197" fill="none" xmlns="http://www.w3.org/2000/svg">

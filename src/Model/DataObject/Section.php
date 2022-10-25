@@ -4,35 +4,42 @@ namespace App\Votee\Model\DataObject;
 
 class Section extends AbstractDataObject {
 
-    private int $idSection;
+    private ?int $idTexte;
+    private int $idQuestion;
     private string $titre;
-    private string $description;
+    private string $texte;
 
-    public function __construct(int $idSection, string $titre, string $description) {
-        $this->idSection = $idSection;
+    public function __construct(?int $idTexte, string $titre, string $texte, int $idQuestion) {
+        $this->idTexte = $idTexte;
+        $this->idQuestion = $idQuestion;
         $this->titre = $titre;
-        $this->description = $description;
+        $this->texte = $texte;
     }
 
     public function formatTableau(): array {
         return array(
-            "idQuestion" => $this->getIdSection(),
+            "idTexte" => $this->getIdTexte(),
+            "idQuestion" => $this->getIdQuestion(),
             "titre" => $this->getTitre(),
-            "description" => $this->getDescription(),
+            "texte" => $this->getTexte(),
         );
     }
 
-    public function getIdSection(): int { return $this->idSection; }
+    public function getIdQuestion(): int { return $this->idQuestion; }
 
-    public function setIdSection(int $idSection): void { $this->idSection = $idSection; }
+    public function setIdQuestion(int $idQuestion): void { $this->idQuestion = $idQuestion; }
+
+    public function getIdTexte(): int { return $this->idTexte; }
+
+    public function setIdTexte(int $idTexte): void { $this->idTexte = $idTexte; }
 
     public function getTitre(): string { return $this->titre; }
 
     public function setTitre(string $titre): void { $this->titre = $titre; }
 
-    public function getDescription(): string { return $this->description; }
+    public function getTexte(): string { return $this->texte; }
 
-    public function setDescription(string $description): void { $this->description = $description; }
+    public function setTexte(string $texte): void { $this->texte = $texte; }
 
 
 }
