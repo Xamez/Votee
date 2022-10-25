@@ -1,4 +1,16 @@
-.color-dark {
+/* Permet d'avoir le footer toujours en bas même si la page a un contenu en hauteur trop petit */
+.everything {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main {
+	flex: 1;
+}
+
+/* Quelques classes pour des couleurs utile */ 
+.text-dark {
     color: #2E3436;
 }
 
@@ -18,6 +30,7 @@
 	background: rgba(174, 164, 255, 0.5);
 }
 
+/* Permet d'avoir un effet quand on passe la souris sur les liens dans le burger-menu*/
 .link-underline {
 	border-bottom-width: 0;
 	background-image: linear-gradient(transparent, transparent), linear-gradient(#fff, #fff);
