@@ -2,10 +2,10 @@
     <form class="flex flex-col gap-10 items-center" method="post" action="">
         <div class="flex flex-col gap-2">
             <div>
-                <input type="text" placeholder="cazauxl" name="login"/>
+                <input class="w-80 border-2" type="text" placeholder="cazauxl" name="login"/>
             </div>
             <div>
-                <input type="password" name="password"/>
+                <input class="w-80 border-2" type="password" name="password"/>
             </div>
         </div>
         <div>
@@ -13,6 +13,6 @@
         </div>
     </form>
     <div class="flex gap-1">
-        <p>Vous n’avez pas de compte ? </p><a class="text-main" href="inscription.php">Connectez-vous.</a>
+        <p>Vous n’avez pas de compte ? </p><a class="text-main" href="frontController.php?action=connexion">Connectez-vous.</a>
     </div>
 </div>
