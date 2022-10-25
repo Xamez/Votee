@@ -1,14 +1,16 @@
 <?php
 // affiche le login de l'utilisateur qui a créé la question
 echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Représentant : 
-        <div class="flex gap-1 text-main shadow-md rounded-2xl w-fit p-2"><span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($question->getLogin()) .
+        <div class="flex gap-1 text-main shadow-md rounded-2xl w-fit p-2"><span class="material-symbols-outlined">account_circle</span>'
+            . htmlspecialchars($representant->getNom()) . ' ' . htmlspecialchars($representant->getPrenom()) .
      '</div></p></div>';
 
 
 // TODO: afficher co-auteurs (EXEMPLE ICI)
 echo '<div class="flex items-center flex-wrap gap-2 pt-0"><p class="text-main font-semibold">Co-auteurs :</p>';
 for($i = 0; $i < 8; $i++)
-    echo '<div class="flex gap-1 text-main shadow-md rounded-2xl p-2"><span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars("A faire") . '</div>';
+    echo '<div class="flex gap-1 text-main shadow-md rounded-2xl p-2"><span class="material-symbols-outlined">account_circle</span>'
+        . htmlspecialchars("Nom") . htmlspecialchars("Prenom"). '</div>';
 echo '</div>';
 
 echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';

@@ -4,12 +4,11 @@ namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Utilisateur;
 
-class UtilisateurRepository {
+class UtilisateurRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
             'login',
-            'motDePasse',
             'nom',
             'prenom',
         );
@@ -30,7 +29,6 @@ class UtilisateurRepository {
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
         return new Utilisateur(
             $utilisateurFormatTableau['login'],
-            $utilisateurFormatTableau['motDePasse'],
             $utilisateurFormatTableau['nom'],
             $utilisateurFormatTableau['prenom'],
         );

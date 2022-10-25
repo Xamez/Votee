@@ -2,17 +2,14 @@
 
 namespace App\Votee\Model\DataObject;
 
-class Utilisateur {
+class Utilisateur extends AbstractDataObject {
 
     private string $login;
-    private string $motDePasse;
     private string $nom;
     private string $prenom;
 
-    public function __construct(string $login, string $motDePasse, string $nom, string $prenom)
-    {
+    public function __construct(string $login,string $nom, string $prenom) {
         $this->login = $login;
-        $this->motDePasse = $motDePasse;
         $this->nom = $nom;
         $this->prenom = $prenom;
     }
@@ -20,7 +17,6 @@ class Utilisateur {
     public function formatTableau(): array {
         return array(
             "login" => $this->getLogin(),
-            "motDePasse" => $this->getMotDePasse(),
             "nom" => $this->getNom(),
             "prenom" => $this->getPrenom(),
         );
@@ -29,10 +25,6 @@ class Utilisateur {
     public function getLogin(): string { return $this->login; }
 
     public function setLogin(string $login): void{ $this->login = $login; }
-
-    public function getMotDePasse(): string { return $this->motDePasse; }
-
-    public function setMotDePasse(string $motDePasse): void { $this->motDePasse = $motDePasse; }
 
     public function getNom(): string { return $this->nom; }
 
