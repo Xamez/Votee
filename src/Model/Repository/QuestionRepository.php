@@ -15,7 +15,6 @@ class QuestionRepository extends AbstractRepository {
             'dateFinQuestion',
             'dateDebutVote',
             'dateFinVote',
-            'idCategorie',
             'login');
     }
     function getNomTable(): string {
@@ -40,7 +39,6 @@ class QuestionRepository extends AbstractRepository {
             $questionFormatTableau['dateFinQuestion'],
             $questionFormatTableau['dateDebutVote'],
             $questionFormatTableau['dateFinVote'],
-            $questionFormatTableau['idCategorie'],
             $questionFormatTableau['login'],
         );
     }

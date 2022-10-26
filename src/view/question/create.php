@@ -1,9 +1,9 @@
 <form method="post" action="frontController.php?&action=created">
     <div class="bg-light p-10 rounded-3xl">
-<!--        <p>-->
-<!--            <label for="visibilite_id">visibilite</label> :-->
-<!--            <input type="text" placeholder="visible" name="visibilite" id="visibilite_id" required/>-->
-<!--        </p>-->
+        <!--        <p>-->
+        <!--            <label for="visibilite_id">visibilite</label> :-->
+        <!--            <input type="text" placeholder="visible" name="visibilite" id="visibilite_id" required/>-->
+        <!--        </p>-->
         <div class="flex flex-col">
             <label for="systeme_vote_id">Titre :</label>
             <input type="text" placeholder="Question" name="titreQuestion" id="systeme_vote_id" required/>
@@ -14,27 +14,14 @@
         </div>
 
         <p class="text-center my-6">Organisation</p>
-        <div class="flex flex-col">
-            <label for="systeme_vote_id">Section 1 :</label>
-            <input type="text" placeholder="Activité" name="section1" id="systeme_vote_id" required/>
-        </div>
-        <div class="flex flex-col">
-            <label for="systeme_vote_id">Section 2 :</label>
-            <input type="text" placeholder="Organisation" name="section2" id="systeme_vote_id"/>
-        </div>
-        <div class="flex flex-col">
-            <label for="systeme_vote_id">Section 3 :</label>
-            <input type="text" placeholder="..." name="section3" id="systeme_vote_id"/>
-        </div>
-        <div class="flex flex-col">
-            <label for="systeme_vote_id">Section 4 :</label>
-            <input type="text" placeholder="..." name="section4" id="systeme_vote_id"/>
-        </div>
-        <div class="flex flex-col">
-            <label for="systeme_vote_id">Section 5 :</label>
-            <input type="text" placeholder="..." name="section5" id="systeme_vote_id"/>
-        </div>
-
+        <?php
+        for ($i = 1; $i <= $nbSections; $i++) {
+            echo '<div class="flex flex-col">
+                <label for="systeme_vote_id' . $i . '">Section ' . $i . ' :</label>
+                <input type="text" placeholder="Nom de la section" name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
+            </div>';
+        }
+        ?>
         <p class="text-center my-6">Calendrier</p>
         <div class="flex gap-10 items-end">
             <p class="w-36 font-semibold">Période d'écriture :</p>
@@ -57,6 +44,19 @@
                 <label for="date_fin_vote_id">Termine le</label>
                 <input type="date" name="dateFinVote" id="date_fin_vote_id" required/>
             </div>
+        </div>
+        <p class="text-center my-6">Votant</p>
+        <div>
+            <label for="login_id">login</label> :
+            <input type="text" placeholder="tjean" name="login" id="login_id" required/>
+        </div>
+    </div>
+    <div>
+        <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
+        <input class="p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
+    </div>
+
+</form>     </div>
         </div>
 
 <!--        <p>-->
