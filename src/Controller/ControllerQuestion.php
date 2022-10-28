@@ -14,10 +14,10 @@ class ControllerQuestion extends AbstractController {
             $_POST['visibilite'],
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
-            $_POST['dateDebutQuestion'],
-            $_POST['dateFinQuestion'],
-            $_POST['dateDebutVote'],
-            $_POST['dateFinVote'],
+            date_format(date_create($_POST['dateDebutQuestion']),'d/m/Y'),
+            date_format(date_create($_POST['dateFinQuestion']),'d/m/Y'),
+            date_format(date_create($_POST['dateDebutVote']),'d/m/Y'),
+            date_format(date_create($_POST['dateFinVote']),'d/m/Y'),
             $_POST['login'],
         );
         (new QuestionRepository())->sauvegarder($question);
@@ -51,6 +51,19 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
+    public static function delete(): void {
+        $idQuestion = $_GET['idQuestion'];
+        (new QuestionRepository())->supprimer($idQuestion);
+        $questions = (new QuestionRepository())->selectAll();
+        self::afficheVue('view.php',
+            ["questions" => $questions,
+                "idQuestion" => $idQuestion,
+                "pagetitle" => "Suppression",
+                "cheminVueBody" => "question/delete.php",
+                "title" => "Supression d'un vote",
+                "subtitle" => ""]);
+    }
+
     public static function readAll(): void {
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
@@ -72,6 +85,24 @@ class ControllerQuestion extends AbstractController {
                     "representant" => $representant,
                     "pagetitle" => "Question",
                     "cheminVueBody" => "question/detail.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()]);
+        } else {
+            self::error("La question n'existe pas");
+        }
+    }
+
+    public static function proposition(): void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $representant = (new UtilisateurRepository())->select($question->getLogin());
+        if ($question) {
+            self::afficheVue('view.php',
+                ["question" => $question,
+                    "sections" => $sections,
+                    "representant" => $representant,
+                    "pagetitle" => "Question",
+                    "cheminVueBody" => "question/proposition.php",
                     "title" => $question->getTitre(),
                     "subtitle" => $question->getDescription()]);
         } else {
