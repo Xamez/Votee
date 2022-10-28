@@ -50,7 +50,7 @@
                     <h3 class="text-2xl md:text-4xl font-bold text-main">Étes vous prêt à vous lancer ?</h3>
                     <h4 class="text-xl md:text-3xl font-semibold text-white">Commencer maintenant !</h4>
                 </div>
-                <a class="p-2 pl-6 pr-6 text-white bg-dark rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Vote</a>
+                <a class="p-2 pl-6 pr-6 text-white bg-dark rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Voter</a>
             </div>
         </div>
     </div>
