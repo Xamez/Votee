@@ -22,7 +22,7 @@
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
             <a href="./frontController.php?action=readAll"><span class="link-underline link-underline-color">Vote</span></a>
-            <a href=""><span class="link-underline link-underline-color">Contact</span></a>
+            <a href=""><span class="link-underline link-underline-color">Demande</span></a>
         </div>
 
         <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="">Se connecter</a>
@@ -36,7 +36,7 @@
             <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">
                 <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
                 <a href="./frontController.php?action=readAll"><span class="link-underline link-underline-color">Vote</span></a>
-                <a href=""><span class="link-underline link-underline-color">Contact</span></a>
+                <a href=""><span class="link-underline link-underline-color">Demande</span></a>
             </div>
         </div>
     </nav>
@@ -69,7 +69,11 @@ if (!isset($mainType)) {
     } else if ($footerType == 1) {
         echo '
         <div class="w-full pt-10">
-            <p>FOOTER</p>
+            <div class="flex w-4/5 items-center justify-center mx-auto border-t border-main pb-12">
+                <div class="flex flex-row text-main text-md lg:text-xl font-semibold pt-6">
+                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevalier Julie</p>
+                </div>
+            </div>
         </div>
         ';
     }

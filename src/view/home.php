@@ -1,10 +1,10 @@
 <div>
     <div class="flex flex-col lg:flex-row items-center justify-center pt-6 w-10/12 mx-auto">
         <div class="flex flex-col">
-            <h1 class="text-4xl font-bold drop-shadow-md w-96 text-center lg:text-left"><span class="text-dark">Venez voter en</span><br/><span class="text-main">quelques secondes</span></h1>
-            <h3 class="text-gray-400 pt-3 text-center lg:text-left">Exprime ton opinion en un clic !</h3>
+            <h1 class="text-4xl font-bold w-96 text-center lg:text-left"><span class="text-dark">Venez voter en</span><br/><span class="text-main">quelques secondes</span></h1>
+            <h3 class="text-lg text-gray-400 pt-3 text-center lg:text-left">Exprime ton opinion en un clic !</h3>
             <div class="flex pt-8 mx-auto lg:mx-0">
-                <a class="p-3 pl-6 pr-6 text-white bg-main font-semibold rounded-md shadow-button" href="./frontController.php?action=section">Créer un vote</a>
+                <a class="p-3 pl-6 pr-6 text-white bg-main font-bold rounded-md shadow-button" href="./frontController.php?action=section">Créer un vote</a>
             </div>
         </div>
         <img class="lg:w-10/12" src="../resources/undraw_voting.png" alt="Vote">
@@ -22,7 +22,7 @@
         <div class="flex flex-col lg:flex-row w-4/5 gap-8 items-center pt-10">
             <div class="w-96 text-center lg:text-left">
                 <i class="fa-regular fa-envelope text-white text-2xl px-3 py-2 bg-main rounded-lg"></i>
-                <h3 class="text-white font-semibold text-xl pt-2">Voter, c'est facile !</h3>
+                <h3 class="text-white font-bold text-xl pt-2">Voter, c'est facile !</h3>
                 <p class="text-dark text-md pt-4">Votee, un système de vote dématérialisée à bulletin secret fiable, simple et sécurisée.<br/>Disponible partout et maintenant</p>
                 <div class="flex pt-3 justify-center lg:justify-start">
                     <a class="p-2 pl-6 pr-6 text-white bg-main rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Vote</a>
@@ -34,7 +34,7 @@
             <img class="w-10/12 lg:w-1/2 rounded-3xl shadow-md" src="../resources/creer_vote.png" alt="Créer un vote">
             <div class="w-96 text-center lg:text-left">
                 <i class="fa fa-pen-to-square text-white text-2xl px-3 py-2 bg-main rounded-lg"></i>
-                <h3 class="text-white font-semibold text-xl pt-2">Créer un vote, c'est trivial !</h3>
+                <h3 class="text-white font-bold text-xl pt-2">Créer un vote, c'est trivial !</h3>
                 <p class="text-dark text-md pt-4">Réaliser un vote avec Votee pour déterminer simplement et rapidement l’opinion du public.<br/>Personnaliser votre vote comme bon vous semble.</p>
                 <div class="flex flex-row gap-x-4 justify-center lg:justify-start pt-3">
                     <a class="p-2 pl-6 pr-6 text-white bg-main rounded-lg font-semibold shadow" href="./frontController.php?action=section">Créer un vote</a>
@@ -43,18 +43,14 @@
             </div>
         </div>
     </div>
-    <!-- A FINIR (problème z-index) -->
     <div class="flex relative -top-1">
-        <img src="../resources/urne-vote.png" alt="Urne">
-        <div class="">
-             <div class="flex flex-col justify-center align-items">
-                <div class="flex flex-row">
-                    <h3 class="text-3xl font-semibold text-main">Étes vous prêt à vous lancer ?</h3>
-                    <h4 class="text-2xl font-semibold text-white">Commencer maintenant !</h4>
+        <div class="flex bg-image-urne w-screen h-40 items-center justify-center">
+            <div class="flex flex-row w-3/5 items-center justify-between">
+                <div class="flex flex-col">
+                    <h3 class="text-2xl md:text-4xl font-bold text-main">Étes vous prêt à vous lancer ?</h3>
+                    <h4 class="text-xl md:text-3xl font-semibold text-white">Commencer maintenant !</h4>
                 </div>
-                <div class="">
-                    <a class="p-2 pl-6 pr-6 text-white bg-main rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Vote</a>
-                </div>
+                <a class="p-2 pl-6 pr-6 text-white bg-dark rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Vote</a>
             </div>
         </div>
     </div>
