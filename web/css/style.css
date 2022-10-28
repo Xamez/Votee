@@ -26,6 +26,10 @@ main {
     background-color: #8080D7;
 }
 
+.bg-dark {
+	background-color: #2E3436;
+}
+
 .bg-light {
 	background: rgba(174, 164, 255, 0.5);
 }

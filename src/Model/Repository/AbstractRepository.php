@@ -8,8 +8,7 @@ use PDOException;
 abstract class AbstractRepository {
 
     public function sauvegarder(AbstractDataObject $object): bool {
-        $sql = "INSERT INTO " . $this->getNomTable() . " (". implode(', ', $this->getNomsColonnes())
-            . ") VALUES (:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $sql = "CALL " . $this->getProcedureInsert(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -18,6 +17,13 @@ abstract class AbstractRepository {
         } catch (PDOException) {
             return false;
         }
+    }
+
+    public function supprimer($valeurClePrimaire): void {
+        $sql = "DELETE FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire()} = :valueTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array("valueTag" => $valeurClePrimaire);
+        $pdoStatement->execute($value);
     }
 
     public function selectAll(): array {
