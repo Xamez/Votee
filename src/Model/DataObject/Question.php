@@ -25,7 +25,6 @@ class Question extends AbstractDataObject {
         string $dateFinQuestion,
         string $dateDebutVote,
         string $dateFinVote,
-        int    $idCategorie,
         string $login)
     {
         $this->idQuestion = $idQuestion;
@@ -36,26 +35,23 @@ class Question extends AbstractDataObject {
         $this->dateFinQuestion = $dateFinQuestion;
         $this->dateDebutVote = $dateDebutVote;
         $this->dateFinVote = $dateFinVote;
-        $this->idCategorie = $idCategorie;
         $this->login = $login;
     }
 
 
     public function formatTableau(): array {
         return array(
-            "idQuestion" => $this->getIdQuestion(),
-            "visibilite" => $this->getVisibilite(),
-            "titre" => $this->getTitre(),
-            "description" => $this->getDescription(),
-            "dateDebutQuestion" => $this->getDateDebutQuestion(),
-            "dateFinQuestion" => $this->getDateFinQuestion(),
-            "dateDebutVote" => $this->getDateDebutVote(),
-            "dateFinVote" => $this->getDateFinVote(),
-            "idCategorie" => $this->getIdCategorie(),
-            "login" => $this->getLogin()
+            "IDQUESTION" => $this->getIdQuestion(),
+            "VISIBILITE" => $this->getVisibilite(),
+            "TITRE" => $this->getTitre(),
+            "DESCRIPTION" => $this->getDescription(),
+            "DATEDEBUTQUESTION" => $this->getDateDebutQuestion(),
+            "DATEFINQUESTION" => $this->getDateFinQuestion(),
+            "DATEDEBUTVOTE" => $this->getDateDebutVote(),
+            "DATEFINVOTE" => $this->getDateFinVote(),
+            "LOGIN" => $this->getLogin()
         );
     }
-
 
     public function getIdQuestion(): ?int { return $this->idQuestion; }
 
@@ -88,10 +84,6 @@ class Question extends AbstractDataObject {
     public function getDateFinVote(): string { return $this->dateFinVote; }
 
     public function setDateFinVote(string $dateFinVote): void { $this->dateFinVote = $dateFinVote; }
-
-    public function getIdCategorie(): int { return $this->idCategorie; }
-
-    public function setIdCategorie(int $idCategorie): void { $this->idCategorie = $idCategorie; }
 
     public function getLogin(): string { return $this->login; }
 

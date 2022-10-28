@@ -18,10 +18,10 @@ class Section extends AbstractDataObject {
 
     public function formatTableau(): array {
         return array(
-            "idTexte" => $this->getIdTexte(),
-            "idQuestion" => $this->getIdQuestion(),
-            "titre" => $this->getTitre(),
-            "texte" => $this->getTexte(),
+            "IDTEXTE" => $this->getIdTexte(),
+            "IDQUESTION" => $this->getIdQuestion(),
+            "TITRE" => $this->getTitre(),
+            "TEXTE" => $this->getTexte(),
         );
     }
 
