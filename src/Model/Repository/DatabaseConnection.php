@@ -14,11 +14,13 @@ class DatabaseConnection {
         return static::getInstance()->pdo;
     }
 
+
     public function __construct() {
         $dbname = Conf::getDatabase();
         $login = Conf::getLogin();
         $password = Conf::getPassword();
 
+        //  Connexion base de donnée
         $this->pdo = new PDO("oci:dbname=".$dbname, $login, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }

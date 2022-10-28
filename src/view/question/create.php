@@ -55,24 +55,4 @@
         <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
         <input class="p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
     </div>
-
-</form>     </div>
-        </div>
-
-<!--        <p>-->
-<!--            <label for="categorie_id">idCategorie</label> :-->
-<!--            <input type="number" placeholder="1" name="idCategorie" id="categorie_id" required/>-->
-<!--        </p>-->
-        <p class="text-center my-6">Votant</p>
-        <p>
-            <label for="login_id">login</label> :
-            <input type="text" placeholder="tjean" name="login" id="login_id" required/>
-        </p>
-    </div>
-    <p>
-        <input type="number" hidden value="1" placeholder="1" name="idCategorie" id="categorie_id" required/>
-        <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
-        <input class="p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
-    </p>
-
 </form>

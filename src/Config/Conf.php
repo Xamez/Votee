@@ -5,18 +5,17 @@ namespace App\Votee\Config;
 class Conf {
 
     static private array $databases = array(
-        'hostname' => 'webinfo.iutmontp.univ-montp2.fr',
-        'database' => 'cazauxl',
-        'login' => 'cazauxl',
-        'password' => 'NA2Lz@-m0T0v1DSk'
-    );
 
+        'database' => '(DESCRIPTION = 
+                       (ADDRESS = (PROTOCOL = TCP)(HOST = 162.38.222.149)(PORT = 1521)) 
+                       (CONNECT_DATA = 
+                            (SERVICE_NAME = IUT) 
+                            (SID = ORCL)))',
+        'login' => 'cazauxl',
+        'password' => '081975268be'
+    );
     static public function getLogin() : string {
         return static::$databases['login'];
-    }
-
-    static public function getHostname() : string {
-        return static::$databases['hostname'];
     }
 
     static public function getDatabase() : string {
