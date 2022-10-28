@@ -26,6 +26,14 @@ main {
     background-color: #8080D7;
 }
 
+.bg-home {
+	background-color: #AFAFF3;
+}
+
+.shadow-button {
+	filter: drop-shadow(8px 8px 0px #B8B8F8);
+}
+
 .bg-light {
 	background: rgba(174, 164, 255, 0.5);
 }

@@ -33,11 +33,10 @@ class ControllerQuestion extends AbstractController {
 
     public static function home(): void {
         self::afficheVue('view.php',
-            ["pagetitle" => "Pgae d'accueil",
+            ["pagetitle" => "Page d'accueil",
+                "mainType" => 1,
                 "footerType" => 1,
-                "cheminVueBody" => "home.php",
-                "title" => "",
-                "subtitle" => ""
+                "cheminVueBody" => "home.php"
             ]);
     }
 
