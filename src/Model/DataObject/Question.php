@@ -41,18 +41,17 @@ class Question extends AbstractDataObject {
 
     public function formatTableau(): array {
         return array(
-            "idQuestion" => $this->getIdQuestion(),
-            "visibilite" => $this->getVisibilite(),
-            "titre" => $this->getTitre(),
-            "description" => $this->getDescription(),
-            "dateDebutQuestion" => $this->getDateDebutQuestion(),
-            "dateFinQuestion" => $this->getDateFinQuestion(),
-            "dateDebutVote" => $this->getDateDebutVote(),
-            "dateFinVote" => $this->getDateFinVote(),
-            "login" => $this->getLogin()
+            "IDQUESTION" => $this->getIdQuestion(),
+            "VISIBILITE" => $this->getVisibilite(),
+            "TITRE" => $this->getTitre(),
+            "DESCRIPTION" => $this->getDescription(),
+            "DATEDEBUTQUESTION" => $this->getDateDebutQuestion(),
+            "DATEFINQUESTION" => $this->getDateFinQuestion(),
+            "DATEDEBUTVOTE" => $this->getDateDebutVote(),
+            "DATEFINVOTE" => $this->getDateFinVote(),
+            "LOGIN" => $this->getLogin()
         );
     }
-
 
     public function getIdQuestion(): ?int { return $this->idQuestion; }
 
