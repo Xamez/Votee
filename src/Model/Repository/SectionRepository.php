@@ -8,18 +8,18 @@ class SectionRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
-            'idTexte',
-            'titre',
-            'texte',
-            'idQuestion',
+            'IDTEXTE',
+            'TITRE',
+            'TEXTE',
+            'IDQUESTION',
             );
     }
     function getNomTable(): string {
-        return "TextesQuestions";
+        return "SectionTemp";
     }
 
     function getNomClePrimaire(): string {
-        return "idQuestion";
+        return "IDQUESTION";
     }
 
     function getProcedureInsert(): string {
@@ -28,10 +28,10 @@ class SectionRepository extends AbstractRepository {
 
     public function construire(array $sectionFormatTableau) : Section {
         return new Section(
-            $sectionFormatTableau['idTexte'],
-            $sectionFormatTableau['titre'],
-            $sectionFormatTableau['texte'],
-            $sectionFormatTableau['idQuestion'],
+            $sectionFormatTableau['IDTEXTE'],
+            $sectionFormatTableau['TITRE'],
+            $sectionFormatTableau['TEXTE'],
+            $sectionFormatTableau['IDQUESTION'],
         );
     }
 
