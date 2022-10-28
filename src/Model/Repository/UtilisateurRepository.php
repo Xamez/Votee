@@ -8,9 +8,9 @@ class UtilisateurRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
-            'login',
-            'nom',
-            'prenom',
+            'LOGIN',
+            'NOM',
+            'PRENOM',
         );
     }
 
@@ -28,9 +28,9 @@ class UtilisateurRepository extends AbstractRepository {
 
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
         return new Utilisateur(
-            $utilisateurFormatTableau['login'],
-            $utilisateurFormatTableau['nom'],
-            $utilisateurFormatTableau['prenom'],
+            $utilisateurFormatTableau['LOGIN'],
+            $utilisateurFormatTableau['NOM'],
+            $utilisateurFormatTableau['PRENOM'],
         );
     }
 }

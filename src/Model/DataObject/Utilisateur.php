@@ -16,9 +16,9 @@ class Utilisateur extends AbstractDataObject {
 
     public function formatTableau(): array {
         return array(
-            "login" => $this->getLogin(),
-            "nom" => $this->getNom(),
-            "prenom" => $this->getPrenom(),
+            "LOGIN" => $this->getLogin(),
+            "NOM" => $this->getNom(),
+            "PRENOM" => $this->getPrenom(),
         );
     }
 
