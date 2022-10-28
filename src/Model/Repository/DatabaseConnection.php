@@ -15,13 +15,11 @@ class DatabaseConnection {
     }
 
     public function __construct() {
-        $hostname = Conf::getHostname();
-        $databaseName = Conf::getDatabase();
+        $dbname = Conf::getDatabase();
         $login = Conf::getLogin();
         $password = Conf::getPassword();
 
-        //  Connexion base de donnée
-        $this->pdo = new PDO("mysql:host=$hostname;dbname=$databaseName", $login, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+        $this->pdo = new PDO("oci:dbname=".$dbname, $login, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 

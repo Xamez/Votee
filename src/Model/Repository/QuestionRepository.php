@@ -7,22 +7,23 @@ class QuestionRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
-            'idQuestion',
-            'visibilite',
-            'titre',
-            'description',
-            'dateDebutQuestion',
-            'dateFinQuestion',
-            'dateDebutVote',
-            'dateFinVote',
-            'login');
+            'IDQUESTION',
+            'VISIBILITE',
+            'TITRE',
+            'DESCRIPTION',
+            'DATEDEBUTQUESTION',
+            'DATEFINQUESTION',
+            'DATEDEBUTVOTE',
+            'DATEFINVOTE',
+            'LOGIN');
     }
+
     function getNomTable(): string {
         return "Questions";
     }
 
     function getNomClePrimaire(): string {
-        return "idQuestion";
+        return "IDQUESTION";
     }
 
     function getProcedureInsert(): string {
@@ -31,15 +32,15 @@ class QuestionRepository extends AbstractRepository {
 
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
-            $questionFormatTableau['idQuestion'],
-            $questionFormatTableau['visibilite'],
-            $questionFormatTableau['titre'],
-            $questionFormatTableau['description'],
-            $questionFormatTableau['dateDebutQuestion'],
-            $questionFormatTableau['dateFinQuestion'],
-            $questionFormatTableau['dateDebutVote'],
-            $questionFormatTableau['dateFinVote'],
-            $questionFormatTableau['login'],
+            $questionFormatTableau['IDQUESTION'],
+            $questionFormatTableau['VISIBILITE'],
+            $questionFormatTableau['TITRE'],
+            $questionFormatTableau['DESCRIPTION'],
+            $questionFormatTableau['DATEDEBUTQUESTION'],
+            $questionFormatTableau['DATEFINQUESTION'],
+            $questionFormatTableau['DATEDEBUTVOTE'],
+            $questionFormatTableau['DATEFINVOTE'],
+            $questionFormatTableau['LOGIN'],
         );
     }
 }
