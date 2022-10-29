@@ -8,7 +8,6 @@ class SectionRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
-            'LOGIN',
             'IDPROPOSITION',
             'IDSECTION',
             'TITRESECTION',
@@ -30,7 +29,6 @@ class SectionRepository extends AbstractRepository {
 
     public function construire(array $sectionFormatTableau) : Section {
         return new Section(
-            $sectionFormatTableau['LOGIN'],
             $sectionFormatTableau['IDPROPOSITION'],
             $sectionFormatTableau['IDSECTION'],
             $sectionFormatTableau['TITRESECTION'],

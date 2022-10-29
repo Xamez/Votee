@@ -51,6 +51,23 @@ abstract class AbstractRepository {
         return $object;
     }
 
+    public function selectAllByMultiKey(array $valeurAttributs): array {
+        $object = [];
+        $ligne = "";
+        foreach ($valeurAttributs as $key=>$valeurAttribut) {
+            $ligne .= $key . "= :" . $key . ' AND ';
+        }
+        $ligne = substr_replace($ligne, "",-5);
+        $sql = "SELECT * FROM {$this->getNomTable()}  WHERE $ligne";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute($valeurAttributs);
+
+        foreach ($pdoStatement as $FormatTableau) {
+            $object[] = $this->construire($FormatTableau);
+        }
+        return $object;
+    }
+
     public function select($valeurClePrimaire) {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
