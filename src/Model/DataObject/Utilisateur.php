@@ -22,6 +22,7 @@ class Utilisateur extends AbstractDataObject {
         );
     }
 
+
     public function getLogin(): string { return $this->login; }
 
     public function setLogin(string $login): void{ $this->login = $login; }

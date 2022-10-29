@@ -4,15 +4,13 @@ namespace App\Votee\Model\DataObject;
 
 class Section extends AbstractDataObject {
 
-    private string $login;
     private int $idProposition;
     private int $idSection;
     private string $titreSection;
     private string $texte;
     private int $idQuestion;
 
-    public function __construct(string $login, int $idProposition, int $idSection, string $titreSection, string $texte, int $idQuestion) {
-        $this->login = $login;
+    public function __construct(int $idProposition, int $idSection, string $titreSection, string $texte, int $idQuestion) {
         $this->idProposition = $idProposition;
         $this->idSection = $idSection;
         $this->titreSection = $titreSection;
@@ -22,7 +20,6 @@ class Section extends AbstractDataObject {
 
     public function formatTableau(): array {
         return array(
-            "LOGIN" => $this->getLogin(),
             "IDPROPOSITION" => $this->getIdProposition(),
             "IDSECTION" => $this->getIdSection(),
             "TITRESECTION" => $this->getTitreSection(),
@@ -30,10 +27,6 @@ class Section extends AbstractDataObject {
             "IDQUESTION" => $this->getIdQuestion(),
         );
     }
-
-    public function getLogin(): string { return $this->login; }
-
-    public function setLogin(string $login): void { $this->login = $login; }
 
     public function getIdProposition(): int { return $this->idProposition; }
 

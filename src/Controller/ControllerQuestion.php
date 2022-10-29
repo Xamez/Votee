@@ -3,6 +3,7 @@
 namespace App\Votee\Controller;
 
 use App\Votee\Model\DataObject\Question;
+use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
@@ -24,10 +25,10 @@ class ControllerQuestion extends AbstractController {
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             ["questions" => $questions,
-                "pagetitle" => "Crée",
-                "cheminVueBody" => "question/created.php",
-                "title" => "Créer un vote",
-                "subtitle" => "Remplissez les champs suivants pour réaliser votre enquête."
+             "pagetitle" => "Crée",
+             "cheminVueBody" => "organisateur/created.php",
+             "title" => "Créer un vote",
+             "subtitle" => "Remplissez les champs suivants pour réaliser votre enquête."
             ]);
     }
 
@@ -35,19 +36,19 @@ class ControllerQuestion extends AbstractController {
         $nbSections = $_POST['nbSections'];
         self::afficheVue('view.php',
             ["nbSections" => $nbSections,
-                "pagetitle" => "Creation",
-                "cheminVueBody" => "question/create.php",
-                "title" => "Créer un vote",
-                "subtitle" => ""
+             "pagetitle" => "Creation",
+             "cheminVueBody" => "organisateur/create.php",
+             "title" => "Créer un vote",
+             "subtitle" => ""
             ]);
     }
 
     public static function section(): void {
         self::afficheVue('view.php',
             ["pagetitle" => "Nombre de sections",
-                "cheminVueBody" => "question/section.php",
-                "title" => "Créer un vote",
-                "subtitle" => "Définissez un nombre de section pour votre vote."
+             "cheminVueBody" => "organisateur/section.php",
+             "title" => "Créer un vote",
+             "subtitle" => "Définissez un nombre de section pour votre vote."
             ]);
     }
 
@@ -57,36 +58,40 @@ class ControllerQuestion extends AbstractController {
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             ["questions" => $questions,
-                "idQuestion" => $idQuestion,
-                "pagetitle" => "Suppression",
-                "cheminVueBody" => "question/delete.php",
-                "title" => "Supression d'un vote",
-                "subtitle" => ""]);
+             "idQuestion" => $idQuestion,
+             "pagetitle" => "Suppression",
+             "cheminVueBody" => "organisateur/delete.php",
+             "title" => "Supression d'un vote",
+             "subtitle" => ""]);
     }
 
     public static function readAll(): void {
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             ["questions" => $questions,
-                "pagetitle" => "Liste des questions",
-                "cheminVueBody" => "question/list.php",
-                "title" => "Liste des votes",
-                "subtitle" => ""]);
+             "pagetitle" => "Liste des questions",
+             "cheminVueBody" => "organisateur/list.php",
+             "title" => "Liste des votes",
+             "subtitle" => ""]);
     }
 
     public static function read(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-        $representant = (new UtilisateurRepository())->select($question->getLogin());
+        $propositions = (new PropositionRepository())->selectAllByKey($_GET['idQuestion']);
+        foreach ($propositions as $proposition) $utilisateurs[] = (new UtilisateurRepository())->select($proposition->getLogin());
+        $organisateur = (new UtilisateurRepository())->select($question->getLogin());
         if ($question) {
             self::afficheVue('view.php',
                 ["question" => $question,
-                    "sections" => $sections,
-                    "representant" => $representant,
-                    "pagetitle" => "Question",
-                    "cheminVueBody" => "question/detail.php",
-                    "title" => $question->getTitre(),
-                    "subtitle" => $question->getDescription()]);
+                 "propositions" => $propositions,
+                 "sections" => $sections,
+                 "organisateur" => $organisateur,
+                 "utilisateurs" => $utilisateurs,
+                 "pagetitle" => "Question",
+                 "cheminVueBody" => "organisateur/detail.php",
+                 "title" => $question->getTitre(),
+                 "subtitle" => $question->getDescription()]);
         } else {
             self::error("La question n'existe pas");
         }
@@ -94,17 +99,17 @@ class ControllerQuestion extends AbstractController {
 
     public static function proposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByMultiKey(array("idQuestion" =>$_GET['idQuestion'], "login"=>$_GET['login']));
         $representant = (new UtilisateurRepository())->select($question->getLogin());
         if ($question) {
             self::afficheVue('view.php',
                 ["question" => $question,
-                    "sections" => $sections,
-                    "representant" => $representant,
-                    "pagetitle" => "Question",
-                    "cheminVueBody" => "question/proposition.php",
-                    "title" => $question->getTitre(),
-                    "subtitle" => $question->getDescription()]);
+                 "sections" => $sections,
+                 "representant" => $representant,
+                 "pagetitle" => "Question",
+                 "cheminVueBody" => "organisateur/proposition.php",
+                 "title" => $question->getTitre(),
+                 "subtitle" => $question->getDescription()]);
         } else {
             self::error("La question n'existe pas");
         }
@@ -112,7 +117,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function error(string $errorMessage = "") {
         self::afficheVue("view.php",
-            ["errorMessage" => $errorMessage,"pagetitle" => "Erreur", "cheminVueBody" => "question/error.php","title" => "",
+            ["errorMessage" => $errorMessage,"pagetitle" => "Erreur", "cheminVueBody" => "organisateur/error.php","title" => "",
                 "subtitle" => ""]);
     }
 
