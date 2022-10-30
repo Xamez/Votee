@@ -52,6 +52,7 @@
         </div>
     </div>
     <div>
+        <input type="number" hidden value=<?=$nbSections?> name="nbSections" id="nb_sections" required/>
         <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
         <input class="p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
     </div>

@@ -3,6 +3,7 @@
 namespace App\Votee\Controller;
 
 use App\Votee\Model\DataObject\Question;
+use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -22,6 +23,16 @@ class ControllerQuestion extends AbstractController {
             $_POST['login'],
         );
         (new QuestionRepository())->sauvegarder($question);
+//        for ($i = 0; $i < $_POST['nbSections']; $i++) {
+//           $section = new Section(
+//               NULL,
+//               NULL,
+//               $_POST['section'.$i],
+//                NULL,
+//               $questionID
+//           );
+//           (new SectionRepository())->sauvegarder($section);
+//        }
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             ["questions" => $questions,
@@ -65,6 +76,19 @@ class ControllerQuestion extends AbstractController {
              "subtitle" => ""]);
     }
 
+    public static function deleteProposition(): void {
+        $idProposition = $_GET['idProposition'];
+        (new SectionRepository())->supprimer($idProposition);
+        $questions = (new QuestionRepository())->selectAll();
+        self::afficheVue('view.php',
+            ["questions" => $questions,
+                "idProposition" => $idProposition,
+                "pagetitle" => "Suppression",
+                "cheminVueBody" => "organisateur/delete.php",
+                "title" => "Supression d'un vote",
+                "subtitle" => ""]);
+    }
+
     public static function readAll(): void {
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
@@ -78,7 +102,8 @@ class ControllerQuestion extends AbstractController {
     public static function read(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-        $propositions = (new PropositionRepository())->selectAllByKey($_GET['idQuestion']);
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        $utilisateurs = array();
         foreach ($propositions as $proposition) $utilisateurs[] = (new UtilisateurRepository())->select($proposition->getLogin());
         $organisateur = (new UtilisateurRepository())->select($question->getLogin());
         if ($question) {
@@ -99,12 +124,15 @@ class ControllerQuestion extends AbstractController {
 
     public static function proposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByMultiKey(array("idQuestion" =>$_GET['idQuestion'], "login"=>$_GET['login']));
-        $representant = (new UtilisateurRepository())->select($question->getLogin());
+        $sections = (new SectionRepository())->selectAllByMultiKey(array("idQuestion" =>$_GET['idQuestion'], "idProposition"=>$_GET['idProposition']));
+        $proposition = (new PropositionRepository())->select($_GET['idProposition']);
         if ($question) {
+            $representant = (new UtilisateurRepository())->select($question->getLogin());
+            $coAuteur = (new UtilisateurRepository())->select($proposition->getLogin());
             self::afficheVue('view.php',
                 ["question" => $question,
                  "sections" => $sections,
+                 "coAuteur" => $coAuteur,
                  "representant" => $representant,
                  "pagetitle" => "Question",
                  "cheminVueBody" => "organisateur/proposition.php",
