@@ -14,11 +14,11 @@ class PropositionRepository extends AbstractRepository {
         );
     }
     function getNomTable(): string {
-        return "overviewSRPR";
+        return "viewPropTemp";
     }
 
     function getNomClePrimaire(): string {
-        return "IDQUESTION";
+        return "IDPROPOSITION";
     }
 
     function getProcedureInsert(): string {

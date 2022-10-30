@@ -54,10 +54,10 @@ abstract class AbstractRepository {
     public function selectAllByMultiKey(array $valeurAttributs): array {
         $object = [];
         $ligne = "";
-        foreach ($valeurAttributs as $key=>$valeurAttribut) {
+        foreach ($valeurAttributs as $key => $valeurAttribut) {
             $ligne .= $key . "= :" . $key . ' AND ';
         }
-        $ligne = substr_replace($ligne, "",-5);
+        $ligne = substr_replace($ligne, "", -5);
         $sql = "SELECT * FROM {$this->getNomTable()}  WHERE $ligne";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute($valeurAttributs);
@@ -73,6 +73,20 @@ abstract class AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("valueTag" => $valeurClePrimaire);
         $pdoStatement->execute($values);
+        $object = $pdoStatement->fetch();
+
+        return $object ? $this->construire($object) : null;
+    }
+
+    public function selectByMultiKey(array $valeurAttributs) {
+        $ligne = "";
+        foreach ($valeurAttributs as $key => $valeurAttribut) {
+            $ligne .= $key . "= :" . $key . ' AND ';
+        }
+        $ligne = substr_replace($ligne, "", -5);
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute($valeurAttributs);
         $object = $pdoStatement->fetch();
 
         return $object ? $this->construire($object) : null;

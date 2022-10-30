@@ -4,13 +4,13 @@ namespace App\Votee\Model\DataObject;
 
 class Section extends AbstractDataObject {
 
-    private int $idProposition;
-    private int $idSection;
+    private ?int $idProposition;
+    private ?int $idSection;
     private string $titreSection;
-    private string $texte;
+    private ?string $texte;
     private int $idQuestion;
 
-    public function __construct(int $idProposition, int $idSection, string $titreSection, string $texte, int $idQuestion) {
+    public function __construct(?int $idProposition, ?int $idSection, string $titreSection, ?string $texte, int $idQuestion) {
         $this->idProposition = $idProposition;
         $this->idSection = $idSection;
         $this->titreSection = $titreSection;
@@ -28,11 +28,11 @@ class Section extends AbstractDataObject {
         );
     }
 
-    public function getIdProposition(): int { return $this->idProposition; }
+    public function getIdProposition(): ?int { return $this->idProposition; }
 
     public function setIdProposition(int $idProposition): void { $this->idProposition = $idProposition; }
 
-    public function getIdSection(): int { return $this->idSection; }
+    public function getIdSection(): ?int { return $this->idSection; }
 
     public function setIdSection(int $idSection): void { $this->idSection = $idSection; }
 
@@ -40,7 +40,7 @@ class Section extends AbstractDataObject {
 
     public function setTitreSection(string $titreSection): void { $this->titreSection = $titreSection; }
 
-    public function getTexte(): string { return $this->texte; }
+    public function getTexte(): ?string { return $this->texte; }
 
     public function setTexte(string $texte): void { $this->texte = $texte; }
 

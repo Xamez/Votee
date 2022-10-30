@@ -16,7 +16,7 @@ class SectionRepository extends AbstractRepository {
             );
     }
     function getNomTable(): string {
-        return "overviewSRPR";
+        return "viewSectionTemp";
     }
 
     function getNomClePrimaire(): string {

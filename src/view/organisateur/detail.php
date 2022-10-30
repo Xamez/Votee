@@ -10,8 +10,9 @@ echo '<h1>Calendrier</h1><p><span class="text-main font-bold text-lg">Période d
 echo '<p><span class="text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
 
 echo '<h1>Proposition</h1>';
+if (!is_null($utilisateurs)){
 foreach ($propositions as $key=>$proposition) {
-    echo '<a href="./frontController.php?action=proposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&login='. rawurlencode($proposition->getLogin()).'">
+    echo '<a href="./frontController.php?action=proposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
                 <div class="flex items-center gap-2">
                     <p class="font-bold">Proposition de : </p>
@@ -23,4 +24,4 @@ foreach ($propositions as $key=>$proposition) {
                  <span class="material-symbols-outlined">arrow_forward_ios</span>
             </div>
          </a>';
-}
+}}
