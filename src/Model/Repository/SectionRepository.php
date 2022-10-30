@@ -8,15 +8,13 @@ class SectionRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
-            'IDPROPOSITION',
             'IDSECTION',
             'TITRESECTION',
-            'TEXTE',
             'IDQUESTION',
             );
     }
     function getNomTable(): string {
-        return "viewSectionTemp";
+        return "Sections";
     }
 
     function getNomClePrimaire(): string {
@@ -29,10 +27,8 @@ class SectionRepository extends AbstractRepository {
 
     public function construire(array $sectionFormatTableau) : Section {
         return new Section(
-            $sectionFormatTableau['IDPROPOSITION'],
             $sectionFormatTableau['IDSECTION'],
             $sectionFormatTableau['TITRESECTION'],
-            $sectionFormatTableau['TEXTE'],
             $sectionFormatTableau['IDQUESTION'],
         );
     }

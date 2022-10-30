@@ -7,6 +7,7 @@ use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
+use App\Votee\Model\Repository\TexteRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 
 class ControllerQuestion extends AbstractController {
@@ -124,7 +125,8 @@ class ControllerQuestion extends AbstractController {
 
     public static function proposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByMultiKey(array("idQuestion" =>$_GET['idQuestion'], "idProposition"=>$_GET['idProposition']));
+        $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         $proposition = (new PropositionRepository())->select($_GET['idProposition']);
         if ($question) {
             $representant = (new UtilisateurRepository())->select($question->getLogin());
@@ -133,6 +135,7 @@ class ControllerQuestion extends AbstractController {
                 ["question" => $question,
                  "sections" => $sections,
                  "coAuteur" => $coAuteur,
+                 "textes" => $textes,
                  "representant" => $representant,
                  "pagetitle" => "Question",
                  "cheminVueBody" => "organisateur/proposition.php",
