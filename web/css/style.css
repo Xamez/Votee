@@ -9,6 +9,13 @@ main {
 	flex: 1;
 }
 
+.bg-image-urne {
+	background-image: url("../../resources/urne-vote.png");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
 /* Quelques classes pour des couleurs utile */ 
 .text-dark {
     color: #2E3436;
@@ -22,8 +29,24 @@ main {
 	color: #8080D7;
 }
 
+.border-main {
+	border-color: #8080D7;
+}
+
 .bg-main {
     background-color: #8080D7;
+}
+
+.bg-dark {
+	background-color: #2E3436;
+}
+
+.bg-home {
+	background-color: #AFAFF3;
+}
+
+.shadow-button {
+	filter: drop-shadow(8px 8px 0px #B8B8F8);
 }
 
 .bg-light {
