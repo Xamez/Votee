@@ -12,7 +12,7 @@ $loader->addNamespace('App\Votee', __DIR__ . '/../src');
 // register the autoloader
 $loader->register();
 
-$action = $_GET['action'] ?? 'readAll';
+$action = $_GET['action'] ?? 'home';
 
 // On vérifie si l'action existe
 if (method_exists(ControllerQuestion::class, $action)) {
