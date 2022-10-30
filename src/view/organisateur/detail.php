@@ -1,15 +1,24 @@
 <?php
-echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Organisateur : 
-        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2"><span class="material-symbols-outlined">account_circle</span>'
-    . htmlspecialchars($organisateur->getNom()) . ' ' . htmlspecialchars($organisateur->getPrenom()) .
-    '</div></p></div>';
 
-echo '<h1>Organisation</h1>';
+echo '<div class="flex items-center gap-2">
+        <p class="text-main font-semibold">Organisateur : 
+        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+            <span class="material-symbols-outlined">account_circle</span>'
+                . htmlspecialchars($organisateur->getNom()) . ' ' . htmlspecialchars($organisateur->getPrenom()) .
+        '</div>
+        </p>
+      </div>';
 
-echo '<h1>Calendrier</h1><p><span class="text-main font-bold text-lg">Période décriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>';
-echo '<p><span class="text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
+echo '<h1 class="text-2xl font-bold text-center">Organisation</h1><div>';
+foreach ($sections as  $key=>$section) {
+    echo '<p class="text-xl text-main font-bold">' . $key +1  . ' - ' . $section->getTitreSection() . '</p>';
+}
 
-echo '<h1>Proposition</h1>';
+echo '</div><h1 class="text-2xl font-bold text-center">Calendrier</h1>
+        <p><span class="text-xl text-main font-bold text-lg">Période décriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>
+        <p><span class="text-xl text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
+
+echo '<h1 class="text-2xl font-bold text-center">Proposition</h1>';
 if (!is_null($utilisateurs)){
 foreach ($propositions as $key=>$proposition) {
     echo '<a href="./frontController.php?action=proposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
