@@ -19,7 +19,7 @@ class UtilisateurRepository extends AbstractRepository {
     }
 
     function getNomClePrimaire(): string {
-        return "login";
+        return "LOGIN";
     }
 
     function getProcedureInsert(): string {
@@ -33,4 +33,36 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['PRENOM'],
         );
     }
+    public function selectCoAuteur($valeurClePrimaire): array {
+        $coAuteurs = [];
+        $sql = "SELECT u.login, u.nom, u.prenom FROM Rediger r
+                JOIN Ecriture e ON r.login = e.login
+                JOIN Coauteurs c ON e.login = c.login
+                JOIN roles ro ON e.login = ro.login
+                JOIN Utilisateurs u ON ro.login = u.login
+                WHERE IDPROPOSITION = :valueTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("valueTag" => $valeurClePrimaire);
+        $pdoStatement->execute($values);
+
+        foreach ($pdoStatement as $utilisateur) {
+            $coAuteurs[] = $this->construire($utilisateur);
+        }
+        return $coAuteurs;
+    }
+
+    public function selectResp($valeurClePrimaire): ?Utilisateur {
+        $sql = "SELECT u.login,  u.nom, u.prenom FROM Rediger r
+                JOIN Ecriture e ON r.login = e.login
+                JOIN responsables re ON e.login = re.login
+                JOIN roles ro ON e.login = ro.login
+                JOIN Utilisateurs u ON ro.login = u.login
+                WHERE IDPROPOSITION = :valueTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("valueTag" => $valeurClePrimaire);
+        $pdoStatement->execute($values);
+        $responsable = $pdoStatement->fetch();
+        return $responsable ? $this->construire($responsable): null;
+    }
+
 }
