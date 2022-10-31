@@ -4,27 +4,20 @@ namespace App\Votee\Model\DataObject;
 
 class Proposition extends AbstractDataObject {
 
-    private string $login;
     private int $idProposition;
     private int $idQuestion;
 
-    public function __construct(string $login, int $idProposition, int $idQuestion) {
-        $this->login = $login;
+    public function __construct(int $idProposition, int $idQuestion) {
         $this->idProposition = $idProposition;
         $this->idQuestion = $idQuestion;
     }
 
     public function formatTableau(): array {
         return array(
-            "LOGIN" => $this->getLogin(),
             "IDPROPOSITION" => $this->getIdProposition(),
             "IDQUESTION" => $this->getIdQuestion(),
         );
     }
-
-    public function getLogin(): string { return $this->login; }
-
-    public function setLogin(string $login): void { $this->login = $login; }
 
     public function getIdProposition(): int { return $this->idProposition; }
 

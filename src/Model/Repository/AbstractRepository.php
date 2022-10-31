@@ -32,8 +32,8 @@ abstract class AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute();
 
-        foreach ($pdoStatement as $FormatTableau) {
-            $object[] = $this->construire($FormatTableau);
+        foreach ($pdoStatement as $formatTableau) {
+            $object[] = $this->construire($formatTableau);
         }
         return $object;
     }
@@ -45,8 +45,8 @@ abstract class AbstractRepository {
         $values = array("valueTag" => $valeurClePrimaire);
         $pdoStatement->execute($values);
 
-        foreach ($pdoStatement as $FormatTableau) {
-            $object[] = $this->construire($FormatTableau);
+        foreach ($pdoStatement as $formatTableau) {
+            $object[] = $this->construire($formatTableau);
         }
         return $object;
     }
@@ -62,8 +62,8 @@ abstract class AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute($valeurAttributs);
 
-        foreach ($pdoStatement as $FormatTableau) {
-            $object[] = $this->construire($FormatTableau);
+        foreach ($pdoStatement as $formatTableau) {
+            $object[] = $this->construire($formatTableau);
         }
         return $object;
     }
@@ -89,7 +89,7 @@ abstract class AbstractRepository {
         $pdoStatement->execute($valeurAttributs);
         $object = $pdoStatement->fetch();
 
-        return $object ? $this->construire($object) : null;
+        return $this->construire($object);
     }
 
     protected abstract function getNomTable(): string;

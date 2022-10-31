@@ -104,16 +104,18 @@ class ControllerQuestion extends AbstractController {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
-        $utilisateurs = array();
-        foreach ($propositions as $proposition) $utilisateurs[] = (new UtilisateurRepository())->select($proposition->getLogin());
-        $organisateur = (new UtilisateurRepository())->select($question->getLogin());
+        $responsables = array();
+        foreach ($propositions as $proposition) {
+            $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
+        }
         if ($question) {
+            $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             self::afficheVue('view.php',
                 ["question" => $question,
                  "propositions" => $propositions,
                  "sections" => $sections,
                  "organisateur" => $organisateur,
-                 "utilisateurs" => $utilisateurs,
+                 "responsables" => $responsables,
                  "pagetitle" => "Question",
                  "cheminVueBody" => "organisateur/detail.php",
                  "title" => $question->getTitre(),
@@ -127,16 +129,15 @@ class ControllerQuestion extends AbstractController {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-        $proposition = (new PropositionRepository())->select($_GET['idProposition']);
         if ($question) {
-            $representant = (new UtilisateurRepository())->select($question->getLogin());
-            $coAuteur = (new UtilisateurRepository())->select($proposition->getLogin());
+            $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
+            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
             self::afficheVue('view.php',
                 ["question" => $question,
                  "sections" => $sections,
-                 "coAuteur" => $coAuteur,
+                 "coAuteurs" => $coAuteurs,
                  "textes" => $textes,
-                 "representant" => $representant,
+                 "responsable" => $responsable,
                  "pagetitle" => "Question",
                  "cheminVueBody" => "organisateur/proposition.php",
                  "title" => $question->getTitre(),

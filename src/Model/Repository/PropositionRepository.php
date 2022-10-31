@@ -8,7 +8,6 @@ class PropositionRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
-            'LOGIN',
             'IDPROPOSITION',
             'IDQUESTION',
         );
@@ -27,7 +26,6 @@ class PropositionRepository extends AbstractRepository {
 
     public function construire(array $propositionFormatTableau) : Proposition {
         return new Proposition(
-            $propositionFormatTableau['LOGIN'],
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
         );
