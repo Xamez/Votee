@@ -1,5 +1,4 @@
 <?php
-// affiche le login de l'utilisateur qui a créé la organisateur
 echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Représentant : 
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>'
@@ -27,7 +26,7 @@ foreach ($sections as $index=>$section) {
 }
 echo '</div><div class="flex gap-2 justify-end">
         <a class="w-36 flex p-2 justify-center text-white bg-dark font-semibold rounded-lg" 
-            href="./frontController.php?action=deletePropsition&idProposition=' . $textes[0]->getIdProposition() . '">Supprimer</a>
+            href="./frontController.php?action=deletePropsition&idProposition=' . $idProposition . '">Supprimer</a>
         <a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" 
             href="./frontController.php?action=update">Editer</a>
 </div>';

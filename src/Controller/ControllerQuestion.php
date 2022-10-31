@@ -134,6 +134,7 @@ class ControllerQuestion extends AbstractController {
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
             self::afficheVue('view.php',
                 ["question" => $question,
+                 "idProposition" => $_GET['idProposition'],
                  "sections" => $sections,
                  "coAuteurs" => $coAuteurs,
                  "textes" => $textes,
