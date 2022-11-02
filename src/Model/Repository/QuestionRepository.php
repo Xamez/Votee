@@ -27,7 +27,7 @@ class QuestionRepository extends AbstractRepository {
     }
 
     function getProcedureInsert(): string {
-        return "procedure";
+        return "AjouterQuestions";
     }
 
     public function construire(array $questionFormatTableau) : Question {

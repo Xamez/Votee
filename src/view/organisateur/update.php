@@ -1,4 +1,4 @@
-<form method="post" action="frontController.php?&action=created">
+<form method="get" action="frontController.php?&action=updated">
     <div class="bg-light p-10 rounded-3xl">
         <!--        <p>-->
         <!--            <label for="visibilite_id">visibilite</label> :-->
