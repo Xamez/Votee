@@ -4,6 +4,7 @@ namespace App\Votee\Controller;
 
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
+use App\Votee\Model\DataObject\Texte;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -24,16 +25,16 @@ class ControllerQuestion extends AbstractController {
             $_POST['login'],
         );
         (new QuestionRepository())->sauvegarder($question);
-//        for ($i = 0; $i < $_POST['nbSections']; $i++) {
-//           $section = new Section(
-//               NULL,
-//               NULL,
-//               $_POST['section'.$i],
-//                NULL,
-//               $questionID
-//           );
-//           (new SectionRepository())->sauvegarder($section);
-//        }
+        $question = (new QuestionRepository())->selectByMultiKey(array("titre"=> $_POST['titreQuestion'],"description"=> $_POST['descriptionQuestion']));
+        $idQuestion = $question->getIdQuestion();
+        for ($i = 1; $i <= $_POST['nbSections']; $i++) {
+           $section = new Section(
+               NULL,
+               $_POST['section'.$i],
+               $idQuestion
+           );
+           (new SectionRepository())->sauvegarder($section);
+        }
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             ["questions" => $questions,
@@ -109,6 +110,41 @@ class ControllerQuestion extends AbstractController {
              "subtitle" => ""]);
     }
 
+    public static function update(): void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
+        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+        $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
+        self::afficheVue('view.php',
+            ["question" => $question,
+                "idProposition" => $_GET['idProposition'],
+                "sections" => $sections,
+                "coAuteurs" => $coAuteurs,
+                "textes" => $textes,
+                "responsable" => $responsable,
+                "pagetitle" => "Edition de proposition",
+                "cheminVueBody" => "organisateur/updateProposition.php",
+                "title" => "Liste des votes",
+                "subtitle" => ""]);
+    }
+
+    public static function updated(): void {
+        for ($i = 0; $i < $_GET['nbSections']; $i++) {
+            $texte = new Texte(
+                $_GET['idSection'.$i],
+                $_GET['idProposition'],
+                $_GET['section'.$i]
+            );
+            (new TexteRepository())->modifier($texte);
+        }
+        self::afficheVue('view.php',
+            ["title" => "Modifié",
+             "cheminVueBody" => "organisateur/updated.php",
+             "subtitle" => ""]
+        );
+    }
+
     public static function read(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -155,6 +191,19 @@ class ControllerQuestion extends AbstractController {
         } else {
             self::error("La question n'existe pas");
         }
+    }
+
+    public static function propositionHeader(): void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
+        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+        self::afficheVue('view.php',
+            ["responsable" => $responsable,
+                "coAuteurs" => $coAuteurs,
+                "pagetitle" => "Suppression",
+                "cheminVueBody" => "organisateur/delete.php",
+                "title" => "Supression d'un vote",
+                "subtitle" => ""]);
     }
 
     public static function error(string $errorMessage = "") {

@@ -24,10 +24,16 @@ class PropositionRepository extends AbstractRepository {
         return "AjouterSections";
     }
 
+    function getProcedureUpdate(): string {
+        return "";
+    }
+
     public function construire(array $propositionFormatTableau) : Proposition {
         return new Proposition(
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
         );
     }
+
+
 }

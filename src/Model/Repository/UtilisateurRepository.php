@@ -26,6 +26,10 @@ class UtilisateurRepository extends AbstractRepository {
         return "";
     }
 
+    function getProcedureUpdate(): string {
+        return "";
+    }
+
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
         return new Utilisateur(
             $utilisateurFormatTableau['LOGIN'],

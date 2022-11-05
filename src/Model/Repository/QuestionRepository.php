@@ -30,6 +30,10 @@ class QuestionRepository extends AbstractRepository {
         return "AjouterQuestions";
     }
 
+    function getProcedureUpdate(): string {
+        return "ModifierQuestions";
+    }
+
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
             $questionFormatTableau['IDQUESTION'],
