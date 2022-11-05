@@ -4,25 +4,25 @@ namespace App\Votee\Model\DataObject;
 
 class Texte extends AbstractDataObject {
 
-    private int $idProposition;
     private int $idSection;
+    private ?int $idProposition;
     private string $texte;
 
-    public function __construct(int $idProposition, int $idSection, string $texte) {
-        $this->idProposition = $idProposition;
+    public function __construct( int $idSection, ?int $idProposition, string $texte) {
         $this->idSection = $idSection;
+        $this->idProposition = $idProposition;
         $this->texte = $texte;
     }
 
     public function formatTableau(): array {
         return array(
-            "IDPROPOSITION" => $this->getIdProposition(),
             "IDSECTION" => $this->getIdSection(),
+            "IDPROPOSITION" => $this->getIdProposition(),
             "TEXTE" => $this->getTexte(),
         );
     }
 
-    public function getIdProposition(): int { return $this->idProposition; }
+    public function getIdProposition(): ?int { return $this->idProposition; }
 
     public function setIdProposition(int $idProposition): void { $this->idProposition = $idProposition; }
 

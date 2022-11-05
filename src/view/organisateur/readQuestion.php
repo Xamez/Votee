@@ -42,4 +42,10 @@ foreach ($propositions as $key=>$proposition) {
                  <span class="material-symbols-outlined">arrow_forward_ios</span>
             </div>
          </a>';
-}}
+}
+}
+echo '<a href="./frontController.php?action=createProposition&idQuestion='. $question->getIdQuestion() .'">
+        <div>Demande 
+            <span class="material-symbols-outlined">note_add</span>
+        </div>
+      </a>';
