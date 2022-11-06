@@ -31,11 +31,16 @@ abstract class AbstractRepository {
         }
     }
 
-    public function supprimer($valeurClePrimaire): void {
+    public function supprimer($valeurClePrimaire): bool {
         $sql = "DELETE FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire()} = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
-        $pdoStatement->execute($value);
+        try {
+            $pdoStatement->execute($value);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     public function selectAll(): array {

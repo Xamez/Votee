@@ -8,9 +8,18 @@ foreach ($sections as $index=>$section) {
         echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <p class="text-justify">' . $sectionDescHTML . '</p>';
 }
-echo '</div><div class="flex gap-2 justify-end">
-        <a class="w-36 flex p-2 justify-center text-white bg-dark font-semibold rounded-lg" 
-            href="./frontController.php?action=deleteProposition&idProposition=' . rawurlencode($idProposition) . '">Supprimer</a>
-        <a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" 
-            href="./frontController.php?action=update&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">Editer</a>
-</div>';
+echo '</div>
+        <div class="flex gap-2 justify-between">
+            <a href="./frontController.php?action=update&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
+                <div class="flex gap-2">
+                    <span class="material-symbols-outlined">edit</span>
+                    <p>Editer</p>
+                </div
+            </a>
+            <a href="./frontController.php?action=deleteProposition&idProposition=' . rawurlencode($idProposition) . '">
+                <div class="flex gap-2">
+                    <p>Supprimer</p>
+                    <span class="material-symbols-outlined">delete</span>
+                </div>
+            </a>
+       </div>';
