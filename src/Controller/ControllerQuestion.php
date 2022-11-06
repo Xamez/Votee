@@ -144,7 +144,7 @@ class ControllerQuestion extends AbstractController {
             ["responsable" => $responsable,
                 "coAuteurs" => $coAuteurs,
                 "pagetitle" => "Suppression",
-                "cheminVueBody" => "organisateur/delete.php",
+                "cheminVueBody" => "organisateur/deleteProposition.php",
                 "title" => "Supression d'un vote",
                 "subtitle" => ""]);
     }
@@ -207,30 +207,25 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function delete(): void {
-        $idQuestion = $_GET['idQuestion'];
-        (new QuestionRepository())->supprimer($idQuestion);
-        $questions = (new QuestionRepository())->selectAll();
-        self::afficheVue('view.php',
-            ["questions" => $questions,
-                "idQuestion" => $idQuestion,
-                "pagetitle" => "Suppression",
-                "cheminVueBody" => "organisateur/delete.php",
-                "title" => "Supression d'un vote",
-                "subtitle" => ""]);
-    }
-
     public static function deleteProposition(): void {
         $idProposition = $_GET['idProposition'];
-        (new SectionRepository())->supprimer($idProposition);
-        $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
-            ["questions" => $questions,
-                "idProposition" => $idProposition,
-                "pagetitle" => "Suppression",
-                "cheminVueBody" => "organisateur/delete.php",
-                "title" => "Supression d'un vote",
-                "subtitle" => ""]);
+            ["idProposition" => $idProposition,
+             "pagetitle" => "Confirmation",
+             "cheminVueBody" => "organisateur/deleteProposition.php",
+             "title" => "Confirmation de suppression",
+             "subtitle" => ""]);
+    }
+
+    public static function deletedProposition(): void {
+        $idProposition = $_GET['idProposition'];
+        (new PropositionRepository())->supprimer($idProposition);
+        self::afficheVue('view.php',
+            ["pagetitle" => "Supprimée",
+             "cheminVueBody" => "organisateur/deletedProposition.php",
+             "title" => "Proposition supprimée !",
+             "subtitle" => ""
+            ]);
     }
 
     public static function error(string $errorMessage = "") {
