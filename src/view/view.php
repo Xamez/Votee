@@ -25,10 +25,10 @@
             <a href=""><span class="link-underline link-underline-color">Demande</span></a>
         </div>
 
-        <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="">Se connecter</a>
+        <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
 
         <div class="flex md:hidden gap-4 items-center">
-            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" href="">Se connecter</a>
+            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
             <div>
                 <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center text-dark"></i>
                 <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center text-dark"></i>
