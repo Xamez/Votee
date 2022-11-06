@@ -14,22 +14,26 @@ class TexteRepository extends AbstractRepository {
         return "IDPROPOSITION";
     }
 
-    function getProcedureInsert(): string {
-        return "";
-    }
-
     protected function getNomsColonnes(): array {
         return array(
-            'IDPROPOSITION',
             'IDSECTION',
+            'IDPROPOSITION',
             'TEXTE',
         );
     }
 
+    function getProcedureUpdate(): string {
+        return "ModifierRecevoir";
+    }
+
+    function getProcedureInsert(): string {
+        return "AjouterRecevoir";
+    }
+
     public function construire(array $texteFormatTableau) : Texte {
         return new Texte(
-            $texteFormatTableau['IDPROPOSITION'],
             $texteFormatTableau['IDSECTION'],
+            $texteFormatTableau['IDPROPOSITION'],
             $texteFormatTableau['TEXTE'],
         );
     }

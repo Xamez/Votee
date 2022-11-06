@@ -28,7 +28,6 @@ echo '</div><h1 class="text-2xl font-bold text-center text-dark">Calendrier</h1>
         <p><span class="text-xl text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
 
 echo '<h1 class="text-2xl font-bold text-center text-dark">Proposition</h1>';
-if (!is_null($responsables)){
 foreach ($propositions as $key=>$proposition) {
     echo '<a href="./frontController.php?action=proposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
@@ -42,4 +41,13 @@ foreach ($propositions as $key=>$proposition) {
                  <span class="material-symbols-outlined">arrow_forward_ios</span>
             </div>
          </a>';
-}}
+}
+
+echo '<div class="flex justify-end">
+         <a href="./frontController.php?action=createProposition&idQuestion='. $question->getIdQuestion() .'">
+            <div class="flex gap-2">
+                <p>Demandes</p>
+                <span class="material-symbols-outlined">file_copy</span>
+            </div>
+         </a>
+      </div>';

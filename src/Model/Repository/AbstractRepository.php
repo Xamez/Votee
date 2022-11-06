@@ -19,11 +19,28 @@ abstract class AbstractRepository {
         }
     }
 
-    public function supprimer($valeurClePrimaire): void {
+    public function modifier(AbstractDataObject $object): bool {
+        $sql = "CALL " . $this->getProcedureUpdate(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $values = $object->formatTableau();
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    public function supprimer($valeurClePrimaire): bool {
         $sql = "DELETE FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire()} = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
-        $pdoStatement->execute($value);
+        try {
+            $pdoStatement->execute($value);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     public function selectAll(): array {
@@ -101,4 +118,6 @@ abstract class AbstractRepository {
     protected abstract function getNomsColonnes(): array;
 
     protected abstract function getProcedureInsert(): string;
+
+    protected abstract function getProcedureUpdate(): string;
 }
