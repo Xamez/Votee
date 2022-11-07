@@ -21,7 +21,7 @@
 
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?action=readAll"><span class="link-underline link-underline-color">Vote</span></a>
+            <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
             <a href=""><span class="link-underline link-underline-color">Demande</span></a>
         </div>
 
@@ -35,7 +35,7 @@
             </div>
             <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">
                 <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-                <a href="./frontController.php?action=readAll"><span class="link-underline link-underline-color">Vote</span></a>
+                <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
                 <a href=""><span class="link-underline link-underline-color">Demande</span></a>
             </div>
         </div>
