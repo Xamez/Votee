@@ -16,9 +16,11 @@ class TexteRepository extends AbstractRepository {
 
     protected function getNomsColonnes(): array {
         return array(
+            'IDQUESTION',
             'IDSECTION',
             'IDPROPOSITION',
             'TEXTE',
+            'JAIME',
         );
     }
 
@@ -30,11 +32,15 @@ class TexteRepository extends AbstractRepository {
         return "AjouterRecevoir";
     }
 
+    function getProcedureDelete(): string { return ""; }
+
     public function construire(array $texteFormatTableau) : Texte {
         return new Texte(
+            $texteFormatTableau['IDQUESTION'],
             $texteFormatTableau['IDSECTION'],
             $texteFormatTableau['IDPROPOSITION'],
             $texteFormatTableau['TEXTE'],
+            $texteFormatTableau['JAIME'],
         );
     }
 }

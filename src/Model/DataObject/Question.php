@@ -12,7 +12,6 @@ class Question extends AbstractDataObject {
     private string $dateFinQuestion;
     private string $dateDebutVote;
     private string $dateFinVote;
-    private int $idCategorie;
     private string $login;
 
 

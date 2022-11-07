@@ -29,7 +29,7 @@ echo '</div><h1 class="text-2xl font-bold text-center text-dark">Calendrier</h1>
 
 echo '<h1 class="text-2xl font-bold text-center text-dark">Proposition</h1>';
 foreach ($propositions as $key=>$proposition) {
-    echo '<a href="./frontController.php?action=proposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
+    echo '<a href="./frontController.php?action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
                 <div class="flex items-center gap-2">
                     <p class="font-bold text-dark">Proposition de : </p>

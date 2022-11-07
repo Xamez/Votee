@@ -1,7 +1,7 @@
 <?php
 require "propositionHeader.php";
 ?>
-<form method="get" action="frontController.php?action=updated">
+<form method="get" action="frontController.php?action=updatedProposition">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {
@@ -15,6 +15,7 @@ require "propositionHeader.php";
     </div>
     <input type="hidden" name="nbSections" value="<?= sizeof($sections);?>">
     <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
-    <input type="hidden" name="action" value="updated">
+    <input type="hidden" name="idQuestion" value="<?= $idQuestion;?>">
+    <input type="hidden" name="action" value="updatedProposition">
     <input class=" p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
 </form>

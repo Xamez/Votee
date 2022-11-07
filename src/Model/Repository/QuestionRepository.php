@@ -34,6 +34,8 @@ class QuestionRepository extends AbstractRepository {
         return "ModifierQuestions";
     }
 
+    function getProcedureDelete(): string { return ""; }
+
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
             $questionFormatTableau['IDQUESTION'],

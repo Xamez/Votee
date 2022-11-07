@@ -11,6 +11,7 @@ class PropositionRepository extends AbstractRepository {
             'IDPROPOSITION',
             'IDQUESTION',
         );
+
     }
     function getNomTable(): string {
         return "overviewProposition";
@@ -23,6 +24,11 @@ class PropositionRepository extends AbstractRepository {
     function getProcedureInsert(): string { return ""; }
 
     function getProcedureUpdate(): string { return ""; }
+
+    function getProcedureDelete(): string {
+        return "SupprimerPropositions";
+    }
+
 
     public function construire(array $propositionFormatTableau) : Proposition {
         return new Proposition(

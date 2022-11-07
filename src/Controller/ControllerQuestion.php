@@ -31,28 +31,32 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function create(): void {
+    public static function createQuestion(): void {
         $nbSections = $_POST['nbSections'];
         self::afficheVue('view.php',
             ["nbSections" => $nbSections,
              "pagetitle" => "Creation",
-             "cheminVueBody" => "organisateur/create.php",
+             "cheminVueBody" => "organisateur/createQuestion.php",
              "title" => "Créer un vote",
              "subtitle" => ""
             ]);
     }
 
-    public static function readAll(): void {
+    public static function readAllQuestion(): void {
         $questions = (new QuestionRepository())->selectAll();
-        self::afficheVue('view.php',
-            ["questions" => $questions,
-                "pagetitle" => "Liste des questions",
-                "cheminVueBody" => "organisateur/list.php",
-                "title" => "Liste des votes",
-                "subtitle" => ""]);
+        if ($questions) {
+            self::afficheVue('view.php',
+                ["questions" => $questions,
+                    "pagetitle" => "Liste des questions",
+                    "cheminVueBody" => "organisateur/listQuestion.php",
+                    "title" => "Liste des votes",
+                    "subtitle" => ""]);
+        } else {
+            self::error("Les questions n'ont pas pu être récupérées.");
+        }
     }
 
-    public static function read(): void {
+    public static function readQuestion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -77,7 +81,7 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function created(): void {
+    public static function createdQuestion(): void {
         $question = new Question(NULL,
             $_POST['visibilite'],
             $_POST['titreQuestion'],
@@ -91,22 +95,24 @@ class ControllerQuestion extends AbstractController {
         if ((new QuestionRepository())->sauvegarder($question)) {
             $question = (new QuestionRepository())->selectByMultiKey(array("titre" => $_POST['titreQuestion'], "description" => $_POST['descriptionQuestion']));
             $idQuestion = $question->getIdQuestion();
-            for ($i = 1; $i <= $_POST['nbSections']; $i++) {
+            $isOk = true;
+            for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
                 $section = new Section(
                     NULL,
                     $_POST['section' . $i],
                     $idQuestion
                 );
-                (new SectionRepository())->sauvegarder($section);
+                $isOk = (new SectionRepository())->sauvegarder($section);
             }
-            $questions = (new QuestionRepository())->selectAll();
-            self::afficheVue('view.php',
-                ["questions" => $questions,
-                    "pagetitle" => "Crée",
-                    "cheminVueBody" => "organisateur/created.php",
-                    "title" => "Créer un vote",
-                    "subtitle" => "Remplissez les champs suivants pour réaliser votre enquête."
-                ]);
+            if ($isOk) {
+                self::afficheVue('view.php',
+                    ["title" => "La question a bien été crée !",
+                        "cheminVueBody" => "organisateur/createdQuestion.php",
+                        "subtitle" => ""
+                    ]);
+            } else {
+                self::error("L'ajout des sections ont échoués ");
+            }
         } else {
             self::error("L'ajout de la question a échoué");
         }
@@ -157,7 +163,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function update(): void {
+    public static function updateProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         if ($question && $textes) {
@@ -170,6 +176,7 @@ class ControllerQuestion extends AbstractController {
                  "sections" => $sections,
                  "coAuteurs" => $coAuteurs,
                  "textes" => $textes,
+                 "idQuestion" => $question->getIdQuestion(),
                  "responsable" => $responsable,
                  "pagetitle" => "Edition de proposition",
                  "cheminVueBody" => "organisateur/updateProposition.php",
@@ -181,20 +188,22 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function updated(): void {
+    public static function updatedProposition(): void {
         $isOk = true;
         for ($i = 0; $i < $_GET['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
+                $_GET['idQuestion'],
                 $_GET['idSection'.$i],
                 $_GET['idProposition'],
-                $_GET['section'.$i]
+                $_GET['section'.$i],
+                NULL
             );
             $isOk = (new TexteRepository())->modifier($texte);
         }
         if ($isOk) {
             self::afficheVue('view.php',
                 ["title" => "La proposition a bien été modifiée !",
-                 "cheminVueBody" => "organisateur/updated.php",
+                 "cheminVueBody" => "organisateur/updatedProposition.php",
                  "subtitle" => ""
                 ]);
         } else {
@@ -202,7 +211,7 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function proposition(): void {
+    public static function readProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         if ($question && $textes) {
