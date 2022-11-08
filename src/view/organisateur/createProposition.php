@@ -2,6 +2,8 @@
     <div class="flex gap-2 items-center">
         <label class="text-main font-semibold" for="representant_id">Représentant :</label>
         <input placeholder="Login" class="border-2" type="text" name="representant" id="representant_id" required>
+        <label class="text-main font-semibold" for="coAuteur_id">CoAuteur :</label>
+        <input placeholder="Login" class="border-2" type="text" name="coAuteur" id="coAuteur_id">
     </div>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php

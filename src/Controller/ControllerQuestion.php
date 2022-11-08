@@ -44,7 +44,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function readAllQuestion(): void {
         $questions = (new QuestionRepository())->selectAll();
-        if ($questions) {
+        if (isset($questions)) {
             self::afficheVue('view.php',
                 ["questions" => $questions,
                     "pagetitle" => "Liste des questions",
@@ -132,8 +132,8 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createdProposition(): void {
-        $isOk = true;
         $idProposition = (new PropositionRepository())->ajouterProposition();
+        $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
                 $_POST['idQuestion'],
@@ -144,6 +144,10 @@ class ControllerQuestion extends AbstractController {
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'],$idProposition);
+        if ($_POST['coAuteur'] != "") {
+            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'],$idProposition);
+        }
         if($isOk) {
             self::afficheVue('view.php',
                 ["pagetitle" => "Crée",
@@ -152,6 +156,7 @@ class ControllerQuestion extends AbstractController {
                     "subtitle" => ""
                 ]);
         } else {
+            (new PropositionRepository())->supprimer($idProposition);
             self::error("La création de la proposition a échoué");
         }
     }
@@ -170,12 +175,13 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function updateProposition(): void {
+        $idProposition = $_GET['idProposition'];
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
+        $textes = (new TexteRepository())->selectAllByKey($idProposition);
         if ($question && $textes) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-            $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
-            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+            $responsable = (new UtilisateurRepository())->selectResp($idProposition);
+            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
             self::afficheVue('view.php',
                 ["question" => $question,
                  "idProposition" => $_GET['idProposition'],
@@ -205,11 +211,14 @@ class ControllerQuestion extends AbstractController {
                 NULL
             );
             $isOk = (new TexteRepository())->modifier($texte);
+            if ($_GET['coAuteur'] != "") {
+                $isOk &= (new PropositionRepository())->ajouterCoauteur($_GET['coAuteur'], $_GET['idProposition']);
+            }
         }
         if ($isOk) {
             self::afficheVue('view.php',
                 ["pagetitle" => "Modifiée",
-                    "title" => "La proposition a bien été modifiée !",
+                 "title" => "La proposition a bien été modifiée !",
                  "cheminVueBody" => "organisateur/updatedProposition.php",
                  "subtitle" => ""
                 ]);
