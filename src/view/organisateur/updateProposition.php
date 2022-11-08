@@ -1,7 +1,7 @@
 <?php
 require "propositionHeader.php";
 ?>
-<form method="get" action="frontController.php?action=updatedProposition">
+<form method="get" class="flex flex-col gap-7" action="frontController.php?action=updatedProposition">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {
@@ -17,5 +17,7 @@ require "propositionHeader.php";
     <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
     <input type="hidden" name="idQuestion" value="<?= $idQuestion;?>">
     <input type="hidden" name="action" value="updatedProposition">
-    <input class=" p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
+    <div class="flex justify-center">
+        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
+    </div>
 </form>

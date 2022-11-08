@@ -92,29 +92,25 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateFinVote']),'d/m/Y'),
             $_POST['login'],
         );
-        if ((new QuestionRepository())->sauvegarder($question)) {
-            $question = (new QuestionRepository())->selectByMultiKey(array("titre" => $_POST['titreQuestion'], "description" => $_POST['descriptionQuestion']));
-            $idQuestion = $question->getIdQuestion();
-            $isOk = true;
-            for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
-                $section = new Section(
-                    NULL,
-                    $_POST['section' . $i],
-                    $idQuestion
-                );
-                $isOk = (new SectionRepository())->sauvegarder($section);
-            }
-            if ($isOk) {
-                self::afficheVue('view.php',
-                    ["title" => "La question a bien été crée !",
-                        "cheminVueBody" => "organisateur/createdQuestion.php",
-                        "subtitle" => ""
-                    ]);
-            } else {
-                self::error("L'ajout des sections ont échoués ");
-            }
+        $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
+        $isOk = true;
+        for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
+            $section = new Section(
+                NULL,
+                $_POST['section' . $i],
+                $idQuestion
+            );
+            $isOk = (new SectionRepository())->sauvegarder($section);
+        }
+        if ($isOk) {
+            self::afficheVue('view.php',
+                ["pagetitle" => "Crée",
+                    "title" => "La question a bien été crée !",
+                    "cheminVueBody" => "organisateur/createdQuestion.php",
+                    "subtitle" => ""
+                ]);
         } else {
-            self::error("L'ajout de la question a échoué");
+            self::error("L'ajout de la section a échoués ");
         }
     }
 
@@ -125,6 +121,7 @@ class ControllerQuestion extends AbstractController {
             self::afficheVue('view.php',
                 ["pagetitle" => "Creation",
                  "sections" => $sections,
+                 "idQuestion" => $_GET['idQuestion'],
                  "cheminVueBody" => "organisateur/createProposition.php",
                  "title" => $question->getTitre(),
                  "subtitle" => $question->getDescription()
@@ -139,13 +136,22 @@ class ControllerQuestion extends AbstractController {
         $idProposition = (new PropositionRepository())->ajouterProposition();
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
+                $_POST['idQuestion'],
                 $_POST['idSection'.$i],
                 $idProposition,
                 $_POST['section'.$i],
+                NULL
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        if(!$isOk) {
+        if($isOk) {
+            self::afficheVue('view.php',
+                ["pagetitle" => "Crée",
+                    "title" => "La proposition a bien été crée !",
+                    "cheminVueBody" => "organisateur/createdProposition.php",
+                    "subtitle" => ""
+                ]);
+        } else {
             self::error("La création de la proposition a échoué");
         }
     }
@@ -202,7 +208,8 @@ class ControllerQuestion extends AbstractController {
         }
         if ($isOk) {
             self::afficheVue('view.php',
-                ["title" => "La proposition a bien été modifiée !",
+                ["pagetitle" => "Modifiée",
+                    "title" => "La proposition a bien été modifiée !",
                  "cheminVueBody" => "organisateur/updatedProposition.php",
                  "subtitle" => ""
                 ]);
