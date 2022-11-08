@@ -2,6 +2,7 @@
 require "propositionHeader.php";
 ?>
 <form method="get" class="flex flex-col gap-7" action="frontController.php?action=updatedProposition">
+    <input placeholder="Login" class="border-2" type="text" name="coAuteur" id="coAuteur_id">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {

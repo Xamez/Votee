@@ -21,7 +21,7 @@ class DatabaseConnection {
         $password = Conf::getPassword();
 
         //  Connexion base de donnée
-        $this->pdo = new PDO("oci:dbname=".$dbname, $login, $password);
+        $this->pdo = new PDO("oci:dbname=".$dbname.";charset=AL32UTF8", $login, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 

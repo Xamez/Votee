@@ -39,38 +39,37 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['PRENOM'],
         );
     }
-    public function selectCoAuteur($valeurClePrimaire): array {
-//        $coAuteurs = [];
-//        $sql = "SELECT u.login, u.nom, u.prenom FROM Rediger r
-//                JOIN Ecriture e ON r.login = e.login
-//                JOIN Coauteurs c ON e.login = c.login
-//                JOIN roles ro ON e.login = ro.login
-//                JOIN Utilisateurs u ON ro.login = u.login
-//                WHERE IDPROPOSITION = :valueTag";
-//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-//        $values = array("valueTag" => $valeurClePrimaire);
-//        $pdoStatement->execute($values);
-//
-//        foreach ($pdoStatement as $utilisateur) {
-//            $coAuteurs[] = $this->construire($utilisateur);
-//        }
-//        return $coAuteurs;
-        return array(new Utilisateur("login", "nom", "prenom"));
+
+
+    public function selectCoAuteur($idProposition): array {
+        $coAuteurs = [];
+        $sql = "SELECT u.login, u.nom, u.prenom FROM RedigerCA r
+                JOIN Coauteurs c ON r.login = c.login
+                JOIN roles ro ON c.login = ro.login
+                JOIN Utilisateurs u ON ro.login = u.login
+                WHERE IDPROPOSITION = :idProposition";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idProposition" => $idProposition);
+        $pdoStatement->execute($values);
+
+        foreach ($pdoStatement as $utilisateur) {
+            $coAuteurs[] = $this->construire($utilisateur);
+        }
+        return $coAuteurs;
     }
 
-    public function selectResp($valeurClePrimaire): ?Utilisateur {
-//        $sql = "SELECT u.login,  u.nom, u.prenom FROM Rediger r
-//                JOIN Ecriture e ON r.login = e.login
-//                JOIN responsables re ON e.login = re.login
-//                JOIN roles ro ON e.login = ro.login
-//                JOIN Utilisateurs u ON ro.login = u.login
-//                WHERE IDPROPOSITION = :valueTag";
-//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-//        $values = array("valueTag" => $valeurClePrimaire);
-//        $pdoStatement->execute($values);
-//        $responsable = $pdoStatement->fetch();
-//        return $responsable ? $this->construire($responsable): null;
-        return new Utilisateur("login", "nom", "prenom");
+    public function selectResp($idProposition): ?Utilisateur {
+        $sql = "SELECT u.login,  u.nom, u.prenom FROM RedigerR r
+                JOIN responsables re ON r.login = re.login
+                JOIN roles ro ON re.login = ro.login
+                JOIN Utilisateurs u ON ro.login = u.login
+                WHERE IDPROPOSITION = :idProposition";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idProposition" => $idProposition);
+        $pdoStatement->execute($values);
+
+        $responsable = $pdoStatement->fetch();
+        return $responsable ? $this->construire($responsable): null;
     }
 
 }
