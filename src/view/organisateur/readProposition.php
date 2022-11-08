@@ -10,7 +10,7 @@ foreach ($sections as $index=>$section) {
 }
 echo '</div>
         <div class="flex gap-2 justify-between">
-            <a href="./frontController.php?action=update&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
+            <a href="./frontController.php?action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">edit</span>
                     <p>Editer</p>
