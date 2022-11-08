@@ -49,4 +49,12 @@ class QuestionRepository extends AbstractRepository {
             $questionFormatTableau['LOGIN'],
         );
     }
+
+    function ajouterQuestion(Question $question):int {
+        $this->sauvegarder($question);
+        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
+        $pdoLastInsert->execute();
+        $lastInserId = $pdoLastInsert->fetch();
+        return intval($lastInserId[0]);
+    }
 }

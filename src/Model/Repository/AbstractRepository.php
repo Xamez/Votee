@@ -32,12 +32,12 @@ abstract class AbstractRepository {
     }
 
     public function supprimer($valeurClePrimaire): bool {
-        $sql = "CALL " . $this->getProcedureDelete(). "($valeurClePrimaire)";
+        $sql = "CALL " . $this->getProcedureDelete(). "(:valueTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
         try {
             $pdoStatement->execute($value);
-            return $pdoStatement->rowCount() > 0;
+            return true;
         } catch (PDOException) {
             return false;
         }

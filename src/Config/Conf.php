@@ -14,6 +14,7 @@ class Conf {
         'login' => 'cazauxl',
         'password' => '081975268be'
     );
+
     static public function getLogin() : string {
         return static::$databases['login'];
     }
