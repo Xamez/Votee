@@ -25,9 +25,9 @@ class SectionRepository extends AbstractRepository {
         return "AjouterSections";
     }
 
-    function getProcedureUpdate(): string {
-        return "ModifierSections";
-    }
+    function getProcedureDelete(): string { return ""; }
+
+    function getProcedureUpdate(): string { return ""; }
 
     public function construire(array $sectionFormatTableau) : Section {
         return new Section(

@@ -32,7 +32,7 @@ abstract class AbstractRepository {
     }
 
     public function supprimer($valeurClePrimaire): bool {
-        $sql = "DELETE FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire()} = :valueTag";
+        $sql = "CALL " . $this->getProcedureDelete(). "(:valueTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
         try {
@@ -43,15 +43,16 @@ abstract class AbstractRepository {
         }
     }
 
-    public function selectAll(): array {
+    public function selectAll() {
         $object = [];
         $sql = "SELECT * FROM {$this->getNomTable()}";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute();
-
-        foreach ($pdoStatement as $formatTableau) {
-            $object[] = $this->construire($formatTableau);
+        try {
+            $pdoStatement->execute();
+        } catch (PDOException) {
+            return null;
         }
+        foreach ($pdoStatement as $formatTableau) $object[] = $this->construire($formatTableau);
         return $object;
     }
 
@@ -61,7 +62,6 @@ abstract class AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("valueTag" => $valeurClePrimaire);
         $pdoStatement->execute($values);
-
         foreach ($pdoStatement as $formatTableau) {
             $object[] = $this->construire($formatTableau);
         }
@@ -90,9 +90,9 @@ abstract class AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("valueTag" => $valeurClePrimaire);
         $pdoStatement->execute($values);
-        $object = $pdoStatement->fetch();
+        $result = $pdoStatement->fetch();
 
-        return $object ? $this->construire($object) : null;
+        return $result ? $this->construire($result) : null;
     }
 
     public function selectByMultiKey(array $valeurAttributs) {
@@ -120,4 +120,6 @@ abstract class AbstractRepository {
     protected abstract function getProcedureInsert(): string;
 
     protected abstract function getProcedureUpdate(): string;
+
+    protected abstract function getProcedureDelete(): string;
 }

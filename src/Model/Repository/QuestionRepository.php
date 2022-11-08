@@ -34,6 +34,8 @@ class QuestionRepository extends AbstractRepository {
         return "ModifierQuestions";
     }
 
+    function getProcedureDelete(): string { return ""; }
+
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
             $questionFormatTableau['IDQUESTION'],
@@ -46,5 +48,13 @@ class QuestionRepository extends AbstractRepository {
             $questionFormatTableau['DATEFINVOTE'],
             $questionFormatTableau['LOGIN'],
         );
+    }
+
+    function ajouterQuestion(Question $question):int {
+        $this->sauvegarder($question);
+        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
+        $pdoLastInsert->execute();
+        $lastInserId = $pdoLastInsert->fetch();
+        return intval($lastInserId[0]);
     }
 }

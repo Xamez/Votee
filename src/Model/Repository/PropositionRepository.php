@@ -11,6 +11,7 @@ class PropositionRepository extends AbstractRepository {
             'IDPROPOSITION',
             'IDQUESTION',
         );
+
     }
     function getNomTable(): string {
         return "overviewProposition";
@@ -24,6 +25,11 @@ class PropositionRepository extends AbstractRepository {
 
     function getProcedureUpdate(): string { return ""; }
 
+    function getProcedureDelete(): string {
+        return "SupprimerPropositions";
+    }
+
+
     public function construire(array $propositionFormatTableau) : Proposition {
         return new Proposition(
             $propositionFormatTableau['IDPROPOSITION'],
@@ -31,12 +37,14 @@ class PropositionRepository extends AbstractRepository {
         );
     }
 
-    function ajouterProposition(): int {
-        $sql = "SELECT AjouterPropositions FROM DUAL";
+    function ajouterProposition():int {
+        $sql = "CALL AjouterPropositions()";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute();
-        $idProposition = $pdoStatement->fetch();
-        return $idProposition;
+        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT propositions_seq.CURRVAL AS lastInsertId FROM DUAL");
+        $pdoLastInsert->execute();
+        $lastInserId = $pdoLastInsert->fetch();
+        return intval($lastInserId[0]);
     }
 
 }
