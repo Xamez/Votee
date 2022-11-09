@@ -6,7 +6,7 @@ foreach ($sections as $index=>$section) {
         $sectionDescHTML = htmlspecialchars($textes[$index]->getTexte());
 
         echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-              <p class="text-justify">' . $sectionDescHTML . '</p>';
+              <p class="break-all text-justify">' . $sectionDescHTML . '</p>';
 }
 echo '</div>
         <div class="flex gap-2 justify-between">
