@@ -13,7 +13,8 @@ echo $question->getPeriodeActuelle() . '</p>';
 
 echo '<h1 class="text-2xl font-bold text-center text-dark">Organisation</h1><div>';
 foreach ($sections as  $key=>$section) {
-    echo '<p class="text-xl text-main font-bold">' . $key + 1  . ' - ' . $section->getTitreSection() . '</p>';
+    echo '<p class="text-xl text-main font-bold">' . $key + 1  . ' - '
+        . htmlspecialchars($section->getTitreSection()) . '</p>';
 }
 
 echo '</div><h1 class="text-2xl font-bold text-center text-dark">Calendrier</h1>
@@ -37,7 +38,7 @@ foreach ($propositions as $key=>$proposition) {
 }
 
 echo '<div class="flex justify-end">
-         <a href="./frontController.php?action=createProposition&idQuestion='. $question->getIdQuestion() .'">
+         <a href="./frontController.php?action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
             <div class="flex gap-2">
                 <p>Demandes</p>
                 <span class="material-symbols-outlined">file_copy</span>
