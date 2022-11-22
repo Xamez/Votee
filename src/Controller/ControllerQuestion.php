@@ -276,6 +276,23 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
+    public static function readFusion(): void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $textes1 = (new TexteRepository())->selectAllByKey($_GET['idProposition1']);
+        $textes2 = (new TexteRepository())->selectAllByKey($_GET['idProposition2']);
+        $textesFusion = (new TexteRepository())->selectAllByKey($_GET['idProposition3']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition3']);
+        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition3']);
+        self::afficheVue('view.php',
+            ["pagetitle" => "Lire la fusion",
+                "cheminVueBody" => "organisateur/readFusion.php",
+                "title" => $question->getTitre(),
+                "subtitle" => $question->getDescription()
+            ]);
+    }
+
+
     public static function error(string $errorMessage = "") {
         self::afficheVue("view.php",
             ["pagetitle" => "Erreur",
