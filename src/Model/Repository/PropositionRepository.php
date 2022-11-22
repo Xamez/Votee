@@ -11,6 +11,7 @@ class PropositionRepository extends AbstractRepository {
         return array(
             'IDPROPOSITION',
             'IDQUESTION',
+            'VISIBILITE',
         );
 
     }
@@ -35,6 +36,8 @@ class PropositionRepository extends AbstractRepository {
         return new Proposition(
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
+            //$propositionFormatTableau['VISIBILITE'],
+        0
         );
     }
 
