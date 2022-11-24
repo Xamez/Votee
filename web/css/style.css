@@ -91,3 +91,25 @@ textarea {
 label {
 	font-weight: 600;
 }
+
+
+.accordion {
+	background-color: #c3bbff;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	text-align: left;
+	transition: 0.4s;
+}
+
+.active, .accordion:hover {
+	border-radius: 0.25em 0.25em 0 0;
+}
+
+.panel {
+	padding: 18px;
+	border-radius: 0px 0px 0.25em 0.25em;
+	background-color: #d7d2ff;
+	display: none;
+	overflow: hidden;
+}

@@ -11,7 +11,7 @@ class PropositionRepository extends AbstractRepository {
         return array(
             'IDPROPOSITION',
             'IDQUESTION',
-            'VISIBILITE',
+            'VISIBILITEPROPOSITION',
         );
 
     }
@@ -31,20 +31,26 @@ class PropositionRepository extends AbstractRepository {
         return "SupprimerPropositions";
     }
 
-
     public function construire(array $propositionFormatTableau) : Proposition {
         return new Proposition(
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
-            //$propositionFormatTableau['VISIBILITE'],
-        0
+            $propositionFormatTableau['VISIBILITEPROPOSITION'],
         );
     }
 
-    public function ajouterProposition():int {
-        $sql = "CALL AjouterPropositions()";
+    public function modifierProposition(string $idProposition, string $visibilite) {
+        $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute();
+        $values = array("idPropositionTag" => $idProposition, "visibiliteTag" => $visibilite);
+        $pdoStatement->execute($values);
+    }
+
+    public function ajouterProposition(string $visibite):int {
+        $sql = "CALL AjouterPropositions(:visibiliteTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array("visibiliteTag" => $visibite);
+        $pdoStatement->execute($value);
 
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT propositions_seq.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();
@@ -52,11 +58,12 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterRepresentant(string $login, int $idProposition):bool {
-        $sql = "CALL AjouterRedigerR(:login, :idProposition)";
+    public function ajouterRepresentant(string $login, int $idProposition, int $idQuestion):bool {
+        $sql = "CALL AjouterRedigerR(:loginTag, :idPropositionTag, :idQuestionTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array(":loginTag"=>$login, "idPropositionTag"=>$idProposition, "idQuestionTag"=>$idQuestion);
         try {
-            $pdoStatement->execute(array(":login"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
             return false;

@@ -6,9 +6,9 @@ class Proposition extends AbstractDataObject {
 
     private int $idProposition;
     private int $idQuestion;
-    private int $visibilite;
+    private string $visibilite;
 
-    public function __construct(int $idProposition, int $idQuestion, int $visibilite) {
+    public function __construct(int $idProposition, int $idQuestion, string $visibilite) {
         $this->idProposition = $idProposition;
         $this->idQuestion = $idQuestion;
         $this->visibilite = $visibilite;
@@ -18,13 +18,13 @@ class Proposition extends AbstractDataObject {
         return array(
             "IDPROPOSITION" => $this->getIdProposition(),
             "IDQUESTION" => $this->getIdQuestion(),
-            "VISIBILITE" => $this->getVisibilite(),
+            "VISIBILITEPROPOSITION" => $this->getVisibilite(),
         );
     }
 
-    public function getVisibilite(): int { return $this->visibilite; }
+    public function getVisibilite(): string { return $this->visibilite; }
 
-    public function setVisibilite(int $visibilite): void { $this->visibilite = $visibilite; }
+    public function setVisibilite(string $visibilite): void { $this->visibilite = $visibilite; }
 
     public function getIdProposition(): int { return $this->idProposition; }
 
