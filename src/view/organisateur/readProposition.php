@@ -5,7 +5,7 @@ foreach ($sections as $index=>$section) {
         $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
         $sectionDescHTML = htmlspecialchars($textes[$index]->getTexte());
 
-        echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
+        echo '<h1 id="' . $index . '" class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <p class="break-all text-justify">' . $sectionDescHTML . '</p>';
 }
 echo '</div>

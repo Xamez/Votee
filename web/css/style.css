@@ -53,6 +53,10 @@ main {
 	background: rgba(174, 164, 255, 0.5);
 }
 
+.text-light {
+	color: rgba(174, 164, 255, 0.5);
+}
+
 /* Permet d'avoir un effet quand on passe la souris sur les liens dans le burger-menu*/
 .link-underline {
 	border-bottom-width: 0;
@@ -79,6 +83,7 @@ main {
 input {
 	border-radius: 5px;
 }
+
 input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="datetime"], input[type="button"] {
 	padding: 10px;
 }
