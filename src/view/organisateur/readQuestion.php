@@ -33,7 +33,7 @@ foreach ($propositions as $key=>$proposition) {
                     '</div>
                  </div>
                  <div class="flex gap-2">';
-    if ($proposition->getVisibilite() == 0) echo '<span class="material-symbols-outlined">visibility_off</span>';
+    if ($proposition->getVisibilite() == 'invisible') echo '<span class="material-symbols-outlined">visibility_off</span>';
     echo '<span class="material-symbols-outlined">arrow_forward_ios</span>
           </div>
           </div>
