@@ -18,4 +18,9 @@ class AbstractController {
                             "subtitle" => ""
                         ]);
     }
+
+    public static function redirection($url): void {
+        header("Location: $url");
+        exit();
+    }
 }
