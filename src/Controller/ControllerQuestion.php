@@ -290,15 +290,17 @@ class ControllerQuestion extends AbstractController {
 
     public static function createFusion(): void {
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_POST['idQuestion']);
+
         $textes1 = (new TexteRepository())->selectAllByKey($_POST['idProposition']);
         $textes2 = (new TexteRepository())->selectAllByKey($_POST['idProposition1']);
         $textes = array($textes1, $textes2);
-        //$textesFusion = (new TexteRepository())->selectAllByKey($_GET['idProposition3']);
-        $sections = (new SectionRepository())->selectAllByKey($_POST['idQuestion']);
+
         $responsable1 = (new UtilisateurRepository())->selectResp($_POST['idProposition']);
         $responsable2 = (new UtilisateurRepository())->selectResp($_POST['idProposition1']);
         $responsables = array($responsable1, $responsable2);
-        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']); // STUB (3)
+
+        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']); // STUB
         $idPropositions = array($_POST['idProposition'], $_POST['idProposition1']);
         self::afficheVue('view.php',
             ["pagetitle" => "Lire la fusion",
@@ -307,7 +309,7 @@ class ControllerQuestion extends AbstractController {
                 "sections" => $sections,
                 "coAuteurs" => $coAuteurs,
                 "textes" => $textes,
-                "responsable" => $responsable1,
+                "responsable" => $responsable1, // Proposition header
                 "responsables" => $responsables,
                 "cheminVueBody" => "organisateur/createFusion.php",
                 "title" => $question->getTitre(),
@@ -316,7 +318,6 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createdFusion():void {
-
         (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
         (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
         $idProposition = (new PropositionRepository())->ajouterProposition('visible');
@@ -331,8 +332,7 @@ class ControllerQuestion extends AbstractController {
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        var_dump($_POST['idQuestion']);
-        (new PropositionRepository())->ajouterRepresentant('nalixt',$idProposition, $_POST['idQuestion']); // STUB
+        (new PropositionRepository())->ajouterRepresentant($_POST['responsable'] ,$idProposition, $_POST['idQuestion']);
         self::afficheVue('view.php',
             ["pagetitle" => "Modifiée",
                 "title" => "La demande a bien été réalisée !",
