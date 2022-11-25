@@ -32,9 +32,12 @@ foreach ($propositions as $key=>$proposition) {
                         htmlspecialchars($responsables[$key]->getNom()) . ' ' . htmlspecialchars($responsables[$key]->getPrenom()) .
                     '</div>
                  </div>
-                 <span class="material-symbols-outlined">arrow_forward_ios</span>
-            </div>
-         </a>';
+                 <div class="flex gap-2">';
+    if ($proposition->getVisibilite() == 'invisible') echo '<span class="material-symbols-outlined">visibility_off</span>';
+    echo '<span class="material-symbols-outlined">arrow_forward_ios</span>
+          </div>
+          </div>
+          </a>';
 }
 
 echo '<div class="flex justify-end">

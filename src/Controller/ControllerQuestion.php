@@ -106,7 +106,7 @@ class ControllerQuestion extends AbstractController {
             self::afficheVue('view.php',
                 ["pagetitle" => "Crée",
                     "title" => "La question a bien été crée !",
-                    "cheminVueBody" => "organisateur/createdQuestion.php",
+                    "cheminVueBody" => "organisateur/confirmed.php",
                     "subtitle" => ""
                 ]);
         } else {
@@ -132,7 +132,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createdProposition(): void {
-        $idProposition = (new PropositionRepository())->ajouterProposition();
+        $idProposition = (new PropositionRepository())->ajouterProposition('visible');
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
@@ -144,7 +144,8 @@ class ControllerQuestion extends AbstractController {
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'],$idProposition);
+        var_dump($_POST['idQuestion']);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'],$idProposition, $_POST['idQuestion']);
         if ($_POST['coAuteur'] != "") {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'],$idProposition);
         }
@@ -152,7 +153,7 @@ class ControllerQuestion extends AbstractController {
             self::afficheVue('view.php',
                 ["pagetitle" => "Crée",
                     "title" => "La proposition a bien été crée !",
-                    "cheminVueBody" => "organisateur/createdProposition.php",
+                    "cheminVueBody" => "organisateur/confirmed.php",
                     "subtitle" => ""
                 ]);
         } else {
@@ -219,7 +220,7 @@ class ControllerQuestion extends AbstractController {
             self::afficheVue('view.php',
                 ["pagetitle" => "Modifiée",
                  "title" => "La proposition a bien été modifiée !",
-                 "cheminVueBody" => "organisateur/updatedProposition.php",
+                 "cheminVueBody" => "organisateur/confirmed.php",
                  "subtitle" => ""
                 ]);
         } else {
@@ -267,13 +268,77 @@ class ControllerQuestion extends AbstractController {
         if((new PropositionRepository())->supprimer($idProposition)) {
             self::afficheVue('view.php',
                 ["pagetitle" => "Supprimée",
-                 "cheminVueBody" => "organisateur/deletedProposition.php",
+                 "cheminVueBody" => "organisateur/confirmed.php",
                  "title" => "Proposition supprimée !",
                  "subtitle" => ""
                 ]);
         } else {
             self::error("La suppression de la proposition a échoué");
         }
+    }
+
+    public static function selectFusion():void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        self::afficheVue('view.php',
+            ["pagetitle" => "Creer la fusion",
+                "cheminVueBody" => "organisateur/selectFusion.php",
+                "title" => $question->getTitre(),
+                "subtitle" => $question->getDescription()
+            ]);
+    }
+
+
+    public static function createFusion(): void {
+        $question = (new QuestionRepository())->select($_POST['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_POST['idQuestion']);
+
+        $textes1 = (new TexteRepository())->selectAllByKey($_POST['idProposition']);
+        $textes2 = (new TexteRepository())->selectAllByKey($_POST['idProposition1']);
+        $textes = array($textes1, $textes2);
+
+        $responsable1 = (new UtilisateurRepository())->selectResp($_POST['idProposition']);
+        $responsable2 = (new UtilisateurRepository())->selectResp($_POST['idProposition1']);
+        $responsables = array($responsable1, $responsable2);
+
+        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']); // STUB
+        $idPropositions = array($_POST['idProposition'], $_POST['idProposition1']);
+        self::afficheVue('view.php',
+            ["pagetitle" => "Lire la fusion",
+                "idPropositions" => $idPropositions,
+                "question" => $question,
+                "sections" => $sections,
+                "coAuteurs" => $coAuteurs,
+                "textes" => $textes,
+                "responsable" => $responsable1, // Proposition header
+                "responsables" => $responsables,
+                "cheminVueBody" => "organisateur/createFusion.php",
+                "title" => $question->getTitre(),
+                "subtitle" => $question->getDescription()
+            ]);
+    }
+
+    public static function createdFusion():void {
+        (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
+        (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
+        $idProposition = (new PropositionRepository())->ajouterProposition('visible');
+        $isOk = true;
+        for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
+            $texte = new Texte(
+                $_POST['idQuestion'],
+                $_POST['idSection'.$i],
+                $idProposition,
+                $_POST['section'.$i],
+                NULL
+            );
+            $isOk = (new TexteRepository())->sauvegarder($texte);
+        }
+        (new PropositionRepository())->ajouterRepresentant($_POST['responsable'] ,$idProposition, $_POST['idQuestion']);
+        self::afficheVue('view.php',
+            ["pagetitle" => "Modifiée",
+                "title" => "La demande a bien été réalisée !",
+                "cheminVueBody" => "organisateur/confirmed.php",
+                "subtitle" => ""
+            ]);
     }
 
     public static function error(string $errorMessage = "") {
