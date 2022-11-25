@@ -2,6 +2,7 @@
 
 namespace App\Votee\Controller;
 
+use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
@@ -15,7 +16,8 @@ class ControllerQuestion extends AbstractController {
 
     public static function home(): void {
         self::afficheVue('view.php',
-            ["pagetitle" => "Page d'accueil",
+            [
+                "pagetitle" => "Page d'accueil",
                 "mainType" => 1,
                 "footerType" => 1,
                 "cheminVueBody" => "home.php"
@@ -24,7 +26,8 @@ class ControllerQuestion extends AbstractController {
 
     public static function section(): void {
         self::afficheVue('view.php',
-            ["pagetitle" => "Nombre de sections",
+            [
+                "pagetitle" => "Nombre de sections",
                 "cheminVueBody" => "organisateur/section.php",
                 "title" => "Créer un vote",
                 "subtitle" => "Définissez un nombre de section pour votre vote."
@@ -34,11 +37,12 @@ class ControllerQuestion extends AbstractController {
     public static function createQuestion(): void {
         $nbSections = $_POST['nbSections'];
         self::afficheVue('view.php',
-            ["nbSections" => $nbSections,
-             "pagetitle" => "Creation",
-             "cheminVueBody" => "organisateur/createQuestion.php",
-             "title" => "Créer un vote",
-             "subtitle" => ""
+            [
+                "nbSections" => $nbSections,
+                "pagetitle" => "Creation",
+                "cheminVueBody" => "organisateur/createQuestion.php",
+                "title" => "Créer un vote",
+                "subtitle" => ""
             ]);
     }
 
@@ -46,13 +50,14 @@ class ControllerQuestion extends AbstractController {
         $questions = (new QuestionRepository())->selectAll();
         if (isset($questions)) {
             self::afficheVue('view.php',
-                ["questions" => $questions,
+                [
+                    "questions" => $questions,
                     "pagetitle" => "Liste des questions",
                     "cheminVueBody" => "organisateur/listQuestion.php",
                     "title" => "Liste des votes",
                     "subtitle" => ""]);
         } else {
-            self::error("Les questions n'ont pas pu être récupérées.");
+            self::error("Les questions n'ont pas été récupérées.");
         }
     }
 
@@ -60,24 +65,27 @@ class ControllerQuestion extends AbstractController {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
             $responsables = array();
             foreach ($propositions as $proposition) {
                 $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             self::afficheVue('view.php',
-                ["question" => $question,
-                 "propositions" => $propositions,
-                 "sections" => $sections,
-                 "organisateur" => $organisateur,
-                 "responsables" => $responsables,
-                 "pagetitle" => "Question",
-                 "cheminVueBody" => "organisateur/readQuestion.php",
-                 "title" => $question->getTitre(),
-                 "subtitle" => $question->getDescription()]);
+                [
+                    "question" => $question,
+                    "propositions" => $propositions,
+                    "sections" => $sections,
+                    "organisateur" => $organisateur,
+                    "responsables" => $responsables,
+                    "pagetitle" => "Question",
+                    "cheminVueBody" => "organisateur/readQuestion.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()
+                ]);
         } else {
-            self::error("La question n'existe pas");
+            (new Notification())->ajouter("danger", "La question n'existe pas.");
+            self::redirection("?action=readAllQuestion");
         }
     }
 
@@ -86,32 +94,28 @@ class ControllerQuestion extends AbstractController {
             $_POST['visibilite'],
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
-            date_format(date_create($_POST['dateDebutQuestion']),'d/m/Y'),
-            date_format(date_create($_POST['dateFinQuestion']),'d/m/Y'),
-            date_format(date_create($_POST['dateDebutVote']),'d/m/Y'),
-            date_format(date_create($_POST['dateFinVote']),'d/m/Y'),
+            date_format(date_create($_POST['dateDebutQuestion']), 'd/m/Y'),
+            date_format(date_create($_POST['dateFinQuestion']), 'd/m/Y'),
+            date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
+            date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
             $_POST['login'],
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
             $section = new Section(
-                NULL,
-                $_POST['section' . $i],
-                $idQuestion
+                    NULL,
+                            $_POST['section' . $i],
+                            $idQuestion
             );
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
         if ($isOk) {
-            self::afficheVue('view.php',
-                ["pagetitle" => "Crée",
-                    "title" => "La question a bien été crée !",
-                    "cheminVueBody" => "organisateur/confirmed.php",
-                    "subtitle" => ""
-                ]);
+            (new Notification())->ajouter("success", "L'ajout de la question a réussi.");
         } else {
-            self::error("L'ajout de la section a échoués ");
+            (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
         }
+        self::redirection("?action=readAllQuestion");
     }
 
     public static function createProposition(): void {
@@ -119,16 +123,27 @@ class ControllerQuestion extends AbstractController {
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         if ($question) {
             self::afficheVue('view.php',
-                ["pagetitle" => "Creation",
-                 "sections" => $sections,
-                 "idQuestion" => $_GET['idQuestion'],
-                 "cheminVueBody" => "organisateur/createProposition.php",
-                 "title" => $question->getTitre(),
-                 "subtitle" => $question->getDescription()
+                [
+                    "pagetitle" => "Creation",
+                    "sections" => $sections,
+                    "idQuestion" => $_GET['idQuestion'],
+                    "cheminVueBody" => "organisateur/createProposition.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La question n'existe pas");
         }
+    }
+
+    public static function error(string $errorMessage = "") {
+        self::afficheVue("view.php",
+            [
+                "pagetitle" => "Erreur",
+                "cheminVueBody" => "organisateur/error.php",
+                "title" => "Un problème est survenu",
+                "subtitle" => $errorMessage
+            ]);
     }
 
     public static function createdProposition(): void {
@@ -137,41 +152,37 @@ class ControllerQuestion extends AbstractController {
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
                 $_POST['idQuestion'],
-                $_POST['idSection'.$i],
+                $_POST['idSection' . $i],
                 $idProposition,
-                $_POST['section'.$i],
+                $_POST['section' . $i],
                 NULL
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        var_dump($_POST['idQuestion']);
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'],$idProposition, $_POST['idQuestion']);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'], $idProposition, $_POST['idQuestion']);
         if ($_POST['coAuteur'] != "") {
-            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'],$idProposition);
+            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'], $idProposition);
         }
-        if($isOk) {
-            self::afficheVue('view.php',
-                ["pagetitle" => "Crée",
-                    "title" => "La proposition a bien été crée !",
-                    "cheminVueBody" => "organisateur/confirmed.php",
-                    "subtitle" => ""
-                ]);
+        if ($isOk) {
+            (new Notification())->ajouter("success", "La proposition a été crée");
         } else {
             (new PropositionRepository())->supprimer($idProposition);
-            self::error("La création de la proposition a échoué");
+            (new Notification())->ajouter("danger", "La proposition n'a pas pu être créee");
         }
+        self::redirection("?action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
 
     public static function propositionHeader(): void {
         $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
         self::afficheVue('view.php',
-            ["responsable" => $responsable,
-             "coAuteurs" => $coAuteurs,
-             "pagetitle" => "Suppression",
-             "cheminVueBody" => "organisateur/deleteProposition.php",
-             "title" => "Supression d'un vote",
-             "subtitle" => ""
+            [
+                "responsable" => $responsable,
+                "coAuteurs" => $coAuteurs,
+                "pagetitle" => "Suppression",
+                "cheminVueBody" => "organisateur/deleteProposition.php",
+                "title" => "Supression d'un vote",
+                "subtitle" => ""
             ]);
     }
 
@@ -184,17 +195,18 @@ class ControllerQuestion extends AbstractController {
             $responsable = (new UtilisateurRepository())->selectResp($idProposition);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
             self::afficheVue('view.php',
-                ["question" => $question,
-                 "idProposition" => $_GET['idProposition'],
-                 "sections" => $sections,
-                 "coAuteurs" => $coAuteurs,
-                 "textes" => $textes,
-                 "idQuestion" => $question->getIdQuestion(),
-                 "responsable" => $responsable,
-                 "pagetitle" => "Edition de proposition",
-                 "cheminVueBody" => "organisateur/updateProposition.php",
-                 "title" => $question->getTitre(),
-                 "subtitle" => $question->getDescription()
+                [
+                    "question" => $question,
+                    "idProposition" => $_GET['idProposition'],
+                    "sections" => $sections,
+                    "coAuteurs" => $coAuteurs,
+                    "textes" => $textes,
+                    "idQuestion" => $question->getIdQuestion(),
+                    "responsable" => $responsable,
+                    "pagetitle" => "Edition de proposition",
+                    "cheminVueBody" => "organisateur/updateProposition.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas");
@@ -206,9 +218,9 @@ class ControllerQuestion extends AbstractController {
         for ($i = 0; $i < $_GET['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
                 $_GET['idQuestion'],
-                $_GET['idSection'.$i],
+                $_GET['idSection' . $i],
                 $_GET['idProposition'],
-                $_GET['section'.$i],
+                $_GET['section' . $i],
                 NULL
             );
             $isOk = (new TexteRepository())->modifier($texte);
@@ -217,15 +229,11 @@ class ControllerQuestion extends AbstractController {
             }
         }
         if ($isOk) {
-            self::afficheVue('view.php',
-                ["pagetitle" => "Modifiée",
-                 "title" => "La proposition a bien été modifiée !",
-                 "cheminVueBody" => "organisateur/confirmed.php",
-                 "subtitle" => ""
-                ]);
+            (new Notification())->ajouter("success", "La proposition a été modifiée");
         } else {
-            self::error("La proposition n'a pas pu être modifiée");
+            (new Notification())->ajouter("warning", "La proposition n'a pas pu être modifiée");
         }
+        self::redirection("?action=readProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
     }
 
     public static function readProposition(): void {
@@ -236,16 +244,17 @@ class ControllerQuestion extends AbstractController {
             $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
             self::afficheVue('view.php',
-                ["question" => $question,
-                 "idProposition" => $_GET['idProposition'],
-                 "sections" => $sections,
-                 "coAuteurs" => $coAuteurs,
-                 "textes" => $textes,
-                 "responsable" => $responsable,
-                 "pagetitle" => "Question",
-                 "cheminVueBody" => "organisateur/readProposition.php",
-                 "title" => $question->getTitre(),
-                 "subtitle" => $question->getDescription()
+                [
+                    "question" => $question,
+                    "idProposition" => $_GET['idProposition'],
+                    "sections" => $sections,
+                    "coAuteurs" => $coAuteurs,
+                    "textes" => $textes,
+                    "responsable" => $responsable,
+                    "pagetitle" => "Question",
+                    "cheminVueBody" => "organisateur/readProposition.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas");
@@ -256,28 +265,24 @@ class ControllerQuestion extends AbstractController {
         $idProposition = $_GET['idProposition'];
         self::afficheVue('view.php',
             ["idProposition" => $idProposition,
-             "pagetitle" => "Confirmation",
-             "cheminVueBody" => "organisateur/deleteProposition.php",
-             "title" => "Confirmation de suppression",
-             "subtitle" => ""
+                "pagetitle" => "Confirmation",
+                "cheminVueBody" => "organisateur/deleteProposition.php",
+                "title" => "Confirmation de suppression",
+                "subtitle" => ""
             ]);
     }
 
     public static function deletedProposition(): void {
         $idProposition = $_GET['idProposition'];
-        if((new PropositionRepository())->supprimer($idProposition)) {
-            self::afficheVue('view.php',
-                ["pagetitle" => "Supprimée",
-                 "cheminVueBody" => "organisateur/confirmed.php",
-                 "title" => "Proposition supprimée !",
-                 "subtitle" => ""
-                ]);
+        if ((new PropositionRepository())->supprimer($idProposition)) {
+            (new Notification())->ajouter("success", "La proposition a été supprimée");
         } else {
-            self::error("La suppression de la proposition a échoué");
+            (new Notification())->ajouter("warning", "La proposition n'a pas pu être supprimée");
         }
+        self::redirection("?action=readAllQuestion");
     }
 
-    public static function selectFusion():void {
+    public static function selectFusion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         self::afficheVue('view.php',
             ["pagetitle" => "Creer la fusion",
@@ -286,7 +291,6 @@ class ControllerQuestion extends AbstractController {
                 "subtitle" => $question->getDescription()
             ]);
     }
-
 
     public static function createFusion(): void {
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
@@ -303,7 +307,8 @@ class ControllerQuestion extends AbstractController {
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']); // STUB
         $idPropositions = array($_POST['idProposition'], $_POST['idProposition1']);
         self::afficheVue('view.php',
-            ["pagetitle" => "Lire la fusion",
+            [
+                "pagetitle" => "Lire la fusion",
                 "idPropositions" => $idPropositions,
                 "question" => $question,
                 "sections" => $sections,
@@ -317,7 +322,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function createdFusion():void {
+    public static function createdFusion(): void {
         (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
         (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
         $idProposition = (new PropositionRepository())->ajouterProposition('visible');
@@ -325,42 +330,41 @@ class ControllerQuestion extends AbstractController {
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte(
                 $_POST['idQuestion'],
-                $_POST['idSection'.$i],
+                $_POST['idSection' . $i],
                 $idProposition,
-                $_POST['section'.$i],
+                $_POST['section' . $i],
                 NULL
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        (new PropositionRepository())->ajouterRepresentant($_POST['responsable'] ,$idProposition, $_POST['idQuestion']);
+        (new PropositionRepository())->ajouterRepresentant($_POST['responsable'], $idProposition, $_POST['idQuestion']);
         self::afficheVue('view.php',
-            ["pagetitle" => "Modifiée",
+            [
+                "pagetitle" => "Modifiée",
                 "title" => "La demande a bien été réalisée !",
                 "cheminVueBody" => "organisateur/confirmed.php",
                 "subtitle" => ""
             ]);
     }
 
-    public static function error(string $errorMessage = "") {
+    public static function connexion(): void {
         self::afficheVue("view.php",
-            ["pagetitle" => "Erreur",
-             "cheminVueBody" => "organisateur/error.php",
-             "title" => "Un problème est survenu",
-             "subtitle" => $errorMessage
+            [
+                "pagetitle" => "Connexion",
+                "cheminVueBody" => "login/connexion.php",
+                "title" => "Se connecter",
+                "subtitle" => ""
             ]);
     }
 
-    // -----------------------------
-    // POUR TESTER LES PAGES LOGINS
-    public static function connexion():void {
+    public static function inscription(): void {
         self::afficheVue("view.php",
-            ["pagetitle" => "Connexion", "cheminVueBody" => "login/connexion.php","title" => "Se connecter",
-                "subtitle" => ""]);
-    }
-    public static function inscription():void {
-        self::afficheVue("view.php",
-            ["pagetitle" => "Inscription", "cheminVueBody" => "login/inscription.php","title" => "S'inscrire",
-                "subtitle" => ""]);
+            [
+                "pagetitle" => "Inscription",
+                "cheminVueBody" => "login/inscription.php",
+                "title" => "S'inscrire",
+                "subtitle" => ""
+            ]);
     }
 }
 
