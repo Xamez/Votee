@@ -99,11 +99,14 @@ label {
 	padding: 18px;
 	width: 100%;
 	text-align: left;
-	transition: 0.4s;
 }
 
-.active, .accordion:hover {
-	border-radius: 0.25em 0.25em 0 0;
+.active {
+	border-radius: 0.25em 0.25em 0 0!important;
+}
+
+.accordion:hover {
+
 }
 
 .panel {
@@ -112,4 +115,8 @@ label {
 	background-color: #d7d2ff;
 	display: none;
 	overflow: hidden;
+}
+
+.active > .accordion-arrow {
+	transform: rotate(90deg);
 }
