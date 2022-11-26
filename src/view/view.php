@@ -51,20 +51,21 @@
                             else echo 'error';
                             echo '</span>
                         </div>
-                        <span>' . $message . '</span>
-                        <span class="material-symbols-outlined">close</span>
+                        <span>' . $message . '</span>              
                       </div>';
             }
         }
     }
+//<span class="material-symbols-outlined">close</span>
 
     if (!isset($mainType)) {
         echo '
         <main class="flex flex-col gap-5 mx-auto w-8/12">
             <div class="flex flex-col items-center pt-6">
                 <h1 class="text-4xl font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
-                <p class="text-main">'. htmlspecialchars($subtitle) .'</p>
-            </div>';
+                ';
+                if (isset($subtitle)) echo '<p class="text-main">'. htmlspecialchars($subtitle) .'</p>';
+            echo '</div>';
         require __DIR__ . "/{$cheminVueBody}";
         echo '</main>';
     } else if ($mainType == 1) {

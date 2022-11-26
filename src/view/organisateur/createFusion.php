@@ -33,6 +33,7 @@
         <input type="hidden" name="idProposition2" value="<?= $idPropositions[1] ?>">
         <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion() ?>">
         <input type="hidden" name="nbSections" value="<?= sizeof($sections); ?>">
+        <?php foreach ($coAuteurs as $coAuteur) echo '<input type="hidden" name="coAuteurs[]" value="' . $coAuteur->getLogin() . '">' ?>
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider"/>
     </div>
 </form>
