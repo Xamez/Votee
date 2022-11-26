@@ -4,7 +4,7 @@ namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Vote;
 
-class VoteRepository extends AbstractRepository
+class AbstractVoteRepository extends AbstractRepository
 {
 
     function getNomTable(): string {

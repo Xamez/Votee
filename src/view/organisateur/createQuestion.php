@@ -54,11 +54,12 @@
             <div>
                 <div class="flex gap-10 items-end">
                     <p class="w-36 font-semibold">Type de Vote :</p>
-                    <div class="flex flex-col">
-                        <select name="Type de Vote">
-                            <option value="VoteMajoritaire">Vote Majoritaire</option>
-                        </select>
-                    </div>
+
+                    <select name="typeVote">
+                        <option value="VoteMajoritaire">Vote Majoritaire</option>
+                        <option value="VoteClassique">Vote Classique</option>
+                        <option value="Comming soon"> Comming soon</option>
+                    </select>
                 </div>
             </div>
             <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
