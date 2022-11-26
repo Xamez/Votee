@@ -125,6 +125,20 @@ class ControllerQuestion extends AbstractController {
 
     }
 
+    public static function updatedQuestion(): void { //TODO
+        $isOk =  (new QuestionRepository())->modifierQuestion($_GET['idQuestion'], $_GET['description'], 'visible');
+        if ($isOk) {
+            self::afficheVue('view.php',
+                ["pagetitle" => "Modifiée",
+                    "title" => "La question a bien été modifiée !",
+                    "cheminVueBody" => "organisateur/confirmed.php",
+                    "subtitle" => ""
+                ]);
+        } else {
+            self::error("La question n'a pas pu être modifiée");
+        }
+    }
+
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
