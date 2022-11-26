@@ -34,4 +34,5 @@ class Proposition extends AbstractDataObject {
 
     public function setIdQuestion(int $idQuestion): void { $this->idQuestion = $idQuestion; }
 
+    public function getNbVote() : int { return $this->note;}
 }

@@ -50,6 +50,17 @@
                 </div>
             </div>
         </div>
+        <h1 class="text-2xl font-bold text-center text-dark"> Type de Vote<h1/>
+            <div>
+                <div class="flex gap-10 items-end">
+                    <p class="w-36 font-semibold">Type de Vote :</p>
+                        <div class="flex flex-col">
+                            <select name="Type de Vote">
+                           <option value="VoteMajoritaire">Vote Majoritaire</option>
+                            </select>
+                        </div>
+                </div>
+            </div>
         <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
         <div>
             <label for="login_id">login</label> :
