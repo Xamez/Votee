@@ -114,6 +114,17 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
+    public static function updateQuestion(): void { //TODO
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        self::afficheVue('view.php',
+            ["question" => $question,
+                "pagetitle" => "Question",
+                "cheminVueBody" => "organisateur/updateQuestion.php",
+                "title" => $question->getTitre(),
+                "subtitle" => $question->getDescription()]);
+
+    }
+
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
