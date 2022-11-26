@@ -351,6 +351,10 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
+    public static function createdVote(){
+
+    }
+
     // -----------------------------
     // POUR TESTER LES PAGES LOGINS
     public static function connexion():void {
