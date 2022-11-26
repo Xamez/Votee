@@ -1,5 +1,12 @@
 let popup;
 
+const commentary = {
+    numParagraph: -1,
+    indexCharacterStart: -1,
+    indexCharacterEnd: -1,
+    text: ""
+};
+
 window.onload = () => {
 
     const navBurger = document.getElementById('nav-burger');
@@ -12,14 +19,14 @@ window.onload = () => {
 
     popup = document.getElementById('popup');
 
-    let numParagraph = -1;
-    let indexCharacterStart = -1;
-    let indexCharacterEnd = -1;
+    let selectedText = "";
 
     let moved = false;
 
     createCommentaryButton.addEventListener('click', () => {
-        console.log("C'est créer");
+        commentary.text = popup.children[1].value;
+        popup.style.display = "none";
+        // créer commentaire ici dans bdd + afficher message confirmation jsp comment ?
     });
 
     commentaryButton.addEventListener('click', () => {
@@ -31,7 +38,7 @@ window.onload = () => {
             popup.style.display = "none";
     }
 
-    document.addEventListener('mousedown', () => {   
+    document.addEventListener('mousedown', () => {
         moved = false;
     });
 
@@ -42,19 +49,20 @@ window.onload = () => {
         moved = true;
     });
 
-    // TODO: giga problème le 'selectedText' envoie que 1 ou 2 caractères et pas le texte sélectionné
-    document.addEventListener('selectionchange', (e) => {
+    document.addEventListener('mouseup', (e) => {
         const selection = document.getSelection();
+        selectedText = selection.toString();
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
         if (pCommentaryButton.classList.contains('line-through')) return;
-        performHidePopup(e);
         const selectedParagraph = selection.anchorNode.parentElement;
-        const selectedText = selection.toString();
-        console.log(selectedText);
-        numParagraph = selectedParagraph.id;
-        indexCharacterStart = selectedParagraph.innerHTML.indexOf(selectedText);
-        indexCharacterEnd = indexCharacterStart + selectedText.length;
+        if (selectedParagraph !== selection.focusNode.parentElement) return;
+        let numParagraph = selectedParagraph.id;
+        if (numParagraph === "") return;
+        performHidePopup(e);
+        commentary.numParagraph = numParagraph;
+        commentary.indexCharStart = selectedParagraph.innerHTML.indexOf(selectedText);
+        commentary.indexCharEnd = commentary.indexCharStart + selectedText.length;
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;

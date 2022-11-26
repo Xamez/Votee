@@ -49,7 +49,7 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterRepresentant(string $login, int $idProposition):bool {
+    public function ajouterRepresentant(string $login, int $idProposition): bool {
         $sql = "CALL AjouterRedigerR(:login, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -60,7 +60,7 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
-    public function ajouterCoauteur(string $login, int $idProposition):bool {
+    public function ajouterCoauteur(string $login, int $idProposition): bool {
         $sql = "CALL AjouterRedigerCA(:login, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
