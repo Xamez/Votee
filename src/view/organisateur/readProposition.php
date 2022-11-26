@@ -22,7 +22,7 @@ echo '</div>
                     <p>Fusionner</p>
                 </div
             </a>
-            <a href="./frontController.php?action=deleteProposition&idProposition=' . rawurlencode($idProposition) . '">
+            <a href="./frontController.php?action=deleteProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <p>Supprimer</p>
                     <span class="material-symbols-outlined">delete</span>
