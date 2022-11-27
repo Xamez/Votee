@@ -109,3 +109,12 @@ label { font-weight: 600; }
 .toast-icon-success { background-color: #39b259; }
 .toast-icon-warning { background-color: #ee9500; }
 .toast-icon-danger { background-color: #eb4e2c; }
+
+
+.proposition-markdown * {
+	font-size: revert;
+	font-weight: revert;
+	list-style: revert;
+	margin: revert;
+	padding: revert;
+}
