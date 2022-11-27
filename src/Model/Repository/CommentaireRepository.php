@@ -18,7 +18,7 @@ class CommentaireRepository extends AbstractRepository {
 
     }
     function getNomTable(): string {
-        return "Commentaire";
+        return "Commentaires";
     }
 
     function getNomClePrimaire(): string {
@@ -58,6 +58,25 @@ class CommentaireRepository extends AbstractRepository {
             return true;
         } catch (PDOException) {
             return false;
+        }
+    }
+
+    public function getCommentaireById($idProposition) {
+        $sql = "SELECT IDQUESTION, IDPROPOSITION, s.IDCOMMENTAIRE, NUMEROPARAGRAPHE, INDEXCHARDEBUT, INDEXCHARFIN, TEXTECOMMENTAIRE  FROM Stocker s JOIN Commentaires c ON s.idCommentaire = c.idCommentaire WHERE IDPROPOSITION = :idProposition";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array(
+            "idProposition" => $idProposition
+        );
+        try {
+            $pdoStatement->execute($values);
+            $result = $pdoStatement->fetchAll();
+            $commentaires = array();
+            foreach ($result as $row) {
+                $commentaires[] = $this->construire($row);
+            }
+            return $commentaires;
+        } catch (PDOException) {
+            return null;
         }
     }
 
