@@ -31,6 +31,14 @@ class AbstractVoteRepository extends AbstractRepository
         );
     }
 
+    function ajouterVote(string $idProposition,string $login,int $note) {
+        $sql ="CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idPropositionTag" => $idProposition, "loginTag" => $login,"noteTag" => $note);
+        $pdoStatement->execute($values);
+    }
+
+
     function getProcedureInsert(): string {
         return "";
     }

@@ -354,7 +354,13 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createVote(){
-
+        (new AbstractVoteRepository())->ajouterVote($_GET['idProposition'],'votant1',$_GET['value']);
+        self::afficheVue('view.php',
+            ["pagetitle" => "Vote",
+                "title" => "Le Vote a bien été effectué !",
+                "cheminVueBody" => "organisateur/confirmed.php",
+                "subtitle" => ""
+            ]);
     }
 
     // -----------------------------

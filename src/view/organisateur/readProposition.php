@@ -34,16 +34,16 @@ if ($question->getPeriodeActuelle() == 'Période de vote'){
     if ($question->getTypeVote() == 'VoteMajoritaire' ) {
         echo '
         <div>
-        <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(-2) . '">Insuffisant</a>
+        <a href="./frontController.php?action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(-2) . '">Insuffisant</a>
         </div>
           <div>
-           <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(-1) . '">Passable</a>
+           <a href="./frontController.php?action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(-1) . '">Passable</a>
          </div>
          <div>
-           <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(+1) . '">Bien</a>
+           <a href="./frontController.php?action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(+1) . '">Bien</a>
          </div>
          <div>
-           <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(+2) . '">Très Bien</a>
+           <a href="./frontController.php?action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(+2) . '">Très Bien</a>
          </div>
         ';
     }
