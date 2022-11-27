@@ -111,7 +111,7 @@ class ControllerQuestion extends AbstractController {
         self::redirection("?action=readAllQuestion");
     }
 
-    public static function updateQuestion(): void { //TODO
+    public static function updateQuestion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         self::afficheVue('view.php',
             ["question" => $question,
@@ -119,21 +119,13 @@ class ControllerQuestion extends AbstractController {
                 "cheminVueBody" => "organisateur/updateQuestion.php",
                 "title" => $question->getTitre(),
                 "subtitle" => $question->getDescription()]);
-
     }
 
-    public static function updatedQuestion(): void { //TODO
-        $isOk =  (new QuestionRepository())->modifierQuestion($_GET['idQuestion'], $_GET['description'], 'visible');
-        if ($isOk) {
-            self::afficheVue('view.php',
-                ["pagetitle" => "Modifiée",
-                    "title" => "La question a bien été modifiée !",
-                    "cheminVueBody" => "organisateur/confirmed.php",
-                    "subtitle" => ""
-                ]);
-        } else {
-            self::error("La question n'a pas pu être modifiée");
-        }
+    public static function updatedQuestion(): void {
+        $isOk = (new QuestionRepository())->modifierQuestion($_GET['idQuestion'], $_GET['description'], 'visible');
+        if ($isOk) (new Notification())->ajouter("success", "La question a été modifiée.");
+        else (new Notification())->ajouter("warning", "La modification de la question a échoué.");
+        self::redirection("?action=readQuestion&idQuestion=" . $_GET['idQuestion']);
     }
 
     public static function createProposition(): void {
