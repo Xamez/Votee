@@ -141,16 +141,27 @@ class ControllerQuestion extends AbstractController {
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         if ($question) {
             self::afficheVue('view.php',
-                ["pagetitle" => "Creation",
-                 "sections" => $sections,
-                 "idQuestion" => $_GET['idQuestion'],
-                 "cheminVueBody" => "organisateur/createProposition.php",
-                 "title" => $question->getTitre(),
-                 "subtitle" => $question->getDescription()
+                [
+                    "pagetitle" => "Creation",
+                    "sections" => $sections,
+                    "idQuestion" => $_GET['idQuestion'],
+                    "cheminVueBody" => "organisateur/createProposition.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La question n'existe pas");
         }
+    }
+
+    public static function error(string $errorMessage = "") {
+        self::afficheVue("view.php",
+            [
+                "pagetitle" => "Erreur",
+                "cheminVueBody" => "organisateur/error.php",
+                "title" => "Un problème est survenu",
+                "subtitle" => $errorMessage
+            ]);
     }
 
     public static function createdProposition(): void {
@@ -174,33 +185,28 @@ class ControllerQuestion extends AbstractController {
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
         var_dump($_POST['idQuestion']);
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'],$idProposition, $_POST['idQuestion']);
         if ($_POST['coAuteur'] != "") {
-            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'],$idProposition);
+            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'], $idProposition);
         }
-        if($isOk) {
-            self::afficheVue('view.php',
-                ["pagetitle" => "Crée",
-                    "title" => "La proposition a bien été crée !",
-                    "cheminVueBody" => "organisateur/confirmed.php",
-                    "subtitle" => ""
-                ]);
-        } else {
+
+        if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
+        else {
             (new PropositionRepository())->supprimer($idProposition);
-            self::error("La création de la proposition a échoué");
+            (new Notification())->ajouter("danger", "L'ajout de la proposition a échoué.");
         }
+        self::redirection("?action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
 
     public static function propositionHeader(): void {
         $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
         self::afficheVue('view.php',
-            ["responsable" => $responsable,
+            [
+                "responsable" => $responsable,
                 "coAuteurs" => $coAuteurs,
                 "pagetitle" => "Suppression",
                 "cheminVueBody" => "organisateur/deleteProposition.php",
                 "title" => "Supression d'un vote",
-                "subtitle" => ""
             ]);
     }
 
