@@ -40,11 +40,22 @@ foreach ($propositions as $key=>$proposition) {
           </a>';
 }
 
-echo '<div class="flex justify-end">
+echo '
+    <div class="flex gap-2 justify-between">
+      <div class="flex justify-start">
+         <a href="./frontController.php?action=updateQuestion&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+            <div class="flex gap-2">
+                <p>Editer</p>
+                <span class="material-symbols-outlined">edit</span>
+            </div>
+         </a>
+      </div>
+      <div class="flex justify-end">
          <a href="./frontController.php?action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
             <div class="flex gap-2">
                 <p>Demandes</p>
                 <span class="material-symbols-outlined">file_copy</span>
             </div>
          </a>
-      </div>';
+      </div>
+    </div>';

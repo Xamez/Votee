@@ -50,6 +50,14 @@ class QuestionRepository extends AbstractRepository {
         );
     }
 
+    public function modifierQuestion(int $idQuestion, string $description, string $visibilite) : bool {
+        $sql = "CALL ModifierQuestions(:idQuestionTag, :visibiliteTag, :descriptionTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idQuestionTag" => $idQuestion, "visibiliteTag" => $visibilite, "descriptionTag" => $description);
+        $pdoStatement->execute($values);
+        return true;
+    }
+
     function ajouterQuestion(Question $question):int {
         $this->sauvegarder($question);
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
