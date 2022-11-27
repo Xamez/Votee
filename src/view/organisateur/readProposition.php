@@ -1,5 +1,12 @@
 <?php
 require "propositionHeader.php";
+echo '<script type="text/javascript" src="js/commentary.js"></script>';
+echo '
+<div id="ids">
+    <input type="hidden" value="' . rawurlencode($question->getIdQuestion()) . '">
+    <input type="hidden" value="' . rawurlencode($idProposition) . '">
+</div>
+';
 echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
         $sectionTitreHTML = htmlspecialchars($section->getTitreSection());

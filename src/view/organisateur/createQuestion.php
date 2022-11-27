@@ -58,6 +58,7 @@
     </div>
     <input type="number" hidden value=<?=$nbSections?> name="nbSections" id="nb_sections" required/>
     <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
+    <input type="text" hidden value="VoteMajoritaire" placeholder="typeVote" name="typeVote" id="typeVote" required/>
     <div class="flex justify-center">
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
     </div>

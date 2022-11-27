@@ -41,13 +41,13 @@ class CommentaireRepository extends AbstractRepository {
         );
     }
 
-    public function ajouterCommentaireEtStocker($idQuestion, $idProposition, $idCommentaire, $numeroParagraphe, $indexCharDebut, $indexCharFin, $texteCommentaire): bool {
-        $sql = "CALL AjouterCommentairesEtStocker(:idQuestion, :idProposition, :idCommentaire, :numeroParagraphe, :indexCharDebut, :indexCharFin, :texteCommentaire)";
+    public function ajouterCommentaireEtStocker($idQuestion, $idProposition, $numeroParagraphe, $indexCharDebut, $indexCharFin, $texteCommentaire): bool {
+        // TODO: vérifier si le commentaire avec les mêmes caractéristiques (excepté textCommentaire) existe déjà
+        $sql = "CALL AjouterCommentairesEtStocker(:idQuestion, :idProposition, :numeroParagraphe, :indexCharDebut, :indexCharFin, :texteCommentaire)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
             "idQuestion" => $idQuestion,
             "idProposition" => $idProposition,
-            "idCommentaire" => $idCommentaire,
             "numeroParagraphe" => $numeroParagraphe,
             "indexCharDebut" => $indexCharDebut,
             "indexCharFin" => $indexCharFin,

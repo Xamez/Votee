@@ -5,6 +5,7 @@ namespace App\Votee\Controller;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
+use App\Votee\Model\Repository\CommentaireRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -91,6 +92,7 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateDebutVote']),'d/m/Y'),
             date_format(date_create($_POST['dateFinVote']),'d/m/Y'),
             $_POST['login'],
+            $_POST['typeVote'],
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;
@@ -234,6 +236,7 @@ class ControllerQuestion extends AbstractController {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+            //$commentaires = (new CommentaireRepository())->selectAllByKey($_GET['idProposition']);
             self::afficheVue('view.php',
                 ["question" => $question,
                  "idProposition" => $_GET['idProposition'],
@@ -270,6 +273,28 @@ class ControllerQuestion extends AbstractController {
                  "cheminVueBody" => "organisateur/deletedProposition.php",
                  "title" => "Proposition supprimée !",
                  "subtitle" => ""
+                ]);
+        } else {
+            self::error("La suppression de la proposition a échoué");
+        }
+    }
+
+    public static function createdCommentaire(): void {
+        $commentaire = (array) json_decode($_POST['commentaire']);
+        if (!(new CommentaireRepository())->ajouterCommentaireEtStocker($commentaire['idQuestion'], $commentaire['idProposition'],
+                                                                        $commentaire['numeroParagraphe'], $commentaire['indexCharDebut'],
+                                                                        $commentaire['indexCharFin'], $commentaire['texteCommentaire']))
+            self::error("Le commentaire n'a pas pu être créé");
+    }
+
+    public static function deletedCommentaire(): void {
+        $idProposition = $_GET['idCommentaire'];
+        if((new CommentaireRepository())->supprimer($idProposition)) {
+            self::afficheVue('view.php',
+                ["pagetitle" => "Supprimée",
+                    "cheminVueBody" => "organisateur/deletedCommentaire.php",
+                    "title" => "Commentaire supprimée !",
+                    "subtitle" => ""
                 ]);
         } else {
             self::error("La suppression de la proposition a échoué");
