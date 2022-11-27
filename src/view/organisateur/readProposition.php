@@ -3,7 +3,7 @@ require "propositionHeader.php";
 echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-    $sectionDescHTML = htmlspecialchars($textes[$index]->getTexte());
+    $sectionDescHTML = $textes[$index]->getTexte();
 
     echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <div class="proposition-markdown break-all text-justify">' . $sectionDescHTML . '</div>';

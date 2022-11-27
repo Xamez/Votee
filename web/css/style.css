@@ -1,3 +1,12 @@
+.proposition-markdown * {
+	font-size: revert;
+	font-weight: revert;
+	list-style: revert;
+	margin: revert;
+	padding: revert;
+}
+
+
 /* Permet d'avoir le footer toujours en bas même si la page a un contenu en hauteur trop petit */
 .everything {
 	display: flex;
