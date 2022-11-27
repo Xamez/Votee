@@ -2,6 +2,7 @@
 
 namespace App\Votee\Model\Repository;
 use App\Votee\Model\DataObject\Question;
+use PDOException;
 
 class QuestionRepository extends AbstractRepository {
 
@@ -54,8 +55,12 @@ class QuestionRepository extends AbstractRepository {
         $sql = "CALL ModifierQuestions(:idQuestionTag, :visibiliteTag, :descriptionTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idQuestionTag" => $idQuestion, "visibiliteTag" => $visibilite, "descriptionTag" => $description);
-        $pdoStatement->execute($values);
-        return true;
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     function ajouterQuestion(Question $question):int {
