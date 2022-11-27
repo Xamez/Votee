@@ -5,6 +5,8 @@ namespace App\Votee\Controller;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
+use App\Votee\Model\DataObject\Vote;
+use App\Votee\Model\Repository\AbstractVoteRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -351,7 +353,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function createdVote(){
+    public static function createVote(){
 
     }
 
