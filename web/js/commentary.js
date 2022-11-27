@@ -18,12 +18,40 @@ window.onload = () => {
     const createCommentaryButton = document.getElementById('create-commentary');
     const commentaryButton = document.getElementById('commentary-button');
     const pCommentaryButton = commentaryButton.children[1];
+    const commentaries = document.getElementsByClassName('commentary');
 
     popup = document.getElementById('popup');
 
     let selectedText = "";
 
     let moved = false;
+
+    const createTooltip = (span, textCommentaire) => {
+        const tooltip = document.createElement('div');
+        tooltip.id = 'tooltip';
+        tooltip.classList.add('z-1', 'absolute', 'bg-main', 'text-white', 'rounded', 'p-2', 'text-sm', 'shadow-lg');
+        tooltip.style.top = event.pageY + 'px';
+        tooltip.style.left = event.pageX + 'px';
+        const p = document.createElement('p');
+        p.innerText = textCommentaire;
+        tooltip.appendChild(p);
+        span.appendChild(tooltip);
+    }
+
+    console.log(commentaries)
+    for (let i = 0; i < commentaries.length; i++) {
+        let commentary = commentaries[i];
+        commentary.addEventListener("mouseover", e => {
+            const id = e.target.getAttribute("data-id");
+            if (id) createTooltip(e.target, id);
+        });
+
+        commentary.addEventListener("mouseout", e => {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip) tooltip.remove();
+        });
+    }
+
 
     createCommentaryButton.addEventListener('click', () => {
         commentary.texteCommentaire = popup.children[0].children[1].value;
@@ -34,11 +62,8 @@ window.onload = () => {
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             },
             body: "commentaire=" + JSON.stringify(commentary),
-        })
-            .then((response) => response.text())
-            .then((res) => console.log(res));
+        }).then((res) => window.location.reload());
     });
-
 
     commentaryButton.addEventListener('click', () => pCommentaryButton.classList.toggle('line-through'));
 

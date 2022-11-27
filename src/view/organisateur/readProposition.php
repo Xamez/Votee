@@ -8,12 +8,27 @@ echo '
 </div>
 ';
 echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
-foreach ($sections as $index=>$section) {
+
+foreach ($sections as $index => $section) {
         $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
         $sectionDescHTML = htmlspecialchars($textes[$index]->getTexte());
 
+        $paragraph = "";
+
+        $sectionDescHTMLChars = str_split($sectionDescHTML);
+        foreach ($sectionDescHTMLChars as $key => $char) {
+            foreach ($commentaires as $commentaire) {
+                if ($commentaire->getNumeroParagraphe() === $index)
+                    if ($commentaire->getIndexCharDebut() === $key)
+                        $paragraph .= '<span class="commentary cursor-pointer bg-light" data-id="' . $commentaire->getTexteCommentaire() . '">';
+                    else if ($commentaire->getIndexCharFin() == $key)
+                        $paragraph .= '</span>';
+            }
+            $paragraph .= $char;
+        }
+
         echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-              <p id="' . $index . '" class="break-all text-justify">' . $sectionDescHTML . '</p>';
+              <p id="' . $index . '" class="break-all text-justify">' . $paragraph . '</p>';
 }
 
 echo '

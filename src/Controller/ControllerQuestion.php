@@ -236,10 +236,11 @@ class ControllerQuestion extends AbstractController {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
-            //$commentaires = (new CommentaireRepository())->selectAllByKey($_GET['idProposition']);
+            $commentaires = (new CommentaireRepository())->getCommentaireById($_GET['idProposition']);
             self::afficheVue('view.php',
                 ["question" => $question,
                  "idProposition" => $_GET['idProposition'],
+                 "commentaires" => $commentaires,
                  "sections" => $sections,
                  "coAuteurs" => $coAuteurs,
                  "textes" => $textes,
