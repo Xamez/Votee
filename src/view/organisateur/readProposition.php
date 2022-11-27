@@ -29,19 +29,22 @@ echo '</div>
                 </div>
             </a>
        </div>';
-if ($question->getTypeVote() == 'VoteMajoritaire'){
-    echo '
-    <div>
-    <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '&value='. rawurldecode(-2) .'">Insuffisant</a>
-    </div>
-      <div>
-       <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '&value='. rawurldecode(-1) .'">Passable</a>
-     </div>
-     <div>
-       <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '&value='. rawurldecode(+1) .'">Bien</a>
-     </div>
-     <div>
-       <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '&value='. rawurldecode(-1) .'">Très Bien</a>
-     </div>
-    ';
+if ($question->getPeriodeActuelle() == 'Période de vote'){
+
+    if ($question->getTypeVote() == 'VoteMajoritaire' ) {
+        echo '
+        <div>
+        <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(-2) . '">Insuffisant</a>
+        </div>
+          <div>
+           <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(-1) . '">Passable</a>
+         </div>
+         <div>
+           <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(+1) . '">Bien</a>
+         </div>
+         <div>
+           <a href="./frontController.php?action=createdVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=' . rawurldecode(+2) . '">Très Bien</a>
+         </div>
+        ';
+    }
 }
