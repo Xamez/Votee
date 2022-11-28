@@ -7,7 +7,7 @@ require "propositionHeader.php";
         <?php
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-            $sectionTexteHTML = htmlspecialchars($textes[$index]->getTexte());
+            $sectionTexteHTML = preg_replace('#<br\s*/?>#i', "", htmlspecialchars_decode($textes[$index]->getTexte()));
             echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>';
             echo '<textarea class="border-2 max-h-96 h-52" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required>'. $sectionTexteHTML.'</textarea>';
             echo '<input type="hidden" name="idSection' . $index . '" value="'. $section->getIdSection(). '">';

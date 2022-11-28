@@ -7,7 +7,7 @@
                 <a class="p-3 pl-6 pr-6 text-white bg-main font-bold rounded-md shadow-button" href="./frontController.php?action=section">Créer un vote</a>
             </div>
         </div>
-        <img class="lg:w-10/12" src="../resources/undraw_voting.png" alt="Vote">
+        <img class="lg:w-10/12" src="assets/resources/undraw_voting.png" alt="Vote">
     </div>
     <?php
     echo '
@@ -28,10 +28,10 @@
                     <a class="p-2 pl-6 pr-6 text-white bg-main rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Vote</a>
                 </div>
             </div>
-            <img class="lg:w-8/12 rounded-3xl shadow-md" src="../resources/voter.png" alt="Voter">
+            <img class="lg:w-8/12 rounded-3xl shadow-md" src="assets/resources/voter.png" alt="Voter">
         </div>
         <div class="flex flex-col flex-col-reverse lg:flex-row gap-8 items-center justify-center">
-            <img class="w-10/12 lg:w-1/2 rounded-3xl shadow-md" src="../resources/creer_vote.png" alt="Créer un vote">
+            <img class="w-10/12 lg:w-1/2 rounded-3xl shadow-md" src="assets/resources/creer_vote.png" alt="Créer un vote">
             <div class="w-96 text-center lg:text-left">
                 <i class="fa fa-pen-to-square text-white text-2xl px-3 py-2 bg-main rounded-lg"></i>
                 <h3 class="text-white font-bold text-xl pt-2">Créer un vote, c'est trivial !</h3>

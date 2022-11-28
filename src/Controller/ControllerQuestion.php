@@ -160,8 +160,7 @@ class ControllerQuestion extends AbstractController {
         $idProposition = (new PropositionRepository())->ajouterProposition('visible');
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $textsection =  $_POST['section'.$i];
-            $textsection = nl2br($textsection);
+            $textsection =  nl2br(htmlspecialchars($_POST['section'.$i]));
             $texte = new Texte(
                 $_POST['idQuestion'],
                 $_POST['idSection'.$i],
@@ -226,24 +225,25 @@ class ControllerQuestion extends AbstractController {
     public static function updatedProposition(): void {
         $isOk = true;
         for ($i = 0; $i < $_GET['nbSections'] && $isOk; $i++) {
-            $texte = new Texte($_GET['idQuestion'], $_GET['idSection' . $i], $_GET['idProposition'], $_GET['section' . $i],NULL);
+            $textsection =  nl2br(htmlspecialchars($_GET['section'.$i]));
+            $texte = new Texte($_GET['idQuestion'], $_GET['idSection' . $i], $_GET['idProposition'], $textsection,NULL);
             $isOk = (new TexteRepository())->modifier($texte);
-            if ($_GET['coAuteur'] != "") {
-                $isOk &= (new PropositionRepository())->ajouterCoauteur($_GET['coAuteur'], $_GET['idProposition']);
-            }
+        }
+        if ($_GET['coAuteur'] != "") {
+            $isOk &= (new PropositionRepository())->ajouterCoauteur($_GET['coAuteur'], $_GET['idProposition']);
         }
 
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été modifiée.");
-        else (new Notification())->ajouter("warning", "La proposition n'a pas pu être modifiée.");
+        else (new Notification())->ajouter("danger", "La proposition n'a pas pu être modifiée.");
         self::redirection("?action=readProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
     }
 
     public static function readProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
-        foreach ($textes as $key => $text) {
+        foreach ($textes as $texte) {
             $parsedown = new Parsedown();
-            $text->setTexte($parsedown->text($text->getTexte()));
+            $texte->setTexte($parsedown->text($texte->getTexte()));
         }
         if ($question && $textes) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
