@@ -176,7 +176,7 @@ class ControllerQuestion extends AbstractController {
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        var_dump($_POST['idQuestion']);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'], $idProposition, $_POST['idQuestion']);
         if ($_POST['coAuteur'] != "") {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'], $idProposition);
         }

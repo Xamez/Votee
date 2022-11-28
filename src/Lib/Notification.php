@@ -16,7 +16,12 @@ class Notification {
     }
 
     public static function contientMessage(string $type): bool {
-        return isset(Session::getInstance()->lire(static::$cleNotif)[$type]) && sizeof(Session::getInstance()->lire(static::$cleNotif)[$type]) > 0;
+        if(Session::getInstance()->contient(static::$cleNotif)) {
+            return isset(Session::getInstance()->lire(static::$cleNotif)[$type]) && sizeof(Session::getInstance()->lire(static::$cleNotif)[$type]) > 0;
+        } else {
+            return false;
+        }
+
     }
 
     public static function lireMessages(string $type): array {

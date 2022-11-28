@@ -44,7 +44,7 @@
     foreach (['success', 'warning', 'danger'] as $type) {
         if (Notification::contientMessage($type)) {
             foreach (Notification::lireMessages($type) as $key => $message) {
-                echo '<div class="fixed shadow-lg bottom-14 left-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
+                echo '<div class="fixed shadow-lg bottom-14 right-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
                         <div class="flex justify-center shadow-lg items-center justify-items-center w-12 h-12 p-2.5 toast-icon toast-icon-'. $type .'">
                         <span class="material-symbols-outlined">';
                             if ($type == 'success')  echo 'check_circle';
