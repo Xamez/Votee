@@ -3,6 +3,7 @@
 namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Vote;
+use PDOException;
 
 class AbstractVoteRepository extends AbstractRepository
 {
@@ -31,11 +32,16 @@ class AbstractVoteRepository extends AbstractRepository
         );
     }
 
-    function ajouterVote(string $idProposition,string $login,int $note) {
+    function ajouterVote(string $idProposition,string $login,int $note) :bool {
         $sql ="CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idPropositionTag" => $idProposition, "loginTag" => $login,"noteTag" => $note);
-        $pdoStatement->execute($values);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
 
