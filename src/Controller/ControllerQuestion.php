@@ -354,13 +354,18 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createVote(){
-        (new AbstractVoteRepository())->ajouterVote($_GET['idProposition'],'votant2',$_GET['value']);
-        self::afficheVue('view.php',
-            ["pagetitle" => "Vote",
-                "title" => "Le Vote a bien été effectué !",
-                "cheminVueBody" => "organisateur/confirmed.php",
-                "subtitle" => ""
-            ]);
+        $vote = (new AbstractVoteRepository())->ajouterVote($_GET['idProposition'],'votant3',$_GET['value']);
+        if ($vote) {
+            self::afficheVue('view.php',
+                ["pagetitle" => "Vote",
+                    "title" => "Le Vote a bien été effectué !",
+                    "cheminVueBody" => "organisateur/confirmed.php",
+                    "subtitle" => ""
+                ]);
+        }
+        else{
+            self::error("Le vote existe déja");
+        }
     }
 
     // -----------------------------
