@@ -1,9 +1,6 @@
-.proposition-markdown * {
-	font-size: revert;
-	font-weight: revert;
-	list-style: revert;
-	margin: revert;
-	padding: revert;
+.proposition-markdown {
+	all: initial;
+	font-family: inherit;
 }
 
 
