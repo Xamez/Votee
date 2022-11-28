@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title><?php echo $pagetitle; ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/tailwindcss.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/tailwindcss.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script type="text/javascript" src="js/nav-burger.js"></script>
-    <script type="text/javascript" src="js/accordion.js"></script>
+    <script type="text/javascript" src="assets/js/nav-burger.js"></script>
+    <script type="text/javascript" src="assets/js/accordion.js"></script>
+    <link rel="icon" type="image/x-icon" href="assets/resources/logo_votee.png">
 </head>
 <body>
 <div class="everything">
 <header>
     <nav class="flex justify-between items-center gap-10 p-2 mx-10 border-b-2">
         <div class="flex gap-3 items-center">
-            <img class="w-14" src="../resources/logo_votee.png" alt="logo">
+            <img class="w-14" src="assets//resources/logo_votee.png" alt="logo">
             <span class="text-xl font-semibold text-dark">Votee</span>
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
@@ -56,7 +57,6 @@
             }
         }
     }
-//<span class="material-symbols-outlined">close</span>
 
     if (!isset($mainType)) {
         echo '
@@ -89,7 +89,7 @@
         <div class="w-full pt-10">
             <div class="flex w-4/5 items-center justify-center mx-auto border-t border-main pb-12">
                 <div class="flex flex-row text-main text-md lg:text-xl font-semibold pt-6">
-                    <p>Tourniquet Maxance - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevallier Julie</p>
+                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevallier Julie</p>
                 </div>
             </div>
         </div>
