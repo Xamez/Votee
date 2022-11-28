@@ -149,9 +149,10 @@ window.onload = () => {
         const selectedParagraph = selection.anchorNode.parentElement;
         if (selectedParagraph !== selection.focusNode.parentElement) return;
         if (selectedParagraph.parentElement.id === "") return;
-        let numParagraph = parseInt(selectedParagraph.parentElement.id);
         performHidePopup(e);
+        let numParagraph = parseInt(selectedParagraph.parentElement.id);
         commentary.numeroParagraphe = numParagraph;
+        // TODO: Problème en raison des balises compté dans outerHTML (pour avoir le bon index et selectedText qui prends pas en compte)
         commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedText);
         commentary.indexCharFin = commentary.indexCharDebut + selectedText.length;
         popup.style.display = "block";
