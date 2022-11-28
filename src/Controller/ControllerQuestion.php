@@ -161,7 +161,7 @@ class ControllerQuestion extends AbstractController {
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $parsedown = new Parsedown();
-            $textsection =  $_POST['section'.$i];
+            $textsection =  htmlspecialchars($_POST['section'.$i]);
 
             file_put_contents('section.txt', $textsection);
             $texteMD = file_get_contents('section.txt');
