@@ -212,7 +212,10 @@ class ControllerQuestion extends AbstractController {
                 $_GET['section'.$i],
                 NULL
             );
-            $isOk = (new TexteRepository())->modifier($texte);
+            if ($_GET['old-section'.$i] != $_GET['section'.$i]) {
+                $isOk = (new TexteRepository())->modifier($texte);
+                $isOk &= (new CommentaireRepository)->supprimerCommentaireSiSectionModifier($_GET['idProposition'], $i);
+            }
             if ($_GET['coAuteur'] != "") {
                 $isOk &= (new PropositionRepository())->ajouterCoauteur($_GET['coAuteur'], $_GET['idProposition']);
             }
@@ -288,9 +291,18 @@ class ControllerQuestion extends AbstractController {
             self::error("Le commentaire n'a pas pu être créé");
     }
 
+    public static function updatedCommentaire(): void {
+        $commentaire = (array) json_decode($_POST['commentaire']);
+        var_dump($commentaire);
+        if (!(new CommentaireRepository())->modifier($commentaire['idQuestion'], $commentaire['numeroParagraphe'], 
+                                                     $commentaire['indexCharDebut'], $commentaire['indexCharFin'],
+                                                     $commentaire['texteCommentaire']))
+            self::error("Le commentaire n'a pas pu être modifié");
+    }
+
     public static function deletedCommentaire(): void {
-        $idProposition = $_GET['idCommentaire'];
-        if((new CommentaireRepository())->supprimer($idProposition)) {
+        $commentaire = (array) json_decode($_POST['commentaire']);
+        if((new CommentaireRepository())->supprimer($commentaire['idCommentaire'])) {
             self::afficheVue('view.php',
                 ["pagetitle" => "Supprimée",
                     "cheminVueBody" => "organisateur/deletedCommentaire.php",
