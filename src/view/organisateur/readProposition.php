@@ -35,7 +35,7 @@ echo '
 <div id="popup" class="hidden fixed z-1 bg-main text-white rounded-xl p-4">
     <div class="flex flex-col items-center justify-center gap-2">
         <p class="text-md font-bold border-0 select-none">Ecrivez un commentaire</p>
-        <textarea class="border-2 max-h-60 h-44 w-96 bg-main ring-0 focus:outline-none" maxlength="300" placeholder="Entrez votre commentaire..." type="text" required></textarea>
+        <textarea id="text-commentary" class="border-2 max-h-60 h-44 w-96 bg-main ring-0 focus:outline-none" maxlength="300" placeholder="Entrez votre commentaire..." type="text" required></textarea>
         <button id="create-commentary" class="text-xl font-bold hover:underline underline-1">Ajouter un commentaire</button>
     </div>
 </div>

@@ -42,7 +42,6 @@ class CommentaireRepository extends AbstractRepository {
     }
 
     public function ajouterCommentaireEtStocker($idQuestion, $idProposition, $numeroParagraphe, $indexCharDebut, $indexCharFin, $texteCommentaire): bool {
-        // TODO: vérifier si le commentaire avec les mêmes caractéristiques (excepté textCommentaire) existe déjà
         $sql = "CALL AjouterCommentairesEtStocker(:idQuestion, :idProposition, :numeroParagraphe, :indexCharDebut, :indexCharFin, :texteCommentaire)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
@@ -61,8 +60,26 @@ class CommentaireRepository extends AbstractRepository {
         }
     }
 
+    public function supprimerCommentaireSiSectionModifier($idProposition, $numeroParagraphe) : bool {
+        $sql = "SELECT c.idCommentaire FROM Stocker s JOIN Commentaires c ON s.idCommentaire = c.idCommentaire WHERE idProposition = :idProposition AND numeroParagraphe = :numeroParagraphe";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array(
+            "idProposition" => $idProposition,
+            "numeroParagraphe" => $numeroParagraphe
+        );
+        try {
+            $pdoStatement->execute($values);
+            $resultat = $pdoStatement->fetchAll();
+            foreach ($resultat as $idCommentaire)
+                $this->supprimer(intval($idCommentaire[0]));
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
     public function getCommentaireById($idProposition) {
-        $sql = "SELECT IDQUESTION, IDPROPOSITION, s.IDCOMMENTAIRE, NUMEROPARAGRAPHE, INDEXCHARDEBUT, INDEXCHARFIN, TEXTECOMMENTAIRE  FROM Stocker s JOIN Commentaires c ON s.idCommentaire = c.idCommentaire WHERE IDPROPOSITION = :idProposition";
+        $sql = "SELECT IDQUESTION, IDPROPOSITION, s.IDCOMMENTAIRE, NUMEROPARAGRAPHE, INDEXCHARDEBUT, INDEXCHARFIN, TEXTECOMMENTAIRE FROM Stocker s JOIN Commentaires c ON s.idCommentaire = c.idCommentaire WHERE IDPROPOSITION = :idProposition";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
             "idProposition" => $idProposition
@@ -71,9 +88,8 @@ class CommentaireRepository extends AbstractRepository {
             $pdoStatement->execute($values);
             $result = $pdoStatement->fetchAll();
             $commentaires = array();
-            foreach ($result as $row) {
+            foreach ($result as $row)
                 $commentaires[] = $this->construire($row);
-            }
             return $commentaires;
         } catch (PDOException) {
             return null;
