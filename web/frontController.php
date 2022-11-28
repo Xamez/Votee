@@ -2,6 +2,7 @@
 
 use App\Votee\Controller\AbstractController;
 use App\Votee\Controller\ControllerQuestion as ControllerQuestion;
+use App\Votee\Model\HTTP\Session;
 
 require_once __DIR__ . '/../src/Lib/Psr4AutoloaderClass.php';
 
@@ -15,6 +16,9 @@ $loader->register();
 $action = $_GET['action'] ?? 'home';
 
 // On vérifie si l'action existe
+Session::getInstance();
+
+
 if (method_exists(ControllerQuestion::class, $action)) {
     ControllerQuestion::$action();
 } else {

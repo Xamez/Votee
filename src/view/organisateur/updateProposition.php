@@ -7,7 +7,7 @@ require "propositionHeader.php";
         <?php
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-            $sectionTexteHTML = htmlspecialchars($textes[$index]->getTexte());
+            $sectionTexteHTML = preg_replace('#<br\s*/?>#i', "", htmlspecialchars_decode($textes[$index]->getTexte()));
             echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>';
             echo '<textarea class="border-2 max-h-96 h-52" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required>'. $sectionTexteHTML.'</textarea>';
             echo '<input type="hidden" name="old-section'.$index.'" value="' . $sectionTexteHTML . '">';
@@ -17,7 +17,7 @@ require "propositionHeader.php";
     </div>
     <input type="hidden" name="nbSections" value="<?= sizeof($sections);?>">
     <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
-    <input type="hidden" name="idQuestion" value="<?= $idQuestion;?>">
+    <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">
     <input type="hidden" name="action" value="updatedProposition">
     <div class="flex justify-center">
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />

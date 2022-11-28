@@ -9,9 +9,9 @@
         <?php
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-            echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>';
-            echo '<textarea class="border-2 max-h-96 h-52" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required></textarea>';
-            echo '<input type="hidden" name="idSection' . $index . '" value="'. $section->getIdSection(). '">';
+            echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
+                  <textarea class="border-2 max-h-96 h-52 whitespace-pre-wrap" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required></textarea>
+                  <input type="hidden" name="idSection' . $index . '" value="'. $section->getIdSection(). '">';
         }
         ?>
     </div>

@@ -20,6 +20,3 @@ if($questions) {
     }
 }
 echo '</div><a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=section">Créer un vote</a>';
-
-
-

@@ -118,6 +118,7 @@ window.onload = () => {
         commentary.texteCommentaire = commentaryText.value;
         popup.style.display = "none";
         commentaryText.value = ""
+        console.log(commentary);
         performRequest("createdCommentaire", "commentaire=" + JSON.stringify(commentary)).then((res) => window.location.reload());
     });
 
@@ -147,11 +148,11 @@ window.onload = () => {
         if (pCommentaryButton.classList.contains('line-through')) return;
         const selectedParagraph = selection.anchorNode.parentElement;
         if (selectedParagraph !== selection.focusNode.parentElement) return;
-        if (selectedParagraph.id === "") return;
-        let numParagraph = parseInt(selectedParagraph.id);
+        if (selectedParagraph.parentElement.id === "") return;
+        let numParagraph = parseInt(selectedParagraph.parentElement.id);
         performHidePopup(e);
         commentary.numeroParagraphe = numParagraph;
-        commentary.indexCharDebut = selectedParagraph.innerHTML.indexOf(selectedText);
+        commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedText);
         commentary.indexCharFin = commentary.indexCharDebut + selectedText.length;
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";

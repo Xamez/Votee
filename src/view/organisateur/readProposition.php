@@ -1,6 +1,6 @@
 <?php
 require "propositionHeader.php";
-echo '<script type="text/javascript" src="js/commentary.js"></script>';
+echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
 echo '
 <div id="ids">
     <input type="hidden" value="' . rawurlencode($question->getIdQuestion()) . '">
@@ -10,25 +10,29 @@ echo '
 echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 
 foreach ($sections as $index => $section) {
-        $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-        $sectionDescHTML = htmlspecialchars($textes[$index]->getTexte());
+    $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
+    $sectionDescHTML = $textes[$index]->getTexte();
 
-        $paragraph = "";
+    $paragraph = "";
 
-        $sectionDescHTMLChars = str_split($sectionDescHTML);
-        foreach ($sectionDescHTMLChars as $key => $char) {
-            foreach ($commentaires as $commentaire) {
-                if ($commentaire->getNumeroParagraphe() === $index)
-                    if ($commentaire->getIndexCharDebut() === $key)
-                        $paragraph .= '<span class="commentary cursor-pointer bg-light" data-id="' . $commentaire->getTexteCommentaire() . '">';
-                    else if ($commentaire->getIndexCharFin() == $key)
-                        $paragraph .= '</span>';
-            }
-            $paragraph .= $char;
+    $sectionDescHTMLChars = str_split($sectionDescHTML);
+    foreach ($sectionDescHTMLChars as $key => $char) {
+        foreach ($commentaires as $commentaire) {
+            if ($commentaire->getNumeroParagraphe() === $index)
+                if ($commentaire->getIndexCharDebut() === $key)
+                    $paragraph .= '<span class="commentary cursor-pointer bg-light" data-id="' . $commentaire->getTexteCommentaire() . '">';
+                else if ($commentaire->getIndexCharFin() == $key)
+                    $paragraph .= '</span>';
         }
+        $paragraph .= $char;
+    }
 
-        echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-              <p id="' . $index . '" class="break-all text-justify">' . $paragraph . '</p>';
+    echo '
+        <h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
+        <div id=' . $index .'">
+            <p class="proposition-markdown break-all text-justify">' . $paragraph . '</p>
+        </div>
+    ';
 }
 
 echo '
@@ -41,26 +45,33 @@ echo '
 </div>
 ';
 
-echo '</div>
-        <div class="flex gap-2 justify-between select-none">
-            <div class="flex in items-align gap-4">
-                <a href="./frontController.php?action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
-                    <div class="flex gap-2">
-                        <span class="material-symbols-outlined">edit</span>
-                        <p>Editer</p>
-                    </div
-                </a>
-                <a class="cursor-pointer">
-                    <div id="commentary-button" class="flex gap-2">
-                        <span class="material-symbols-outlined">sticky_note_2</span>
-                        <p class="line-through">Commentaire</p>
-                    </div>
-                </a>
+echo '
+</div>
+    <div class="flex gap-2 justify-between">
+        <a href="./frontController.php?action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
+            <div class="flex gap-2">
+                <span class="material-symbols-outlined">edit</span>
+                <p>Editer</p>
+            </div
+        </a>
+        <a class="cursor-pointer">
+            <div id="commentary-button" class="flex gap-2">
+                <span class="material-symbols-outlined">sticky_note_2</span>
+                <p class="line-through">Commentaire</p>
             </div>
-            <a href="./frontController.php?action=deleteProposition&idProposition=' . rawurlencode($idProposition) . '">
-                <div class="flex gap-2">
-                    <p>Supprimer</p>
-                    <span class="material-symbols-outlined">delete</span>
-                </div>
-            </a>
-       </div>';
+        </a>
+        <a href="./frontController.php?action=selectFusion&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
+            <div class="flex gap-2">
+                <span class="material-symbols-outlined">upload</span>
+                <p>Fusionner</p>
+            </div
+        </a>
+        <a href="./frontController.php?action=deleteProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+            <div class="flex gap-2">
+                <p>Supprimer</p>
+                <span class="material-symbols-outlined">delete</span>
+            </div>
+        </a>
+    </div>
+</div>
+';
