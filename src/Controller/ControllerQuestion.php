@@ -160,18 +160,13 @@ class ControllerQuestion extends AbstractController {
         $idProposition = (new PropositionRepository())->ajouterProposition('visible');
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $parsedown = new Parsedown();
             $textsection =  $_POST['section'.$i];
-
-            file_put_contents('section.txt', $textsection);
-            $texteMD = file_get_contents('section.txt');
-            $t = $parsedown->text($texteMD);
-
+            $textsection = nl2br($textsection);
             $texte = new Texte(
                 $_POST['idQuestion'],
                 $_POST['idSection'.$i],
                 $idProposition,
-                $t,
+                $textsection,
                 NULL
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
@@ -246,6 +241,10 @@ class ControllerQuestion extends AbstractController {
     public static function readProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
+        foreach ($textes as $key => $text) {
+            $parsedown = new Parsedown();
+            $text->setTexte($parsedown->text($text->getTexte()));
+        }
         if ($question && $textes) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
