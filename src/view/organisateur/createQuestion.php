@@ -56,8 +56,8 @@
                     <p class="w-36 font-semibold">Type de Vote :</p>
 
                     <select name="typeVote">
-                        <option value="VoteMajoritaire">Vote Majoritaire</option>
-                        <option value="VoteClassique">Vote Classique</option>
+                        <option value="VoteMajoritaire">Jugement Majoritaire</option>
+                        <option value="VoteOuiNon">Vote "Oui" "Non"</option>
                         <option value="Comming soon"> Comming soon</option>
                     </select>
                 </div>
