@@ -69,29 +69,34 @@ class ControllerQuestion extends AbstractController {
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             if($question->getPeriodeActuelle() == "Période des résultats"){
-                $propositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
-                $responsableGagnant = (new UtilisateurRepository())->selectResp($propositionGagnante->getIdProposition());
+                $idPropositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
+                foreach ($propositions as $proposition) {
+                    $notes[] = (new PropositionRepository())->getNote($proposition->getIdProposition());
+                }
                 self::afficheVue('view.php',
                     ["question" => $question,
-                        "propositionGagnante" => $propositionGagnante,
+                        "notes" => $notes,
+                        "propositions" => $propositions,
+                        "responsables" => $responsables,
+                        "idPropositionGagnante" => $idPropositionGagnante,
                         "sections" => $sections,
                         "organisateur" => $organisateur,
-                        "responsableGagnant" => $responsableGagnant,
                         "pagetitle" => "Question",
                         "cheminVueBody" => "organisateur/readQuestionResultats.php",
                         "title" => $question->getTitre(),
                         "subtitle" => $question->getDescription()]);
+            } else {
+                self::afficheVue('view.php',
+                    ["question" => $question,
+                        "propositions" => $propositions,
+                        "sections" => $sections,
+                        "organisateur" => $organisateur,
+                        "responsables" => $responsables,
+                        "pagetitle" => "Question",
+                        "cheminVueBody" => "organisateur/readQuestion.php",
+                        "title" => $question->getTitre(),
+                        "subtitle" => $question->getDescription()]);
             }
-            self::afficheVue('view.php',
-                ["question" => $question,
-                 "propositions" => $propositions,
-                 "sections" => $sections,
-                 "organisateur" => $organisateur,
-                 "responsables" => $responsables,
-                 "pagetitle" => "Question",
-                 "cheminVueBody" => "organisateur/readQuestion.php",
-                 "title" => $question->getTitre(),
-                 "subtitle" => $question->getDescription()]);
         } else {
             self::error("La question n'existe pas");
         }
