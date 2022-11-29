@@ -50,11 +50,22 @@
                 </div>
             </div>
         </div>
-        <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
-        <div>
-            <label for="login_id">login</label> :
-            <input type="text" placeholder="tjean" name="login" id="login_id" required/>
-        </div>
+        <h1 class="text-2xl font-bold text-center text-dark"> Type de Vote<h1/>
+            <div>
+                <div class="flex gap-10 items-end">
+                    <p class="w-36 font-semibold">Type de Vote :</p>
+
+                    <select name="typeVote">
+                        <option value="VoteMajoritaire">Jugement Majoritaire</option>
+                        <option value="VoteOuiNon">Vote "Oui" "Non"</option>
+                    </select>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
+            <div>
+                <label for="login_id">login</label> :
+                <input type="text" placeholder="tjean" name="login" id="login_id" required/>
+            </div>
     </div>
     <input type="number" hidden value=<?=$nbSections?> name="nbSections" id="nb_sections" required/>
     <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
