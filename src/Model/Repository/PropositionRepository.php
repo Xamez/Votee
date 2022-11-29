@@ -82,12 +82,12 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
-    public function getNote(int $idProposition) : int{
+    public function getNote(int $idProposition) {
         $sql = "SELECT SUM(note) as total from voter WHERE idProposition = :idPropositionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("idPropositionTag" => $idProposition));
         $noteTotal = $pdoStatement->fetch();
-        return $noteTotal[0];
+        return $noteTotal ? $noteTotal[0] : null;
     }
 
     public function selectGagnant(int $idQuestion) {

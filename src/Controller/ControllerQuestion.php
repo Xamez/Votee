@@ -6,7 +6,7 @@ use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
 use App\Votee\Model\DataObject\Vote;
-use App\Votee\Model\Repository\AbstractVoteRepository;
+use App\Votee\Model\Repository\VoteRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -70,6 +70,7 @@ class ControllerQuestion extends AbstractController {
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             if($question->getPeriodeActuelle() == "Période des résultats"){
                 $idPropositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
+                $notes = array();
                 foreach ($propositions as $proposition) {
                     $notes[] = (new PropositionRepository())->getNote($proposition->getIdProposition());
                 }
@@ -373,7 +374,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createVote(){
-        $vote = (new AbstractVoteRepository())->ajouterVote($_GET['idProposition'],'votant3',$_GET['value']);
+        $vote = (new VoteRepository())->ajouterVote($_GET['idProposition'],'votant3',$_GET['value']);
         if ($vote) {
             self::afficheVue('view.php',
                 ["pagetitle" => "Vote",
