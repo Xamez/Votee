@@ -31,12 +31,12 @@ foreach ($propositions as $key=>$proposition) {
                     <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                         <span class="material-symbols-outlined">account_circle</span>' .
         htmlspecialchars($responsables[$key]->getNom()) . ' ' . htmlspecialchars($responsables[$key]->getPrenom()) .
-        '</div>
-                 </div>
-                 <div class="flex gap-2">';
+                    '</div>
+                </div>
+                <div class="flex gap-2">';
     if ($proposition->getVisibilite() == 'invisible') echo '<span class="material-symbols-outlined">visibility_off</span>';
     if ($proposition->getIdProposition() == $idPropositionGagnante) echo '<span class="material-symbols-outlined">workspace_premium</span>';
-    echo '<span>'. $notes[$key] .'</span><span class="material-symbols-outlined">arrow_forward_ios</span>
+    echo '<span>'. (($notes[$key] == "") ? 'Aucun vote' : $notes[$key]).'</span><span class="material-symbols-outlined">arrow_forward_ios</span>
           </div>
           </div>
           </a>';

@@ -5,8 +5,7 @@ namespace App\Votee\Model\Repository;
 use App\Votee\Model\DataObject\Vote;
 use PDOException;
 
-class AbstractVoteRepository extends AbstractRepository
-{
+class VoteRepository extends AbstractRepository {
 
     function getNomTable(): string {
         return "Voter";
@@ -45,14 +44,8 @@ class AbstractVoteRepository extends AbstractRepository
     }
 
 
-    function getProcedureInsert(): string {
-        return "";
-    }
-
-    function getProcedureUpdate(): string {
-        return "";
-    }
-
+    function getProcedureInsert(): string { return ""; }
+    function getProcedureUpdate(): string { return ""; }
     function getProcedureDelete(): string { return ""; }
 
 }

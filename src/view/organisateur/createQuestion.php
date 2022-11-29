@@ -58,7 +58,6 @@
                     <select name="typeVote">
                         <option value="VoteMajoritaire">Jugement Majoritaire</option>
                         <option value="VoteOuiNon">Vote "Oui" "Non"</option>
-                        <option value="Comming soon"> Comming soon</option>
                     </select>
                 </div>
             </div>

@@ -92,14 +92,21 @@ class Question extends AbstractDataObject {
     public function setLogin(string $login): void { $this->login = $login; }
 
     public function getPeriodeActuelle() : string {
-        $date = date('d/m/y');
-        if ($date >= $this->getDateDebutQuestion() && $date <= $this->getDateFinQuestion()) {
+        $date = date('Y-m-d');
+        if ($date >= $this->changeDate($this->getDateDebutQuestion()) && $date <= $this->changeDate($this->getDateFinQuestion())) {
             return "Période d'écriture";
-        } else if ($date >= $this->getDateDebutVote() && $date <= $this->getDateFinVote()) {
+        } else if ($date >= $this->changeDate($this->getDateDebutVote()) && $date <= $this->changeDate($this->getDateFinVote())) {
             return "Période de vote";
         } else {
             return "Période des résultats";
         }
+    }
+
+    public function changeDate(string $date) {
+        $old_date = explode('/', $date);
+        $new_data = $old_date[2].'-'.$old_date[1].'-'.$old_date[0];
+        $date = date_format(date_create($new_data),'Y-m-d');
+        return $date;
     }
 
     public function getTypeVote(): string {return $this->typeVote;}

@@ -8,15 +8,16 @@ foreach ($sections as $index=>$section) {
     echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <p class="break-all text-justify">' . $sectionDescHTML . '</p>';
 }
-echo '</div>
-        <div class="flex gap-2 justify-between">
-            <a href="./frontController.php?action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
+echo '</div>';
+if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
+    echo '<div class="flex gap-2 justify-between">
+            <a href="./frontController.php?action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">edit</span>
                     <p>Editer</p>
                 </div
             </a>
-            <a href="./frontController.php?action=selectFusion&idQuestion=' . rawurlencode($question->getIdQuestion()). '&idProposition='. rawurlencode($idProposition) . '">
+            <a href="./frontController.php?action=selectFusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">upload</span>
                     <p>Fusionner</p>
@@ -29,6 +30,7 @@ echo '</div>
                 </div>
             </a>
        </div>';
+}
 if ($question->getPeriodeActuelle() == 'Période de vote'){
     if ($question->getTypeVote() == 'VoteMajoritaire' ) {
         echo '
