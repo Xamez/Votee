@@ -306,7 +306,16 @@ class ControllerQuestion extends AbstractController {
         $sections = (new SectionRepository())->selectAllByKey($_POST['idQuestion']);
 
         $textes1 = (new TexteRepository())->selectAllByKey($_POST['idProposition']);
+        foreach ($textes1 as $texte) {
+            $parsedown = new Parsedown();
+            $texte->setTexte($parsedown->text($texte->getTexte()));
+        }
+
         $textes2 = (new TexteRepository())->selectAllByKey($_POST['idProposition1']);
+        foreach ($textes2 as $texte) {
+            $parsedown = new Parsedown();
+            $texte->setTexte($parsedown->text($texte->getTexte()));
+        }
 
         $responsable1 = (new UtilisateurRepository())->selectResp($_POST['idProposition']);
         $responsable2 = (new UtilisateurRepository())->selectResp($_POST['idProposition1']);
