@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script type="text/javascript" src="assets/js/nav-burger.js"></script>
-    <script type="text/javascript" src="assets/js/accordion.js"></script>
     <link rel="icon" type="image/x-icon" href="assets/resources/logo_votee.png">
 </head>
 <body>
