@@ -27,6 +27,13 @@ function performRequest(url, data) {
     });
 }
 
+function getElementId(element) {
+    let myElement = element;
+    while (myElement.id === "")
+        myElement = myElement.parentElement;
+    return myElement.id;
+}
+
 window.onload = () => {
 
     const ids = document.getElementById("ids");
@@ -143,18 +150,50 @@ window.onload = () => {
     document.addEventListener('mouseup', (e) => {
         const selection = document.getSelection();
         selectedText = selection.toString();
+        /*const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
+        let selectedHtml = "";
+        if (selection.rangeCount) {
+            let container = document.createElement("div");
+            for (let i = 0, len = selection.rangeCount; i < len; ++i) {
+                for (let j = 0; j < selection.getRangeAt(i).cloneContents().childNodes.length; j++) {
+                    let node = selection.getRangeAt(i).cloneContents().childNodes[j];
+                    console.log(node);
+                    console.log(node.nodeType);
+                    //if (node.classList.contains("commentary")) return;
+                    container.appendChild(selection.getRangeAt(i).cloneContents());
+                }
+            }
+            selectedHtml = container.innerHTML;
+        }*/
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
         if (pCommentaryButton.classList.contains('line-through')) return;
         const selectedParagraph = selection.anchorNode.parentElement;
         if (selectedParagraph !== selection.focusNode.parentElement) return;
+        let idElement = getElementId(selectedParagraph);
+        if (idElement === "") return;
+        performHidePopup(e);
+        let numParagraph = parseInt(idElement);
+        commentary.numeroParagraphe = numParagraph;
         if (selectedParagraph.parentElement.id === "") return;
         performHidePopup(e);
-        let numParagraph = parseInt(selectedParagraph.parentElement.id);
         commentary.numeroParagraphe = numParagraph;
         // TODO: Problème en raison des balises compté dans outerHTML (pour avoir le bon index et selectedText qui prends pas en compte)
         commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedText);
         commentary.indexCharFin = commentary.indexCharDebut + selectedText.length;
+
+        /*commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
+        let textBeforeSelection = selectedParagraph.outerHTML.substring(0, commentary.indexCharDebut);
+        // if selected text includes <span id="x" class="commentary cursor-pointer bg-light" data-id="xxxx"> remove it from indexCharDebut and indexCharFin
+        let indexSpan = textBeforeSelection.indexOf('<span id="');
+        while (indexSpan !== -1) {
+            let indexSpanEnd = textBeforeSelection.indexOf('</span>');
+            textBeforeSelection = textBeforeSelection.substring(0, indexSpan) + textBeforeSelection.substring(indexSpanEnd + 7);
+            indexSpan = textBeforeSelection.indexOf('<span id="');
+            // todo finir
+        }
+        commentary.indexCharFin = commentary.indexCharDebut + selectedHtml.length;
+        console.log(commentary.indexCharDebut + " " + commentary.indexCharFin);*/
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
