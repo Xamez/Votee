@@ -9,6 +9,7 @@ class QuestionRepository extends AbstractRepository {
     protected function getNomsColonnes(): array {
         return array(
             'IDQUESTION',
+            'TYPEVOTE',
             'VISIBILITE',
             'TITRE',
             'DESCRIPTION',
@@ -40,6 +41,7 @@ class QuestionRepository extends AbstractRepository {
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
             $questionFormatTableau['IDQUESTION'],
+            $questionFormatTableau['TYPEVOTE'],
             $questionFormatTableau['VISIBILITE'],
             $questionFormatTableau['TITRE'],
             $questionFormatTableau['DESCRIPTION'],
@@ -47,7 +49,7 @@ class QuestionRepository extends AbstractRepository {
             $questionFormatTableau['DATEFINQUESTION'],
             $questionFormatTableau['DATEDEBUTVOTE'],
             $questionFormatTableau['DATEFINVOTE'],
-            $questionFormatTableau['LOGIN'],
+            $questionFormatTableau['LOGIN']
         );
     }
 

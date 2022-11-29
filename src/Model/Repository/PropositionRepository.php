@@ -3,6 +3,7 @@
 namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Proposition;
+use App\Votee\Model\Repository\DatabaseConnection as DatabaseConnection;
 use PDOException;
 
 class PropositionRepository extends AbstractRepository {
@@ -79,6 +80,22 @@ class PropositionRepository extends AbstractRepository {
         } catch (PDOException) {
             return false;
         }
+    }
+
+    public function getNote(int $idProposition) {
+        $sql = "SELECT SUM(note) as total from voter WHERE idProposition = :idPropositionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idPropositionTag" => $idProposition));
+        $noteTotal = $pdoStatement->fetch();
+        return $noteTotal ? $noteTotal[0] : null;
+    }
+
+    public function selectGagnant(int $idQuestion) {
+        $sql = "SELECT GetPropositionGagnante(:idQuestionTag) FROM DUAL";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion));
+        $result = $pdoStatement->fetch();
+        return $result[0];
     }
 
 }
