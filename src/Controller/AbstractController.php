@@ -15,7 +15,6 @@ class AbstractController {
                         ["pagetitle" => "Page introuvable",
                             "cheminVueBody" => "404.php",
                             "title" => "Page introuvable",
-                            "subtitle" => ""
                         ]);
     }
 
