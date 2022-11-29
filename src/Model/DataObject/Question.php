@@ -2,6 +2,8 @@
 
 namespace App\Votee\Model\DataObject;
 
+use DateTime;
+
 class Question extends AbstractDataObject {
 
     private ?int $idQuestion;
@@ -90,9 +92,9 @@ class Question extends AbstractDataObject {
 
     public function getPeriodeActuelle() : string {
         $date = date('d/m/y');
-        if ($date >= $this->getDateDebutQuestion() && $date <= $this->getDateFinQuestion()) {
+        if ($date >= date_create($this->getDateDebutQuestion()) && $date <= date_create($this->getDateFinQuestion())) {
             return "Période d'écriture";
-        } else if ($date >= $this->getDateDebutVote() && $date <= $this->getDateFinVote()) {
+        } else if ($date >= date_create($this->getDateDebutVote()) && $date <= date_create($this->getDateFinVote())) {
             return "Période de vote";
         } else {
             return "Période des résultats";
