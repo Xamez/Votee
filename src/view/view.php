@@ -3,31 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title><?php echo $pagetitle; ?></title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/tailwindcss.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/tailwindcss.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script type="text/javascript" src="js/nav-burger.js"></script>
-    <script type="text/javascript" src="js/accordion.js"></script>
+    <script type="text/javascript" src="assets/js/nav-burger.js"></script>
+    <link rel="icon" type="image/x-icon" href="assets/resources/logo_votee.png">
 </head>
 <body>
 <div class="everything">
 <header>
     <nav class="flex justify-between items-center gap-10 p-2 mx-10 border-b-2">
         <div class="flex gap-3 items-center">
-            <img class="w-14" src="../resources/logo_votee.png" alt="logo">
+            <img class="w-14" src="assets//resources/logo_votee.png" alt="logo">
             <span class="text-xl font-semibold text-dark">Votee</span>
         </div>
-
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
             <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
             <a href=""><span class="link-underline link-underline-color">Demande</span></a>
         </div>
-
         <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
-
         <div class="flex md:hidden gap-4 items-center">
             <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
             <div>
@@ -43,19 +40,38 @@
     </nav>
 </header>
 <?php
-if (!isset($mainType)) {
-    echo '
-    <main class="flex flex-col gap-5 mx-auto w-8/12">
-        <div class="flex flex-col items-center pt-6">
-            <h1 class="text-4xl font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
-            <p class="text-main">'. htmlspecialchars($subtitle) .'</p>
-        </div>';
-    require __DIR__ . "/{$cheminVueBody}";
-    echo '</main>';
-} else if ($mainType == 1) {
-    require __DIR__ . "/{$cheminVueBody}";
-}
+    use App\Votee\Lib\Notification;
+    foreach (['success', 'warning', 'danger'] as $type) {
+        if (Notification::contientMessage($type)) {
+            foreach (Notification::lireMessages($type) as $key => $message) {
+                echo '<div class="fixed shadow-lg bottom-14 right-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
+                        <div class="flex justify-center shadow-lg items-center justify-items-center w-12 h-12 p-2.5 toast-icon toast-icon-'. $type .'">
+                        <span class="material-symbols-outlined">';
+                            if ($type == 'success')  echo 'check_circle';
+                            else echo 'error';
+                            echo '</span>
+                        </div>
+                        <span>' . $message . '</span>              
+                      </div>';
+            }
+        }
+    }
+
+    if (!isset($mainType)) {
+        echo '
+        <main class="flex flex-col gap-5 mx-auto w-8/12">
+            <div class="flex flex-col items-center pt-6">
+                <h1 class="text-4xl font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
+                ';
+                if (isset($subtitle)) echo '<p class="text-main">'. htmlspecialchars($subtitle) .'</p>';
+            echo '</div>';
+        require __DIR__ . "/{$cheminVueBody}";
+        echo '</main>';
+    } else if ($mainType == 1) {
+        require __DIR__ . "/{$cheminVueBody}";
+    }
 ?>
+
 <footer>
     <?php
     if (!isset($footerType)) {
@@ -72,7 +88,7 @@ if (!isset($mainType)) {
         <div class="w-full pt-10">
             <div class="flex w-4/5 items-center justify-center mx-auto border-t border-main pb-12">
                 <div class="flex flex-row text-main text-md lg:text-xl font-semibold pt-6">
-                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevalier Julie</p>
+                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevallier Julie</p>
                 </div>
             </div>
         </div>
