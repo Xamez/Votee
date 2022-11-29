@@ -68,6 +68,20 @@ class ControllerQuestion extends AbstractController {
                 $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
+            if($question->getPeriodeActuelle() == "Période des résultats"){
+                $propositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
+                $responsableGagnant = (new UtilisateurRepository())->selectResp($propositionGagnante->getIdProposition());
+                self::afficheVue('view.php',
+                    ["question" => $question,
+                        "propositionGagnante" => $propositionGagnante,
+                        "sections" => $sections,
+                        "organisateur" => $organisateur,
+                        "responsableGagnant" => $responsableGagnant,
+                        "pagetitle" => "Question",
+                        "cheminVueBody" => "organisateur/readQuestionResultats.php",
+                        "title" => $question->getTitre(),
+                        "subtitle" => $question->getDescription()]);
+            }
             self::afficheVue('view.php',
                 ["question" => $question,
                  "propositions" => $propositions,
