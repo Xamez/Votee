@@ -3,6 +3,7 @@
 namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Proposition;
+use App\Votee\Model\Repository\DatabaseConnection as DatabaseConnection;
 use PDOException;
 
 class PropositionRepository extends AbstractRepository {
@@ -87,6 +88,10 @@ class PropositionRepository extends AbstractRepository {
         $pdoLastInsert->execute();
         $noteTotal = $pdoLastInsert->fetch();
         return $noteTotal;
+    }
+
+    public function selectGagnant(array $idQuestion) {
+
     }
 
 }
