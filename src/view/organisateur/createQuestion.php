@@ -61,9 +61,9 @@
                     </select>
                 </div>
             </div>
-            <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
+            <h1 class="text-2xl font-bold text-center text-dark">Organisateur</h1>
             <div>
-                <label for="login_id">login</label> :
+                <label for="login_id">Login</label> :
                 <input type="text" placeholder="tjean" name="login" id="login_id" required/>
             </div>
     </div>
