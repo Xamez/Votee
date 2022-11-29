@@ -5,8 +5,6 @@ namespace App\Votee\Controller;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
-use App\Votee\Model\DataObject\Vote;
-use App\Votee\Model\Repository\VoteRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -113,7 +111,7 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateFinQuestion']),'d/m/Y'),
             date_format(date_create($_POST['dateDebutVote']),'d/m/Y'),
             date_format(date_create($_POST['dateFinVote']),'d/m/Y'),
-            $_POST['login']
+            $_POST['login'],
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;

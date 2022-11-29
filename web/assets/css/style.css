@@ -1,0 +1,117 @@
+.proposition-markdown {
+	all: initial;
+	font-family: inherit;
+}
+
+
+/* Permet d'avoir le footer toujours en bas même si la page a un contenu en hauteur trop petit */
+.everything {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main { flex: 1; }
+
+.bg-image-urne {
+	background-image: url("../resources/urne-vote.png");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+/* Quelques classes pour des couleurs utile */ 
+.text-dark { color: #2E3436; }
+.nav-button:hover { color: #ddd; }
+.text-main { color: #8080D7; }
+.border-main { border-color: #8080D7; }
+.bg-main { background-color: #8080D7; }
+.bg-dark { background-color: #2E3436; }
+.bg-home { background-color: #AFAFF3; }
+.shadow-button { filter: drop-shadow(8px 8px 0px #B8B8F8); }
+.bg-light {	background: rgba(174, 164, 255, 0.5); }
+
+/* Permet d'avoir un effet quand on passe la souris sur les liens dans le burger-menu*/
+.link-underline {
+	border-bottom-width: 0;
+	background-image: linear-gradient(transparent, transparent), linear-gradient(#fff, #fff);
+	background-size: 0 3px;
+	padding-bottom: 2px;
+	background-position: 0 100%;
+	background-repeat: no-repeat;
+	transition: background-size .5s ease-in-out;
+}
+.link-underline-color {	background-image: linear-gradient(transparent, transparent), linear-gradient(#fff, #fff) }
+.link-underline:hover {
+	background-size: 100% 3px;
+	background-position: 0 100%
+}
+#nav-burger { transform: translate(-57%, 34%); }
+
+
+/* Custom les inputs */
+input {	border-radius: 5px; }
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="datetime"], input[type="button"] {
+	padding: 10px;
+}
+
+textarea {
+	padding: 10px !important;
+	border-radius: 5px;
+}
+
+label { font-weight: 600; }
+
+
+/* Accordion */
+
+.accordion { background-color: #c3bbff; }
+.active { border-radius: 0.25em 0.25em 0 0!important; }
+.active > .accordion-arrow { transform: rotate(90deg); }
+
+.panel {
+	border-radius: 0px 0px 0.25em 0.25em;
+	background-color: #d7d2ff;
+}
+
+
+
+/* Toast */
+
+.toast {
+	border-radius: 19px;
+	padding: 8px 15px 8px 8px;
+}
+
+.toast-icon .material-symbols-outlined {
+	color: white;
+	font-size: 30px;
+	font-variation-settings:'FILL' 1,'wght' 700,'GRAD' 0,'opsz' 48
+}
+
+.toast-icon { border-radius: 20px; }
+.toast-success {
+	border: #a3e6c9 solid 1px;
+	background-color: #eaf7ee;
+}
+.toast-warning {
+	border: #ee8579 solid 1px;
+	background-color: #fef7ea;
+}
+.toast-danger {
+	border: #ee8579 solid 1px;
+	background-color: #fcede9;
+}
+
+.toast-icon-success { background-color: #39b259; }
+.toast-icon-warning { background-color: #ee9500; }
+.toast-icon-danger { background-color: #eb4e2c; }
+
+
+.proposition-markdown * {
+	font-size: revert;
+	font-weight: revert;
+	list-style: revert;
+	margin: revert;
+	padding: revert;
+}

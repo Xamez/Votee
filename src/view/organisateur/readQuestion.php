@@ -18,7 +18,7 @@ foreach ($sections as  $key=>$section) {
 }
 
 echo '</div><h1 class="text-2xl font-bold text-center text-dark">Calendrier</h1>
-        <p><span class="text-xl text-main font-bold text-lg">Période décriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>
+        <p><span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>
         <p><span class="text-xl text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
 
 echo '<h1 class="text-2xl font-bold text-center text-dark">Proposition</h1>';
@@ -40,11 +40,22 @@ foreach ($propositions as $key=>$proposition) {
           </a>';
 }
 
-echo '<div class="flex justify-end">
+echo '
+    <div class="flex gap-2 justify-between">
+      <div class="flex justify-start">
+         <a href="./frontController.php?action=updateQuestion&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+            <div class="flex gap-2">
+                <p>Editer</p>
+                <span class="material-symbols-outlined">edit</span>
+            </div>
+         </a>
+      </div>
+      <div class="flex justify-end">
          <a href="./frontController.php?action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
             <div class="flex gap-2">
                 <p>Demandes</p>
                 <span class="material-symbols-outlined">file_copy</span>
             </div>
          </a>
-      </div>';
+      </div>
+    </div>';
