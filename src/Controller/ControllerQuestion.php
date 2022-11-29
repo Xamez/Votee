@@ -191,10 +191,6 @@ class ControllerQuestion extends AbstractController {
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
         $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['representant'], $idProposition, $_POST['idQuestion']);
-        if ($_POST['coAuteur'] != "") {
-            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'], $idProposition);
-        }
-
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
         else {
             (new PropositionRepository())->supprimer($idProposition);
@@ -366,6 +362,15 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("success", "Le co-auteur a été supprimé.");
         } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être supprimé.");
         self::redirection("?action=updateProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
+    }
+
+    public static function createdCoAuteur():void {
+        $idProposition = $_POST['idProposition'];
+        $login = $_POST['login'];
+        if ((new PropositionRepository())->ajouterCoAuteur( $login, $idProposition)) {
+            (new Notification())->ajouter("success", "Le co-auteur a été ajouté.");
+        } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être ajouté.");
+        self::redirection("?action=updateProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
     }
 
 

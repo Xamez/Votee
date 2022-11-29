@@ -71,7 +71,7 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
-    public function ajouterCoauteur(string $login, int $idProposition):bool {
+    public function ajouterCoAuteur(string $login, int $idProposition):bool {
         $sql = "CALL AjouterRedigerCA(:login, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
