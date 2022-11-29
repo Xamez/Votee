@@ -20,8 +20,13 @@ foreach ($coAuteurs as $coAuteur) {
 }
 echo '</div>'
 ?>
+<form method="post" action="frontController.php?action=createdCoAuteur">
+    <input placeholder="Login" class="border-2" type="text" name="login" id="coAuteur_id">
+    <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
+    <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">
+    <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Ajouter" />
+</form>
 <form method="get" class="flex flex-col gap-7" action="frontController.php?action=updatedProposition">
-    <input placeholder="Login" class="border-2" type="text" name="coAuteur" id="coAuteur_id">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {
