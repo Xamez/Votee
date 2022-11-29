@@ -19,7 +19,7 @@
                             <span class="accordion-arrow material-symbols-outlined">arrow_forward_ios</span>
                         </div>                        
                         <div class="p-4 overflow-hidden hidden panel">
-                            <p class="proposition-markdown break-all text-justify">' . $texte[$index]->getTexte() . '</p>
+                            <div class="proposition-markdown break-all text-justify">' . $texte[$index]->getTexte() . '</div>
                         </div>
                     </div>';
             }
