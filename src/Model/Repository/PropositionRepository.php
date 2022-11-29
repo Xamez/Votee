@@ -82,6 +82,17 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
+    public function supprimerCoAuteur(string $login, int $idProposition):bool {
+        $sql = "CALL SupprimerRedigerCA(:login, :idProposition)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute(array(":login"=>$login, "idProposition"=>$idProposition));
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
     public function getNote(int $idProposition) {
         $sql = "SELECT SUM(note) as total from voter WHERE idProposition = :idPropositionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);

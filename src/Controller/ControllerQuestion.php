@@ -341,13 +341,15 @@ class ControllerQuestion extends AbstractController {
 
         $coAuteurs1 = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']);
         $coAuteurs2 = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition1']);
+        $coAuteurs = array_unique(array_merge($coAuteurs1, $coAuteurs2), SORT_REGULAR);
+        if (in_array($responsable1, $coAuteurs)) unset($coAuteurs[array_search($responsable1, $coAuteurs)]);
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Lire la fusion",
                 "idPropositions" => array($_POST['idProposition'], $_POST['idProposition1']),
                 "question" => $question,
                 "sections" => $sections,
-                "coAuteurs" => array_merge($coAuteurs1, $coAuteurs2),
+                "coAuteurs" => $coAuteurs,
                 "textes" => array($textes1, $textes2),
                 "responsable" => $responsable1, // Proposition header
                 "responsables" => array($responsable1, $responsable2),
@@ -357,10 +359,21 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
+    public static function deletedCoAuteur(): void {
+        $idProposition = $_GET['idProposition'];
+        $login = $_GET['login'];
+        if ((new PropositionRepository())->supprimerCoAuteur( $login, $idProposition)) {
+            (new Notification())->ajouter("success", "Le co-auteur a été supprimé.");
+        } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être supprimé.");
+        self::redirection("?action=updateProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
+    }
+
+
     public static function createdFusion(): void {
         (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
         (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
-        $isOk = $idProposition = (new PropositionRepository())->ajouterProposition('visible');
+        $idProposition = (new PropositionRepository())->ajouterProposition('visible');
+        $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $_POST['section' . $i], NULL);
             $isOk = (new TexteRepository())->sauvegarder($texte);
@@ -372,6 +385,7 @@ class ControllerQuestion extends AbstractController {
 
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {
+            (new PropositionRepository())->supprimer($idProposition);
             (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'visible');
             (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'visible');
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
