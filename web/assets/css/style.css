@@ -1,5 +1,5 @@
-.proposition-markdown {
-	all: initial;
+.proposition-markdown * {
+	all: revert;
 	font-family: inherit;
 }
 
