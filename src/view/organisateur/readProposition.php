@@ -29,8 +29,8 @@ foreach ($sections as $index => $section) {
 
     echo '
         <h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-        <div id=' . $index .'">
-            <p class="proposition-markdown break-all text-justify">' . $paragraph . '</p>
+        <div id=' . $index .'" class="break-all text-justify">
+            <p>' . $paragraph . '</p>
         </div>
     ';
 }

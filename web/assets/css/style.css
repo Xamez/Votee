@@ -1,8 +1,8 @@
 .proposition-markdown {
 	all: initial;
 	font-family: inherit;
-}
 
+}
 
 /* Permet d'avoir le footer toujours en bas même si la page a un contenu en hauteur trop petit */
 .everything {
