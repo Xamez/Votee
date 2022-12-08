@@ -3,6 +3,7 @@
 namespace App\Votee\Controller;
 
 use App\Votee\Lib\Notification;
+use App\Votee\Model\DataObject\Commentaire;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
@@ -300,10 +301,10 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedCommentaire(): void {
         $commentaire = (array) json_decode($_POST['commentaire']);
-        var_dump($commentaire);
-        if ((new CommentaireRepository())->modifier($commentaire['idQuestion'], $commentaire['numeroParagraphe'], 
-                                                     $commentaire['indexCharDebut'], $commentaire['indexCharFin'],
-                                                     $commentaire['texteCommentaire'])) {
+        $commentaireObject = new Commentaire($commentaire['idCommentaire'], $commentaire['numeroParagraphe'],
+                                             $commentaire['indexCharDebut'], $commentaire['indexCharFin'],
+                                             $commentaire['texteCommentaire']);
+        if ((new CommentaireRepository())->modifier($commentaireObject)) {
             (new Notification())->ajouter("success", "Le commentaire a été modifié.");                                        
         } else {
             (new Notification())->ajouter("warning", "Le commentaire n'a pas pu être modifié.");

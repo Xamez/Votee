@@ -73,18 +73,20 @@ window.onload = () => {
         const container = document.createElement('div');
         container.classList.add('flex', 'flex-row', 'justify-between', 'align-top');
         const p = document.createElement('p');
-        p.contentEditable = true;
+        p.contentEditable = 'true';
+        // TODO: Aucune erreur, la requête a bien un code de réponse de 200 mais le commentaire n'est pas édité.
+        //       Le console.log() envoie bien ce qu'il faut.
+        //       Impossible de debug côté PHP, aucun message de debug ne daigne s'afficher (ni echo, ni var_dump, ni rien).
         p.addEventListener('keyup', debounce( () => {
             commentary.texteCommentaire = p.innerText;
-            performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(commentary));
+            performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(commentary))
+                .then((res) => console.log(res));
         }, 750));
         p.innerText = textCommentaire;
         const closeButton = document.createElement('span');
         closeButton.classList.add('cursor-pointer', 'material-symbols-outlined', 'text-red-500', 'hover:text-red-600', 'ml-4');
         closeButton.innerText = 'close';
-        closeButton.addEventListener('click', () => {
-            tooltip.remove();
-        });
+        closeButton.addEventListener('click', () => tooltip.remove());
         container.appendChild(p);
         container.appendChild(closeButton);
         const deleteCommentary = document.createElement('button');
@@ -94,9 +96,7 @@ window.onload = () => {
         //       Le span.removeChild() est bien exécuté...
         deleteCommentary.addEventListener('click', () => {
             performRequest("deletedCommentaire", "commentaire=" + JSON.stringify(commentary))
-            .then( () => {
-                span.removeChild(tooltip);
-            });
+                .then(() => span.removeChild(tooltip));
         });
         tooltip.appendChild(container);
         tooltip.appendChild(deleteCommentary);
@@ -126,16 +126,14 @@ window.onload = () => {
         popup.style.display = "none";
         commentaryText.value = ""
         console.log(commentary);
-        performRequest("createdCommentaire", "commentaire=" + JSON.stringify(commentary)).then((res) => window.location.reload());
+        performRequest("createdCommentaire", "commentaire=" + JSON.stringify(commentary))
+            .then(() => window.location.reload());
     });
 
     commentaryButton.addEventListener('click', () => {
         pCommentaryButton.classList.toggle('line-through');
-        const tooltips = document.getElementsByClassName('tooltipEditable');
-        if (tooltips.length > 0)
-            // TODO: Pour une raison inconnu, il y'a toujours un qui n'est pas supprimé  
-            for (let i = 0; i < tooltips.length; i++)
-                tooltips[i].remove();
+        const tooltips = [...document.getElementsByClassName('tooltipEditable')];
+        tooltips.forEach(tooltip => tooltip.remove());
     });
 
     const performHidePopup = (e) => {
