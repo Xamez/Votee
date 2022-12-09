@@ -6,7 +6,7 @@ if($questions) {
         $questionIdURL = rawurlencode($question->getIdQuestion());
 
         echo '
-        <a href="./frontController.php?action=readQuestion&idQuestion=' . $questionIdURL . '">
+        <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $questionIdURL . '">
         <div class="flex justify-between items-center bg-light p-2 rounded">
             ' . $questionTitreHTML . '
             <div class="flex items-center gap-2">
@@ -19,4 +19,4 @@ if($questions) {
         </a>';
     }
 }
-echo '</div><a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=section">Créer un vote</a>';
+echo '</div><a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" href="./frontController.php?controller=question&action=section">Créer un vote</a>';

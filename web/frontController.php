@@ -13,16 +13,21 @@ $loader->addNamespace('App\Votee', __DIR__ . '/../src');
 // register the autoloader
 $loader->register();
 
+$controllerDefaut = 'question';
+$controller = $_GET['controller'] ?? $controllerDefaut;
+
 $action = $_GET['action'] ?? 'home';
 
+$controllerClassName = 'App\Votee\Controller\Controller' . ucfirst($controller);
 // On vérifie si l'action existe
 Session::getInstance();
 
-
-if (method_exists(ControllerQuestion::class, $action)) {
-    ControllerQuestion::$action();
+if (class_exists($controllerClassName)) {
+    if (in_array($action,get_class_methods($controllerClassName))){
+        $controllerClassName::$action();
+    } else {
+        ControllerQuestion::pageIntrouvable();
+    }
 } else {
     ControllerQuestion::pageIntrouvable();
 }
-
-?>

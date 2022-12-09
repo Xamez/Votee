@@ -9,6 +9,7 @@ class UtilisateurRepository extends AbstractRepository {
     protected function getNomsColonnes(): array {
         return array(
             'LOGIN',
+            'MOTDEPASSE',
             'NOM',
             'PRENOM',
         );
@@ -23,7 +24,7 @@ class UtilisateurRepository extends AbstractRepository {
     }
 
     function getProcedureInsert(): string {
-        return "";
+        return "AjouterUtilisateurs";
     }
 
     function getProcedureUpdate(): string {
@@ -35,6 +36,7 @@ class UtilisateurRepository extends AbstractRepository {
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
         return new Utilisateur(
             $utilisateurFormatTableau['LOGIN'],
+            $utilisateurFormatTableau['MOTDEPASSE'],
             $utilisateurFormatTableau['NOM'],
             $utilisateurFormatTableau['PRENOM'],
         );
@@ -43,7 +45,7 @@ class UtilisateurRepository extends AbstractRepository {
 
     public function selectCoAuteur($idProposition): array {
         $coAuteurs = [];
-        $sql = "SELECT u.login, u.nom, u.prenom FROM RedigerCA r
+        $sql = "SELECT u.* FROM RedigerCA r
                 JOIN Coauteurs c ON r.login = c.login
                 JOIN roles ro ON c.login = ro.login
                 JOIN Utilisateurs u ON ro.login = u.login
@@ -59,15 +61,15 @@ class UtilisateurRepository extends AbstractRepository {
     }
 
     public function selectResp($idProposition): ?Utilisateur {
-        $sql = "SELECT u.login,  u.nom, u.prenom FROM RedigerR r
+        $sql = "SELECT u.* FROM RedigerR r
                 JOIN responsables re ON r.login = re.login
                 JOIN roles ro ON re.login = ro.login
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idProposition" => $idProposition);
-        $pdoStatement->execute($values);
 
+        $pdoStatement->execute($values);
         $responsable = $pdoStatement->fetch();
         return $responsable ? $this->construire($responsable): null;
     }

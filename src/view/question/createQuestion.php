@@ -1,4 +1,4 @@
-<form method="post" class="flex flex-col gap-7" action="frontController.php?&action=createdQuestion">
+<form method="post" class="flex flex-col gap-7" action="frontController.php?controller=question&action=createdQuestion">
     <div class="flex flex-col gap-7 bg-light p-10 rounded-3xl">
         <!--        <p>-->
         <!--            <label for="visibilite_id">visibilite</label> :-->
@@ -17,6 +17,9 @@
         <h1 class="text-2xl font-bold text-center text-dark">Organisation</h1>
         <div>
             <?php
+
+            use App\Votee\Lib\ConnexionUtilisateur;
+
             for ($i = 1; $i <= $nbSections; $i++) {
                 echo '<div class="flex flex-col">
                     <label for="systeme_vote_id' . $i . '">Section ' . $i . ' :</label>
@@ -51,24 +54,20 @@
             </div>
         </div>
         <h1 class="text-2xl font-bold text-center text-dark"> Type de Vote<h1/>
-            <div>
-                <div class="flex gap-10 items-end">
-                    <p class="w-36 font-semibold">Type de Vote :</p>
+        <div>
+            <div class="flex gap-10 items-end">
+                <p class="w-36 font-semibold">Type de Vote :</p>
 
-                    <select name="typeVote">
-                        <option value="VoteMajoritaire">Jugement Majoritaire</option>
-                        <option value="VoteOuiNon">Vote "Oui" "Non"</option>
-                    </select>
-                </div>
+                <select name="typeVote">
+                    <option value="VoteMajoritaire">Jugement Majoritaire</option>
+                    <option value="VoteOuiNon">Vote "Oui" "Non"</option>
+                </select>
             </div>
-            <h1 class="text-2xl font-bold text-center text-dark">Organisateur</h1>
-            <div>
-                <label for="login_id">Login</label> :
-                <input type="text" placeholder="tjean" name="login" id="login_id" required/>
-            </div>
+        </div>
     </div>
-    <input type="number" hidden value=<?=$nbSections?> name="nbSections" id="nb_sections" required/>
-    <input type="text" hidden value="visible" placeholder="visible" name="visibilite" id="visibilite_id" required/>
+    <input type="text" hidden name="organisateur" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
+    <input type="number" hidden value=<?=$nbSections?> name="nbSections" required/>
+    <input type="text" hidden value="visible" placeholder="visible" name="visibilite" required/>
     <div class="flex justify-center">
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
     </div>

@@ -24,23 +24,43 @@
             <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
             <a href=""><span class="link-underline link-underline-color">Demande</span></a>
         </div>
-        <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
-        <div class="flex md:hidden gap-4 items-center">
-            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
-            <div>
-                <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center text-dark"></i>
-                <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center text-dark"></i>
-            </div>
-            <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">
-                <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-                <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
-                <a href=""><span class="link-underline link-underline-color">Demande</span></a>
-            </div>
-        </div>
+        <?php
+        use App\Votee\Lib\ConnexionUtilisateur;
+        if (ConnexionUtilisateur::estConnecte()) {
+            $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+            if ($utilisateur != null) {
+                echo '<a>' .
+                    htmlspecialchars($utilisateur->getPrenom()) . ' ' . htmlspecialchars($utilisateur->getNom()) . '
+                      </a>
+                      <a href="frontController.php?controller=utilisateur&action=deconnecter">
+                        <span class="material-symbols-outlined">logout</span>
+                      </a>';
+            } else {
+              echo 'Erreur';
+            }
+        } else {
+            echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
+                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
+
+        }
+        ?>
+<!--        <div class="flex md:hidden gap-4 items-center">-->
+<!--            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" -->
+<!--               href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>-->
+<!--            <div>-->
+<!--                <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center text-dark"></i>-->
+<!--                <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center text-dark"></i>-->
+<!--            </div>-->
+<!--            <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">-->
+<!--                <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>-->
+<!--                <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>-->
+<!--                <a href=""><span class="link-underline link-underline-color">Demande</span></a>-->
+<!--            </div>-->
+<!--        </div>-->
     </nav>
 </header>
 <?php
-    use App\Votee\Lib\Notification;
+use App\Votee\Lib\Notification;
     foreach (['success', 'warning', 'danger'] as $type) {
         if (Notification::contientMessage($type)) {
             foreach (Notification::lireMessages($type) as $key => $message) {

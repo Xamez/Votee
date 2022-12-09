@@ -15,6 +15,7 @@ abstract class AbstractRepository {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
