@@ -77,8 +77,8 @@ window.onload = () => {
         p.addEventListener('keyup', debounce( () => {
             const data = {'idCommentaire': span.id, 'texteCommentaire': p.innerText};
             performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(data))
-                /*.then(() => window.location.reload());*/
-        }, 750));
+                .then(() => window.location.reload());
+        }, 1000));
         p.innerText = textCommentaire;
 
         const closeButton = document.createElement('span');
@@ -144,22 +144,18 @@ window.onload = () => {
     document.addEventListener('mousemove', (e) => { performHidePopup(e); moved = true; });
 
     document.addEventListener('mouseup', (e) => {
-        const selectedText = window.getSelection();
         const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
         let selectedHtml = "";
         if (selection.rangeCount) {
             let container = document.createElement("div");
-            for (let i = 0, len = selection.rangeCount; i < len; ++i) {
-                for (let j = 0; j < selection.getRangeAt(i).cloneContents().childNodes.length; j++) {
-                    let node = selection.getRangeAt(i).cloneContents().childNodes[j];
-                    console.log(node);
-                    console.log(node.nodeType);
-                    //if (node.classList.contains("commentary")) return;
-                    container.appendChild(selection.getRangeAt(i).cloneContents());
-                }
+            for (let j = 0; j < selection.getRangeAt(0).cloneContents().childNodes.length; j++) {
+                let node = selection.getRangeAt(0).cloneContents().childNodes[j];
+                container.appendChild(node);
             }
             selectedHtml = container.innerHTML;
         }
+        const selectedText = window.getSelection();
+        console.log(selectedHtml);
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
         if (pCommentaryButton.classList.contains('line-through')) return;
@@ -175,7 +171,7 @@ window.onload = () => {
         commentary.numeroParagraphe = numParagraph;
         // TODO: Problème en raison des balises compté dans outerHTML (pour avoir le bon index et selectedText qui prends pas en compte)
         commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
-        commentary.indexCharFin = commentary.indexCharDebut + selectedText.length;
+        commentary.indexCharFin = commentary.indexCharDebut + selectedText.toString().length;
 
         /*commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
         let textBeforeSelection = selectedParagraph.outerHTML.substring(0, commentary.indexCharDebut);

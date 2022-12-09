@@ -246,7 +246,7 @@ class ControllerQuestion extends AbstractController {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
-            $commentaires = (new CommentaireRepository())->getCommentaireById($_GET['idProposition']);
+            $commentaires = (new CommentaireRepository())->getCommentaireByIdProposition($_GET['idProposition']);
             self::afficheVue('view.php',
                 [
                     "question" => $question,
@@ -302,12 +302,11 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedCommentaire(): void {
         $commentaire = (array) json_decode($_POST['commentaire']);
-        var_dump($commentaire);
         $previousCommentaire = (new CommentaireRepository())->getCommentaireById($commentaire['idCommentaire']);
-        var_dump($previousCommentaire);
         if ($previousCommentaire != null) {
             if ($previousCommentaire->getTexteCommentaire() != $commentaire['texteCommentaire']) {
                 $previousCommentaire->setTexteCommentaire($commentaire['texteCommentaire']);
+                (new CommentaireRepository())->modifier($previousCommentaire);
                 (new Notification())->ajouter("success", "Le commentaire a été modifié.");
             }
         } else {
