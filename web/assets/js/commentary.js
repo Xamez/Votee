@@ -1,5 +1,3 @@
-let popup;
-
 const commentary = {
     idQuestion: 0,
     idProposition: 0,
@@ -46,7 +44,7 @@ window.onload = () => {
     const commentaryText = document.getElementById('text-commentary');
     const commentaries = document.getElementsByClassName('commentary');
     
-    popup = document.getElementById('popup');
+    const popup = document.getElementById('popup');
 
     let selectedText = "";
 
@@ -70,34 +68,35 @@ window.onload = () => {
         tooltip.classList.add('tooltipEditable', 'flex', 'flex-col', 'justify-center', 'cursor-default', 'z-1', 'absolute', 'bg-main', 'text-white', 'rounded', 'p-2', 'text-sm', 'shadow-lg', 'gap-3');
         tooltip.style.top = span.offsetTop + span.offsetHeight + 'px';
         tooltip.style.left = span.offsetLeft + 'px';
+
         const container = document.createElement('div');
         container.classList.add('flex', 'flex-row', 'justify-between', 'align-top');
+
         const p = document.createElement('p');
         p.contentEditable = 'true';
-        // TODO: Aucune erreur, la requête a bien un code de réponse de 200 mais le commentaire n'est pas édité.
-        //       Le console.log() envoie bien ce qu'il faut.
-        //       Impossible de debug côté PHP, aucun message de debug ne daigne s'afficher (ni echo, ni var_dump, ni rien).
         p.addEventListener('keyup', debounce( () => {
-            commentary.texteCommentaire = p.innerText;
-            performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(commentary))
-                .then((res) => console.log(res));
+            const data = {'idCommentaire': span.id, 'texteCommentaire': p.innerText};
+            performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(data))
+                /*.then(() => window.location.reload());*/
         }, 750));
         p.innerText = textCommentaire;
+
         const closeButton = document.createElement('span');
         closeButton.classList.add('cursor-pointer', 'material-symbols-outlined', 'text-red-500', 'hover:text-red-600', 'ml-4');
         closeButton.innerText = 'close';
         closeButton.addEventListener('click', () => tooltip.remove());
         container.appendChild(p);
         container.appendChild(closeButton);
+
         const deleteCommentary = document.createElement('button');
         deleteCommentary.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white', 'rounded', 'p-1');
         deleteCommentary.innerText = 'Supprimer';
-        // TODO: Aucune erreur, la requête a bien un code de réponse de 200 mais le commentaire n'est pas supprimé.
-        //       Le span.removeChild() est bien exécuté...
         deleteCommentary.addEventListener('click', () => {
-            performRequest("deletedCommentaire", "commentaire=" + JSON.stringify(commentary))
-                .then(() => span.removeChild(tooltip));
+            const data = {'idCommentaire': span.id};
+            performRequest("deletedCommentaire", "commentaire=" + JSON.stringify(data))
+                .then(() => window.location.reload());
         });
+
         tooltip.appendChild(container);
         tooltip.appendChild(deleteCommentary);
         span.appendChild(tooltip);
@@ -125,7 +124,6 @@ window.onload = () => {
         commentary.texteCommentaire = commentaryText.value;
         popup.style.display = "none";
         commentaryText.value = ""
-        console.log(commentary);
         performRequest("createdCommentaire", "commentaire=" + JSON.stringify(commentary))
             .then(() => window.location.reload());
     });
@@ -146,8 +144,7 @@ window.onload = () => {
     document.addEventListener('mousemove', (e) => { performHidePopup(e); moved = true; });
 
     document.addEventListener('mouseup', (e) => {
-        const selection = document.getSelection();
-        selectedText = selection.toString();
+
         /*const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
         let selectedHtml = "";
         if (selection.rangeCount) {
@@ -197,8 +194,4 @@ window.onload = () => {
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
     });
 
-}
-
-window.onbeforeunload = () => {
-    popup.style.display = "none";
 }

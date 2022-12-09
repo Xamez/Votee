@@ -86,11 +86,8 @@ class CommentaireRepository extends AbstractRepository {
         );
         try {
             $pdoStatement->execute($values);
-            $result = $pdoStatement->fetchAll();
-            $commentaires = array();
-            foreach ($result as $row)
-                $commentaires[] = $this->construire($row);
-            return $commentaires;
+            $result = $pdoStatement->fetch();
+            return $this->construire($result);
         } catch (PDOException) {
             return null;
         }
