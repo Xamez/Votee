@@ -42,6 +42,23 @@ class UtilisateurRepository extends AbstractRepository {
         );
     }
 
+    public function getRoleQuestion($login, $idQuestion): ?string {
+        $sql = "SELECT GetRoleQuestion(:loginTag, :idQuestionTag) FROM DUAL";
+        $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute($values);
+        $role = $pdoStatement->fetch();
+        return $role[0];
+    }
+
+    public function getRoleProposition($login, $idProposition): ?string {
+        $sql = "SELECT GetRoleProposition(:loginTag, :idPropositionTag) FROM DUAL";
+        $values = array("loginTag" => $login, "idPropositionTag" => $idProposition);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute($values);
+        $role = $pdoStatement->fetch();
+        return $role[0];
+    }
 
     public function selectCoAuteur($idProposition): array {
         $coAuteurs = [];

@@ -1,4 +1,7 @@
 <?php
+
+use App\Votee\Lib\ConnexionUtilisateur;
+
 require "propositionHeader.php";
 echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
@@ -16,26 +19,31 @@ echo '</div><div class="flex gap-2 justify-between">
             </div
         </a>';
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
-    echo '
+    if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
+        || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
+        echo '
             <a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">edit</span>
                     <p>Editer</p>
                 </div
-            </a>
-            <a href="./frontController.php?controller=question&action=selectFusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+            </a>';
+        if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant') {
+            echo ' <a href="./frontController.php?controller=proposition&action=selectFusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">upload</span>
                     <p>Fusionner</p>
                 </div
-            </a>
-            <a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+            </a>';
+        }
+        echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
-                    <p>Supprimer</p>
                     <span class="material-symbols-outlined">delete</span>
+                    <p>Supprimer</p>
                 </div>
             </a>
-       </div>';
+            </div>';
+    }
 }
 echo '</div>';
 if ($question->getPeriodeActuelle() == 'Période de vote') {

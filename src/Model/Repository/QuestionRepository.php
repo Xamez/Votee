@@ -67,7 +67,7 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
-    function ajouterQuestion(Question $question):int {
+    public function ajouterQuestion(Question $question):int {
         $this->sauvegarder($question);
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();
