@@ -43,7 +43,7 @@ foreach ($propositions as $key=>$proposition) {
           </a>';
 }
 echo '<div class="flex gap-2 justify-between">';
-if (ConnexionUtilisateur::estUtilisateur($organisateur->getLogin())) {
+if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
     echo '<div class="flex justify-start">
          <a href="./frontController.php?controller=question&action=updateQuestion&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
             <div class="flex gap-2">

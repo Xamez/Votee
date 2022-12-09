@@ -41,12 +41,17 @@ class ConnexionUtilisateur {
 //        return false;
 //    }
 
-    public static function getRole($idQuestion): ?string {
+    public static function getRoleQuestion($idQuestion): ?string {
         if (self::estConnecte()) {
-            $utilisateur = (new UtilisateurRepository())->select(Session::getInstance()->lire(static::$cleConnexion));
-
+            return (new UtilisateurRepository())->getRoleQuestion(Session::getInstance()->lire(static::$cleConnexion),$idQuestion);
         }
         return null;
     }
 
+    public static function getRoleProposition($idProposition): ?string {
+        if (self::estConnecte()) {
+            return (new UtilisateurRepository())->getRoleProposition(Session::getInstance()->lire(static::$cleConnexion),$idProposition);
+        }
+        return null;
+    }
 }
