@@ -144,6 +144,7 @@ window.onload = () => {
     document.addEventListener('mousemove', (e) => { performHidePopup(e); moved = true; });
 
     document.addEventListener('mouseup', (e) => {
+        // TODO: revoir ça
         const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
         let selectedHtml = "";
         if (selection.rangeCount) {
@@ -154,8 +155,8 @@ window.onload = () => {
             }
             selectedHtml = container.innerHTML;
         }
+        // FIN TODO
         const selectedText = window.getSelection();
-        console.log(selectedHtml);
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
         if (pCommentaryButton.classList.contains('line-through')) return;
@@ -172,19 +173,7 @@ window.onload = () => {
         // TODO: Problème en raison des balises compté dans outerHTML (pour avoir le bon index et selectedText qui prends pas en compte)
         commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
         commentary.indexCharFin = commentary.indexCharDebut + selectedText.toString().length;
-
-        /*commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
-        let textBeforeSelection = selectedParagraph.outerHTML.substring(0, commentary.indexCharDebut);
-        // if selected text includes <span id="x" class="commentary cursor-pointer bg-light" data-id="xxxx"> remove it from indexCharDebut and indexCharFin
-        let indexSpan = textBeforeSelection.indexOf('<span id="');
-        while (indexSpan !== -1) {
-            let indexSpanEnd = textBeforeSelection.indexOf('</span>');
-            textBeforeSelection = textBeforeSelection.substring(0, indexSpan) + textBeforeSelection.substring(indexSpanEnd + 7);
-            indexSpan = textBeforeSelection.indexOf('<span id="');
-            // todo finir
-        }
-        commentary.indexCharFin = commentary.indexCharDebut + selectedHtml.length;
-        console.log(commentary.indexCharDebut + " " + commentary.indexCharFin);*/
+        // FIN TODO
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
