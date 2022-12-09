@@ -20,7 +20,7 @@ foreach ($coAuteurs as $coAuteur) {
 }
 echo '</div>'
 ?>
-<form method="post" action="frontController.php?controller=question&action=createdCoAuteur">
+<form method="post" action="frontController.php?controller=proposition&action=createdCoAuteur">
     <input placeholder="Login" class="border-2" type="text" name="login" id="coAuteur_id">
     <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
     <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">

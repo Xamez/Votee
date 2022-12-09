@@ -36,7 +36,9 @@ class QuestionRepository extends AbstractRepository {
         return "ModifierQuestions";
     }
 
-    function getProcedureDelete(): string { return ""; }
+    function getProcedureDelete(): string {
+        return "SupprimerQuestions";
+    }
 
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
@@ -71,5 +73,17 @@ class QuestionRepository extends AbstractRepository {
         $pdoLastInsert->execute();
         $lastInserId = $pdoLastInsert->fetch();
         return intval($lastInserId[0]);
+    }
+
+    public function ajouterOrganisateur(string $login):bool {
+        $sql = "CALL AjouterOrganisateurs(:loginTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array(":loginTag"=>$login);
+        try {
+            $pdoStatement->execute($value);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 }

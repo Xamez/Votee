@@ -40,4 +40,13 @@ class ConnexionUtilisateur {
 //        }
 //        return false;
 //    }
+
+    public static function getRole($idQuestion): ?string {
+        if (self::estConnecte()) {
+            $utilisateur = (new UtilisateurRepository())->select(Session::getInstance()->lire(static::$cleConnexion));
+
+        }
+        return null;
+    }
+
 }
