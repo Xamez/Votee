@@ -144,8 +144,8 @@ window.onload = () => {
     document.addEventListener('mousemove', (e) => { performHidePopup(e); moved = true; });
 
     document.addEventListener('mouseup', (e) => {
-
-        /*const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
+        const selectedText = window.getSelection();
+        const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
         let selectedHtml = "";
         if (selection.rangeCount) {
             let container = document.createElement("div");
@@ -159,7 +159,7 @@ window.onload = () => {
                 }
             }
             selectedHtml = container.innerHTML;
-        }*/
+        }
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
         if (pCommentaryButton.classList.contains('line-through')) return;
@@ -174,7 +174,7 @@ window.onload = () => {
         performHidePopup(e);
         commentary.numeroParagraphe = numParagraph;
         // TODO: Problème en raison des balises compté dans outerHTML (pour avoir le bon index et selectedText qui prends pas en compte)
-        commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedText);
+        commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
         commentary.indexCharFin = commentary.indexCharDebut + selectedText.length;
 
         /*commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);

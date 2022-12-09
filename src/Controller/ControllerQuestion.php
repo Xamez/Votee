@@ -218,7 +218,8 @@ class ControllerQuestion extends AbstractController {
     public static function updatedProposition(): void {
         $isOk = true;
         for ($i = 0; $i < $_GET['nbSections'] && $isOk; $i++) {
-            $textsection = nl2br(htmlspecialchars($_GET['section'.$i]));
+            //$textsection = nl2br(htmlspecialchars($_GET['section'.$i]));
+            $textsection = htmlspecialchars($_GET['section'.$i]);
             $texte = new Texte($_GET['idQuestion'], $_GET['idSection' . $i], $_GET['idProposition'], $textsection,NULL);
             if ($_GET['old-section'.$i] != $_GET['section'.$i]) {
                 $isOk = (new TexteRepository())->modifier($texte);
