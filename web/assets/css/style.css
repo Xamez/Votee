@@ -1,7 +1,11 @@
 .proposition-markdown {
 	all: initial;
 	font-family: inherit;
+}
 
+.proposition-markdown > * {
+	all: revert;
+	margin: 0;
 }
 
 /* Permet d'avoir le footer toujours en bas même si la page a un contenu en hauteur trop petit */

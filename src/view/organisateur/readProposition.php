@@ -20,7 +20,7 @@ foreach ($sections as $index => $section) {
         foreach ($commentaires as $commentaire) {
             if ($commentaire->getNumeroParagraphe() === $index)
                 if ($commentaire->getIndexCharDebut() === $key)
-                    $paragraph .= '<span class="commentary cursor-pointer bg-light" data-id="' . $commentaire->getTexteCommentaire() . '">';
+                    $paragraph .= '<span id=' . $commentaire->getIdCommentaire() . ' class="commentary cursor-pointer bg-light" data-id="' . $commentaire->getTexteCommentaire() . '">';
                 else if ($commentaire->getIndexCharFin() == $key)
                     $paragraph .= '</span>';
         }
@@ -29,7 +29,7 @@ foreach ($sections as $index => $section) {
 
     echo '
         <h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-        <div id=' . $index .'" class="break-all text-justify">
+        <div id=' . $index .'" class="proposition-markdown break-all text-justify">
             <p>' . $paragraph . '</p>
         </div>
     ';
