@@ -1,4 +1,4 @@
-<form method="get" class="flex flex-col gap-7" action="frontController.php?action=updatedQuestion">
+<form method="get" class="flex flex-col gap-7" action="frontController.php?controller=question&action=updatedQuestion">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
 <!--TODO-->
         <?php

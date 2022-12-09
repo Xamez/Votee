@@ -1,4 +1,7 @@
 <?php
+
+use App\Votee\Lib\ConnexionUtilisateur;
+
 echo '<div class="flex items-center gap-2">
         <p class="text-main font-semibold">Organisateur : 
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
@@ -23,7 +26,7 @@ echo '</div><h1 class="text-2xl font-bold text-center text-dark">Calendrier</h1>
 
 echo '<h1 class="text-2xl font-bold text-center text-dark">Proposition</h1>';
 foreach ($propositions as $key=>$proposition) {
-    echo '<a href="./frontController.php?action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
+    echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
                 <div class="flex items-center gap-2">
                     <p class="font-bold text-dark">Proposition de : </p>
@@ -39,19 +42,19 @@ foreach ($propositions as $key=>$proposition) {
           </div>
           </a>';
 }
-
-echo '
-    <div class="flex gap-2 justify-between">
-      <div class="flex justify-start">
-         <a href="./frontController.php?action=updateQuestion&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+echo '<div class="flex gap-2 justify-between">';
+if (ConnexionUtilisateur::estUtilisateur($organisateur->getLogin())) {
+    echo '<div class="flex justify-start">
+         <a href="./frontController.php?controller=proposition&action=updateQuestion&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
             <div class="flex gap-2">
                 <p>Editer</p>
                 <span class="material-symbols-outlined">edit</span>
             </div>
          </a>
-      </div>
-      <div class="flex justify-end">
-         <a href="./frontController.php?action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+      </div>';
+}
+echo '<div class="flex justify-end">
+         <a href="./frontController.php?controller=proposition&action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
             <div class="flex gap-2">
                 <p>Demandes</p>
                 <span class="material-symbols-outlined">file_copy</span>
