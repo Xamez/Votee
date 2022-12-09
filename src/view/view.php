@@ -24,6 +24,7 @@
             <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
             <a href=""><span class="link-underline link-underline-color">Demande</span></a>
         </div>
+        <div class="flex gap-4 items-center">
         <?php
         use App\Votee\Lib\ConnexionUtilisateur;
         if (ConnexionUtilisateur::estConnecte()) {
@@ -32,7 +33,7 @@
                 echo '<a>' .
                     htmlspecialchars($utilisateur->getPrenom()) . ' ' . htmlspecialchars($utilisateur->getNom()) . '
                       </a>
-                      <a href="frontController.php?controller=utilisateur&action=deconnecter">
+                      <a class="flex items-center" href="frontController.php?controller=utilisateur&action=deconnecter">
                         <span class="material-symbols-outlined">logout</span>
                       </a>';
             } else {
@@ -57,6 +58,7 @@
 <!--                <a href=""><span class="link-underline link-underline-color">Demande</span></a>-->
 <!--            </div>-->
 <!--        </div>-->
+        </div>
     </nav>
 </header>
 <?php

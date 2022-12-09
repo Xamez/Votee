@@ -2,6 +2,7 @@
 
 namespace App\Votee\Controller;
 
+use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
@@ -119,30 +120,43 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
             $_POST['organisateur'],
         );
-        var_dump($question);
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-
+        $isOk &= (new QuestionRepository())->ajouterOrganisateur($_POST['organisateur']);
         if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
-        else (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-        self::redirection("?action=readAllQuestion");
+        else {
+            (new QuestionRepository())->supprimer($idQuestion);
+            (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
+            self::redirection("?action=readAllQuestion");
+        }
     }
 
     public static function updateQuestion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        if (!ConnexionUtilisateur::estUtilisateur($question->getLogin())) {
+            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         self::afficheVue('view.php',
-            ["question" => $question,
+            [
+                "question" => $question,
                 "pagetitle" => "Question",
                 "cheminVueBody" => "question/updateQuestion.php",
                 "title" => $question->getTitre(),
-                "subtitle" => $question->getDescription()]);
+                "subtitle" => $question->getDescription()
+            ]);
     }
 
     public static function updatedQuestion(): void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        if (!ConnexionUtilisateur::estUtilisateur($question->getLogin())) {
+            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $isOk = (new QuestionRepository())->modifierQuestion($_GET['idQuestion'], $_GET['description'], 'visible');
         if ($isOk) (new Notification())->ajouter("success", "La question a été modifiée.");
         else (new Notification())->ajouter("warning", "La modification de la question a échoué.");
@@ -206,15 +220,6 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("success", "Le co-auteur a été supprimé.");
         } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être supprimé.");
         self::redirection("?action=updateProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
-    }
-
-    public static function createdCoAuteur():void {
-        $idProposition = $_POST['idProposition'];
-        $login = $_POST['login'];
-        if ((new PropositionRepository())->ajouterCoAuteur( $login, $idProposition)) {
-            (new Notification())->ajouter("success", "Le co-auteur a été ajouté.");
-        } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être ajouté.");
-        self::redirection("?action=updateProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
     }
 
 

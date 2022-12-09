@@ -163,4 +163,13 @@ class ControllerProposition extends AbstractController{
     }
 
 
+    public static function createdCoAuteur():void {
+        $idProposition = $_POST['idProposition'];
+        $login = $_POST['login'];
+        if ((new PropositionRepository())->ajouterCoAuteur( $login, $idProposition)) {
+            (new Notification())->ajouter("success", "Le co-auteur a été ajouté.");
+        } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être ajouté.");
+        self::redirection("?controller=proposition&action=updateProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+    }
+
 }

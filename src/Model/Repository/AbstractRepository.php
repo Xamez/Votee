@@ -11,11 +11,14 @@ abstract class AbstractRepository {
         $sql = "CALL " . $this->getProcedureInsert(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        var_dump("<br><br>");
+        var_dump($values);
+        var_dump("<br>REQUETE : <br>");
+        var_dump($sql);
         try {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }

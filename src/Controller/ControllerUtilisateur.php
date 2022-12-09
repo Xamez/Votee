@@ -21,11 +21,11 @@ class ControllerUtilisateur extends AbstractController {
                 self::redirection("?controller=question&action=readAllQuestion");
             } else {
                 (new Notification())->ajouter("warning","Mot de passe erroné");
-                self::redirection("?controller=utilisateur&action=formulaireConnexion");
+                self::redirection("?controller=utilisateur&action=connexion");
             }
         } else {
             (new Notification())->ajouter("danger","Utilisateur inconnu");
-            //self::redirection("?controller=utilisateur&action=connexion");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
     }
 
