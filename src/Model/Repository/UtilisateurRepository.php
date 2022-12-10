@@ -90,5 +90,4 @@ class UtilisateurRepository extends AbstractRepository {
         $responsable = $pdoStatement->fetch();
         return $responsable ? $this->construire($responsable): null;
     }
-
 }
