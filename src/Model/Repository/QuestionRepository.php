@@ -110,9 +110,13 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    //TODO Votant
     public function selectQuestionVota(string $login) {
-        return null;
+        $sql = "SELECT DISTINCT q.* FROM QUESTIONS q
+            JOIN Recevoir r ON q.idQuestion = r.idQuestion
+            JOIN Propositions p ON r.idProposition = p.idProposition
+            JOIN Voter v ON p.idProposition = v.idProposition
+            WHERE v.login = :paramTag";
+        return self::selectAllCustom($sql, $login);
     }
 
     public function selectAllCustom($sql, $param): array {
