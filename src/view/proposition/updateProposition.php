@@ -12,21 +12,21 @@ foreach ($coAuteurs as $coAuteur) {
     echo '<div class="flex gap-1 items-center text-main bg-white shadow-md rounded-2xl p-2">
             <span class="material-symbols-outlined">account_circle</span>'
         . htmlspecialchars($coAuteur->getNom()) . ' ' . htmlspecialchars($coAuteur->getPrenom()) .
-        '<a class="flex" href="./frontController.php?action=deletedCoAuteur&idQuestion='. rawurlencode($question->getIdQuestion())
-        . '&idProposition=' . rawurlencode($idProposition) . '&login='. $coAuteur->getLogin() . '">
+        '<a class="flex" href="./frontController.php?controller=question&action=deletedCoAuteur&idQuestion='. rawurlencode($question->getIdQuestion())
+        . '&idProposition=' . rawurlencode($idProposition) . '&utilisateur='. $coAuteur->getLogin() . '">
                 <span class="text-red-600 material-symbols-outlined">delete</span>
             </a>
          </div>';
 }
 echo '</div>'
 ?>
-<form method="post" action="frontController.php?action=createdCoAuteur">
+<form method="post" action="frontController.php?controller=proposition&action=createdCoAuteur">
     <input placeholder="Login" class="border-2" type="text" name="login" id="coAuteur_id">
     <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
     <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">
     <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Ajouter" />
 </form>
-<form method="get" class="flex flex-col gap-7" action="frontController.php?action=updatedProposition">
+<form method="get" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {
