@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-5 items-center pt-6">
-    <form class="flex flex-col gap-10 items-center" method="post" action="">
+    <form class="flex flex-col gap-10 items-center" method="post" action="frontController.php?controller=utilisateur&action=inscrit">
         <div class="flex flex-col gap-2">
             <div>
                 <input class="w-80 border-2" type="text" placeholder="Identifiant" name="login" required/>
@@ -12,6 +12,9 @@
             </div>
             <div>
                 <input class="w-80 border-2" type="password" placeholder="Mot de passe" name="password" required/>
+            </div>
+            <div>
+                <input class="w-80 border-2" type="password" placeholder="Verification du mot de passe" name="passwordVerif" required/>
             </div>
         </div>
         <div>

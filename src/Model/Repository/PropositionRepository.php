@@ -72,10 +72,10 @@ class PropositionRepository extends AbstractRepository {
     }
 
     public function ajouterCoAuteur(string $login, int $idProposition):bool {
-        $sql = "CALL AjouterRedigerCA(:login, :idProposition)";
+        $sql = "CALL AjouterRedigerCA(:utilisateur, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
-            $pdoStatement->execute(array(":login"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute(array(":utilisateur"=>$login, "idProposition"=>$idProposition));
             return true;
         } catch (PDOException) {
             return false;
@@ -83,10 +83,10 @@ class PropositionRepository extends AbstractRepository {
     }
 
     public function supprimerCoAuteur(string $login, int $idProposition):bool {
-        $sql = "CALL SupprimerRedigerCA(:login, :idProposition)";
+        $sql = "CALL SupprimerRedigerCA(:utilisateur, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
-            $pdoStatement->execute(array(":login"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute(array(":utilisateur"=>$login, "idProposition"=>$idProposition));
             return true;
         } catch (PDOException) {
             return false;
