@@ -49,18 +49,22 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readAllQuestion(): void {
-        $questions = (new QuestionRepository())->selectAll();
-        if (isset($questions)) {
-            self::afficheVue('view.php',
-                [
-                    "questions" => $questions,
-                    "pagetitle" => "Liste des questions",
-                    "cheminVueBody" => "question/listQuestion.php",
-                    "title" => "Liste des votes",
-                ]);
-        } else {
-            self::error("Les questions n'ont pas été récupérées.");
-        }
+        // TODO Erreur si pas de questions
+        $login = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        $questionsOrga = (new QuestionRepository())->selectQuestionOrga($login);
+        $questionsRepre = (new QuestionRepository())->selectQuestionRepre($login);
+        $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
+        $questionsVota = (new QuestionRepository())->selectQuestionVota($login);
+        self::afficheVue('view.php',
+            [
+                "questionsOrga" => $questionsOrga,
+                "questionsRepre" => $questionsRepre,
+                "questionsCoau" => $questionsCoau,
+                "questionsVota" => $questionsVota,
+                "pagetitle" => "Liste des questions",
+                "cheminVueBody" => "question/listQuestion.php",
+                "title" => "Liste des votes",
+            ]);
     }
 
     public static function readQuestion(): void {

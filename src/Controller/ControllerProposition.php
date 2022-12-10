@@ -179,7 +179,7 @@ class ControllerProposition extends AbstractController{
         if ((new PropositionRepository())->supprimer($idProposition)) {
             (new Notification())->ajouter("success", "La proposition a été supprimée.");
         } else (new Notification())->ajouter("warning", "La proposition n'a pas pu être supprimée.");
-        self::redirection("?controller=proposition&action=readQuestion&idQuestion=" . $_GET['idQuestion']);
+        self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_GET['idQuestion']);
     }
 
 
