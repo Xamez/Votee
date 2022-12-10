@@ -123,6 +123,10 @@ class ControllerProposition extends AbstractController{
     }
 
     public static function readProposition(): void {
+        if (!ConnexionUtilisateur::estConnecte()) {
+            (new Notification())->ajouter("danger","Vous devez vous connecter !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         foreach ($textes as $texte) {

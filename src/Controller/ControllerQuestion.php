@@ -49,8 +49,12 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readAllQuestion(): void {
-        // TODO Erreur si pas de questions
-        $login = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        if ($utilisateur == null) {
+            Notification::ajouter("danger", "Vous devez être connecté pour accéder à cette page.");
+            self::redirection("?action=home");
+        }
+        $login = $utilisateur->getLogin();
         $questionsOrga = (new QuestionRepository())->selectQuestionOrga($login);
         $questionsRepre = (new QuestionRepository())->selectQuestionRepre($login);
         $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
@@ -68,6 +72,10 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readQuestion(): void {
+        if (!ConnexionUtilisateur::estConnecte()) {
+            (new Notification())->ajouter("danger","Vous devez vous connecter !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
