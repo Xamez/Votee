@@ -142,13 +142,13 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-        $isOk &= (new QuestionRepository())->ajouterOrganisateur($_POST['organisateur']);
         if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
         else {
             (new QuestionRepository())->supprimer($idQuestion);
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
             self::redirection("?action=readAllQuestion");
         }
+        self::redirection("?action=readAllQuestion");
     }
 
     public static function updateQuestion(): void {

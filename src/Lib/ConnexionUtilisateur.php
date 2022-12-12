@@ -33,6 +33,14 @@ class ConnexionUtilisateur {
         return self::estConnecte() && $utilisateur == Session::getInstance()->lire(static::$cleConnexion);
     }
 
+    public static function creerQuestion(): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            return $utilisateur->getNbQuestRestant() > 0;
+        }
+        return false;
+    }
+
     public static function estAdministrateur() : bool {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->selectAdministrateur(Session::getInstance()->lire(static::$cleConnexion));
