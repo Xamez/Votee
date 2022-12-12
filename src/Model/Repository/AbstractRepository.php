@@ -7,7 +7,7 @@ use PDOException;
 
 abstract class AbstractRepository {
 
-    public function sauvegarder(AbstractDataObject $object): bool {
+    public function sauvegarder(AbstractDataObject $object) : bool {
         $sql = "CALL " . $this->getProcedureInsert(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -19,7 +19,7 @@ abstract class AbstractRepository {
         }
     }
 
-    public function modifier(AbstractDataObject $object): bool {
+    public function modifier(AbstractDataObject $object) : bool {
         $sql = "CALL " . $this->getProcedureUpdate(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -31,7 +31,7 @@ abstract class AbstractRepository {
         }
     }
 
-    public function supprimer($valeurClePrimaire): bool {
+    public function supprimer($valeurClePrimaire) : bool {
         $sql = "CALL " . $this->getProcedureDelete(). "(:valueTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
@@ -56,7 +56,7 @@ abstract class AbstractRepository {
         return $object;
     }
 
-    public function selectAllByKey($valeurClePrimaire): array {
+    public function selectAllByKey($valeurClePrimaire) : array {
         $object = [];
         $sql = "SELECT * FROM {$this->getNomTable()}  WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -68,7 +68,7 @@ abstract class AbstractRepository {
         return $object;
     }
 
-    public function selectAllByMultiKey(array $valeurAttributs): array {
+    public function selectAllByMultiKey(array $valeurAttributs) : array {
         $object = [];
         $ligne = "";
         foreach ($valeurAttributs as $key => $valeurAttribut) {

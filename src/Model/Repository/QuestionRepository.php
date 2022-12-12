@@ -67,23 +67,14 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
-    public function ajouterQuestion(Question $question):int {
-        $this->sauvegarder($question);
-        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
-        $pdoLastInsert->execute();
-        $lastInserId = $pdoLastInsert->fetch();
-        return intval($lastInserId[0]);
-    }
-
-    public function ajouterOrganisateur(string $login):bool {
-        $sql = "CALL AjouterOrganisateurs(:loginTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array(":loginTag"=>$login);
-        try {
-            $pdoStatement->execute($value);
-            return true;
-        } catch (PDOException) {
-            return false;
+    public function ajouterQuestion(Question $question): ?int {
+        if ($this->sauvegarder($question)) {
+            $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
+            $pdoLastInsert->execute();
+            $lastInserId = $pdoLastInsert->fetch();
+            return intval($lastInserId[0]);
+        } else {
+            return null;
         }
     }
 

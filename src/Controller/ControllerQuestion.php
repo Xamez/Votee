@@ -6,19 +6,16 @@ use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
-use App\Votee\Model\DataObject\Texte;
 use App\Votee\Model\DataObject\VoteTypes;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
-use App\Votee\Model\Repository\TexteRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 use App\Votee\Model\Repository\VoteRepository;
-use App\Votee\parsedown\Parsedown;
 
 class ControllerQuestion extends AbstractController {
 
-    public static function home(): void {
+    public static function home() : void {
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Page d'accueil",
@@ -28,7 +25,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function section(): void {
+    public static function section() : void {
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Nombre de sections",
@@ -38,7 +35,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function createQuestion(): void {
+    public static function createQuestion() : void {
         $nbSections = $_POST['nbSections'];
         $voteTypes = VoteTypes::toArray();
         self::afficheVue('view.php',
@@ -51,7 +48,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function readAllQuestion(): void {
+    public static function readAllQuestion() : void {
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         if ($utilisateur == null) {
             Notification::ajouter("danger", "Vous devez être connecté pour accéder à cette page.");
@@ -74,7 +71,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function readQuestion(): void {
+    public static function readQuestion() : void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
             self::redirection("?controller=question&readAllQuestion");
@@ -87,7 +84,7 @@ class ControllerQuestion extends AbstractController {
             foreach ($propositions as $proposition) {
                 $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
             }
-            $organisateur = (new UtilisateurRepository())->select($question->getLogin());
+            $organisateur = (new UtilisateurRepository())->select($question->getLoginVotant());
             if($question->getPeriodeActuelle() == "Période des résultats"){
                 $idPropositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
                 $notes = array();
@@ -127,7 +124,7 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function createdQuestion(): void {
+    public static function createdQuestion() : void {
         $question = new Question(NULL,
             $_POST['visibilite'],
             $_POST['titreQuestion'],
@@ -140,21 +137,25 @@ class ControllerQuestion extends AbstractController {
             $_POST['typeVote']
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
-        $isOk = true;
-        for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
-            $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
-            $isOk = (new SectionRepository())->sauvegarder($section);
-        }
-        $isOk &= (new QuestionRepository())->ajouterOrganisateur($_POST['organisateur']);
-        if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
-        else {
-            (new QuestionRepository())->supprimer($idQuestion);
+        if ($idQuestion) {
+            $isOk = true;
+            for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
+                $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
+                $isOk = (new SectionRepository())->sauvegarder($section);
+            }
+            if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
+            else {
+                (new QuestionRepository())->supprimer($idQuestion);
+                (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
+                self::redirection("?action=readAllQuestion");
+            }
+        } else {
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
             self::redirection("?action=readAllQuestion");
         }
     }
 
-    public static function updateQuestion(): void {
+    public static function updateQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
@@ -170,7 +171,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function updatedQuestion(): void {
+    public static function updatedQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
@@ -182,11 +183,13 @@ class ControllerQuestion extends AbstractController {
         self::redirection("?action=readQuestion&idQuestion=" . $_GET['idQuestion']);
     }
 
+    public static function createVote($idQuestion, $idVotant, $idProposition) : void {
+        $vote = (new VoteRepository())->construire([$idQuestion, $idVotant, $idProposition]);
+        $vote->getVoteDesign($idQuestion);
+    }
 
-
-
-    public static function createVote(){
-        $vote = (new VoteRepository())->ajouterVote($_GET['idProposition'],'votant3',$_GET['value']); // STUB
+    public static function createdVote() : void {
+        $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['value']);
         if ($vote) {
             (new Notification())->ajouter("success", "Le vote a bien été effectué.");
         }
