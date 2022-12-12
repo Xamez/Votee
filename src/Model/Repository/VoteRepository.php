@@ -3,6 +3,7 @@
 namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Vote;
+use App\Votee\Model\DataObject\VoteTypes;
 use PDOException;
 
 class VoteRepository extends AbstractRepository {
@@ -16,11 +17,14 @@ class VoteRepository extends AbstractRepository {
     }
 
     public function construire(array $voteFormatTableau) : Vote {
-        return new Vote(
-            $voteFormatTableau['IDPROPOSITION'],
-            $voteFormatTableau['LOGIN'],
-            $voteFormatTableau['NOTE'],
-        );
+        $idQuestion = (new PropositionRepository())->getIdQuestion($voteFormatTableau["IDPROPOSITION"]);
+        $question = (new QuestionRepository())->select($idQuestion);
+        $voteType = $question->getVoteType();
+        return match ($voteType) {
+            VoteTypes::JUGEMENT_MAJORITAIRE => new JugementMajoritaire($voteFormatTableau["IDPROPOSITION"], $voteFormatTableau["LOGIN"], $voteFormatTableau["NOTEPROPOSITION"]),
+            VoteTypes::OUI_NON => new OuiNon($voteFormatTableau["IDPROPOSITION"], $voteFormatTableau["LOGIN"], $voteFormatTableau["NOTEPROPOSITION"]),
+            default => throw new PDOException("Le type de vote n'est pas reconnu"),
+        };
     }
 
     protected function getNomsColonnes(): array {
@@ -31,10 +35,10 @@ class VoteRepository extends AbstractRepository {
         );
     }
 
-    function ajouterVote(string $idProposition,string $login,int $note) :bool {
+    function ajouterVote(string $idProposition, string $login, int $note) : bool {
         $sql ="CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idPropositionTag" => $idProposition, "loginTag" => $login,"noteTag" => $note);
+        $values = array("idPropositionTag" => $idProposition, "loginTag" => $login, "noteTag" => $note);
         try {
             $pdoStatement->execute($values);
             return true;
@@ -42,7 +46,6 @@ class VoteRepository extends AbstractRepository {
             return false;
         }
     }
-
 
     function getProcedureInsert(): string { return ""; }
     function getProcedureUpdate(): string { return ""; }

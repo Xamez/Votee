@@ -109,4 +109,12 @@ class PropositionRepository extends AbstractRepository {
         return $result[0];
     }
 
+    public function getIdQuestion(int $idProposition) {
+        $sql = "SELECT idQuestion FROM Recevoir WHERE idProposition = :idPropositionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idPropositionTag"=>$idProposition));
+        $result = $pdoStatement->fetch();
+        return $result[0];
+    }
+
 }

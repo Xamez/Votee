@@ -17,7 +17,6 @@ class Question extends AbstractDataObject {
 
     public function __construct(
         ?int   $idQuestion,
-        string $typeVote,
         string $visibilite,
         string $titre,
         string $description,
@@ -25,7 +24,8 @@ class Question extends AbstractDataObject {
         string $dateFinQuestion,
         string $dateDebutVote,
         string $dateFinVote,
-        string $login,)
+        string $login,
+        string $typeVote)
     {
         $this->idQuestion = $idQuestion;
         $this->visibilite = $visibilite;
@@ -43,7 +43,6 @@ class Question extends AbstractDataObject {
     public function formatTableau(): array {
         return array(
             "IDQUESTION" => $this->getIdQuestion(),
-            "TYPEVOTE" => $this->getTypeVote(),
             "VISIBILITE" => $this->getVisibilite(),
             "TITRE" => $this->getTitre(),
             "DESCRIPTION" => $this->getDescription(),
@@ -51,7 +50,8 @@ class Question extends AbstractDataObject {
             "DATEFINQUESTION" => $this->getDateFinQuestion(),
             "DATEDEBUTVOTE" => $this->getDateDebutVote(),
             "DATEFINVOTE" => $this->getDateFinVote(),
-            "LOGIN" => $this->getLogin()
+            "LOGIN" => $this->getLogin(),
+            "TYPEVOTE" => $this->getTypeVote(),
         );
     }
 

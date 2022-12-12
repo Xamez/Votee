@@ -2,7 +2,7 @@
 
 namespace App\Votee\Model\DataObject;
 
-class Vote extends AbstractDataObject
+abstract class Vote extends AbstractDataObject
 {
     private int $idProposition;
     private string $login;
@@ -14,6 +14,8 @@ class Vote extends AbstractDataObject
         $this->login = $login;
         $this->note = $note;
     }
+
+    public abstract function getVoteDesign($idQuestion, $idProposition): string;
 
     public function formatTableau(): array{
         return array (

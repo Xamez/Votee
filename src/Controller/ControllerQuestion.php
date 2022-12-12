@@ -126,7 +126,6 @@ class ControllerQuestion extends AbstractController {
 
     public static function createdQuestion(): void {
         $question = new Question(NULL,
-            $_POST['typeVote'],
             $_POST['visibilite'],
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
@@ -135,6 +134,7 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
             date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
             $_POST['organisateur'],
+            $_POST['typeVote']
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;
