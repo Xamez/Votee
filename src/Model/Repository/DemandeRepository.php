@@ -57,20 +57,48 @@ class DemandeRepository extends AbstractRepository {
         $value = array("loginTag" => $login);
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute($value);
-        foreach ($pdoStatement as $formatTableau) $demandes[] = $this->construire($formatTableau);
+        $demandes = [];
+        foreach ($pdoStatement as $formatTableau) {
+            $demandes[] = $this->construire($formatTableau);
+        }
         return $demandes;
     }
 
-//    public function modifierDemande(int $idQuestion, string $description, string $visibilite) : bool {
-//        $sql = "CALL ModifierQuestions(:idQuestionTag, :visibiliteTag, :descriptionTag)";
-//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-//        $values = array("idQuestionTag" => $idQuestion, "visibiliteTag" => $visibilite, "descriptionTag" => $description);
-//        try {
-//            $pdoStatement->execute($values);
-//            return true;
-//        } catch (PDOException) {
-//            return false;
-//        }
-//    }
-        // TODO Faire la methode
+    public function ajouterDemande(Demande $demande): bool {
+        $sql = "CALL AjouterDemandes(:loginDTag, :loginTag, :txtTag, :roleTag)";
+        $values = array(
+            "loginDTag" => $demande->getLoginDestinataire(),
+            "loginTag" => $demande->getLogin(),
+            "txtTag" => $demande->getTexteDemande(),
+            "roleTag" => $demande->getRoleDemande(),
+        );
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    public function updateDemande($demande) : bool {
+        $sql = "CALL ModifierDemandes(:idDemandeTag, :etatTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idDemandeTag" => $demande->getIdDemande(), "etatTag" => $demande->getEtatDemande());
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    public function selectNbDemande($login): ?int {
+        $sql = "SELECT COUNT(*) FROM Effectuer WHERE LOGINDESTINATAIRE = :loginTag AND ETATDEMANDE = 'attente'";
+        $value = array("loginTag" => $login);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute($value);
+        $nbDemandes = $pdoStatement->fetch();
+        return $nbDemandes ? $nbDemandes[0] : null;
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Votee\Lib\ConnexionUtilisateur;
+
 echo '<div class="flex flex-col gap-10 mt-10">';
 echo '<h1 class="title text-dark text-2xl font-semibold">Organisateur</h1>
       <div class="flex flex-col gap-3">';
@@ -66,8 +68,14 @@ foreach ($questionsVota as $question) {
     </a>';
 }
 
-echo '</div>
+if (ConnexionUtilisateur::creerQuestion()) {
+    echo '</div>
       </div>
       <a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" 
         href="./frontController.php?controller=question&action=section">Créer un vote
       </a>';
+} else {
+    echo '<a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" 
+        href="./frontController.php?controller=demande&action=createDemande">Faire une demande
+        </a>';
+}

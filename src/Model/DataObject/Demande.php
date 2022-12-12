@@ -6,7 +6,7 @@ class Demande {
 
     private string $loginDestinataire;
     private string $login;
-    private int $idDemande;
+    private ?int $idDemande;
     private string $texteDemande;
     private string $roleDemande;
     private string $etatDemande;
@@ -14,7 +14,7 @@ class Demande {
     public function __construct(
         string $loginDestinataire,
         string $login,
-        int $idDemande,
+        ?int $idDemande,
         string $texteDemande,
         string $roleDemande,
         string $etatDemande)

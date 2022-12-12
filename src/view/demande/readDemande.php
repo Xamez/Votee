@@ -17,11 +17,11 @@ echo '<div class="flex items-center gap-2">
 
 if (ConnexionUtilisateur::estAdministrateur()) {
     echo '<div class="flex justify-center gap-10">
-            <a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" 
-                href="./frontController.php?controller=demande&action=setDemande&statut=accepte">Accepter
+            <a class="w-36 flex p-2 justify-center text-white bg-green font-semibold rounded-lg" 
+                href="./frontController.php?controller=demande&action=setDemande&statut=accepte&idDemande=' . rawurlencode($demande->getIdDemande()) .  '">Accepter
             </a>
             <a class="w-36 flex p-2 justify-center text-white bg-red font-semibold rounded-lg" 
-                href="./frontController.php?controller=demande&action=setDemande&statut=refuse">Refuser
+                href="./frontController.php?controller=demande&action=setDemande&statut=refuse&idDemande=' . rawurlencode($demande->getIdDemande()) .  '">Refuser
             </a>
           </div>';
 }
