@@ -1,6 +1,6 @@
 <?php require "propositionHeader.php"; ?>
 <script type="text/javascript" src="assets/js/accordion.js"></script>
-<form method="post" class="flex flex-col gap-7" action="frontController.php?action=createdFusion">
+<form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=createdFusion">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index => $section) {

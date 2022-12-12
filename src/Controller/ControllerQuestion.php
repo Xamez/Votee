@@ -49,21 +49,33 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readAllQuestion(): void {
-        $questions = (new QuestionRepository())->selectAll();
-        if (isset($questions)) {
-            self::afficheVue('view.php',
-                [
-                    "questions" => $questions,
-                    "pagetitle" => "Liste des questions",
-                    "cheminVueBody" => "question/listQuestion.php",
-                    "title" => "Liste des votes",
-                ]);
-        } else {
-            self::error("Les questions n'ont pas été récupérées.");
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        if ($utilisateur == null) {
+            Notification::ajouter("danger", "Vous devez être connecté pour accéder à cette page.");
+            self::redirection("?action=home");
         }
+        $login = $utilisateur->getLogin();
+        $questionsOrga = (new QuestionRepository())->selectQuestionOrga($login);
+        $questionsRepre = (new QuestionRepository())->selectQuestionRepre($login);
+        $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
+        $questionsVota = (new QuestionRepository())->selectQuestionVota($login);
+        self::afficheVue('view.php',
+            [
+                "questionsOrga" => $questionsOrga,
+                "questionsRepre" => $questionsRepre,
+                "questionsCoau" => $questionsCoau,
+                "questionsVota" => $questionsVota,
+                "pagetitle" => "Liste des questions",
+                "cheminVueBody" => "question/listQuestion.php",
+                "title" => "Liste des votes",
+            ]);
     }
 
     public static function readQuestion(): void {
+        if (!ConnexionUtilisateur::estConnecte()) {
+            (new Notification())->ajouter("danger","Vous devez vous connecter !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -80,7 +92,8 @@ class ControllerQuestion extends AbstractController {
                     $notes[] = (new PropositionRepository())->getNote($proposition->getIdProposition());
                 }
                 self::afficheVue('view.php',
-                    ["question" => $question,
+                    [
+                        "question" => $question,
                         "notes" => $notes,
                         "propositions" => $propositions,
                         "responsables" => $responsables,
@@ -90,10 +103,12 @@ class ControllerQuestion extends AbstractController {
                         "pagetitle" => "Question",
                         "cheminVueBody" => "question/readQuestionResultats.php",
                         "title" => $question->getTitre(),
-                        "subtitle" => $question->getDescription()]);
+                        "subtitle" => $question->getDescription()
+                    ]);
             } else {
                 self::afficheVue('view.php',
-                    ["question" => $question,
+                    [
+                        "question" => $question,
                         "propositions" => $propositions,
                         "sections" => $sections,
                         "organisateur" => $organisateur,
@@ -101,7 +116,8 @@ class ControllerQuestion extends AbstractController {
                         "pagetitle" => "Question",
                         "cheminVueBody" => "question/readQuestion.php",
                         "title" => $question->getTitre(),
-                        "subtitle" => $question->getDescription()]);
+                        "subtitle" => $question->getDescription()
+                    ]);
             }
         } else {
             self::error("La question n'existe pas");
@@ -137,7 +153,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updateQuestion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::estUtilisateur($question->getLogin())) {
+        if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
         }
@@ -153,7 +169,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedQuestion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::estUtilisateur($question->getLogin())) {
+        if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
         }
@@ -163,89 +179,8 @@ class ControllerQuestion extends AbstractController {
         self::redirection("?action=readQuestion&idQuestion=" . $_GET['idQuestion']);
     }
 
-    public static function selectFusion(): void {
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        self::afficheVue('view.php',
-            [
-                "pagetitle" => "Créer la fusion",
-                "cheminVueBody" => "question/selectFusion.php",
-                "title" => $question->getTitre(),
-                "subtitle" => $question->getDescription()
-            ]);
-    }
-
-    public static function createFusion(): void {
-        $question = (new QuestionRepository())->select($_POST['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByKey($_POST['idQuestion']);
-
-        $textes1 = (new TexteRepository())->selectAllByKey($_POST['idProposition']);
-        foreach ($textes1 as $texte) {
-            $parsedown = new Parsedown();
-            $texte->setTexte($parsedown->text($texte->getTexte()));
-        }
-
-        $textes2 = (new TexteRepository())->selectAllByKey($_POST['idProposition1']);
-        foreach ($textes2 as $texte) {
-            $parsedown = new Parsedown();
-            $texte->setTexte($parsedown->text($texte->getTexte()));
-        }
-
-        $responsable1 = (new UtilisateurRepository())->selectResp($_POST['idProposition']);
-        $responsable2 = (new UtilisateurRepository())->selectResp($_POST['idProposition1']);
-
-        $coAuteurs1 = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']);
-        $coAuteurs2 = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition1']);
-        $coAuteurs = array_unique(array_merge($coAuteurs1, $coAuteurs2), SORT_REGULAR);
-        if (in_array($responsable1, $coAuteurs)) unset($coAuteurs[array_search($responsable1, $coAuteurs)]);
-        self::afficheVue('view.php',
-            [
-                "pagetitle" => "Lire la fusion",
-                "idPropositions" => array($_POST['idProposition'], $_POST['idProposition1']),
-                "question" => $question,
-                "sections" => $sections,
-                "coAuteurs" => $coAuteurs,
-                "textes" => array($textes1, $textes2),
-                "responsable" => $responsable1, // Proposition header
-                "responsables" => array($responsable1, $responsable2),
-                "cheminVueBody" => "question/createFusion.php",
-                "title" => $question->getTitre(),
-                "subtitle" => $question->getDescription()
-            ]);
-    }
-
-    public static function deletedCoAuteur(): void {
-        $idProposition = $_GET['idProposition'];
-        $login = $_GET['login'];
-        if ((new PropositionRepository())->supprimerCoAuteur( $login, $idProposition)) {
-            (new Notification())->ajouter("success", "Le co-auteur a été supprimé.");
-        } else (new Notification())->ajouter("warning", "Le co-auteur n'a pas pu être supprimé.");
-        self::redirection("?action=updateProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
-    }
 
 
-    public static function createdFusion(): void {
-        (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
-        (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
-        $idProposition = (new PropositionRepository())->ajouterProposition('visible');
-        $isOk = true;
-        for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $_POST['section' . $i], NULL);
-            $isOk = (new TexteRepository())->sauvegarder($texte);
-        }
-        foreach ($_POST['coAuteurs'] as $coAuteur) {
-            $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idProposition);
-        }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['responsable'], $idProposition, $_POST['idQuestion']);
-
-        if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
-        else {
-            (new PropositionRepository())->supprimer($idProposition);
-            (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'visible');
-            (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'visible');
-            (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
-        }
-        self::redirection("?action=readQuestion&idQuestion=" . $_POST['idQuestion']);
-    }
 
     public static function createVote(){
         $vote = (new VoteRepository())->ajouterVote($_GET['idProposition'],'votant3',$_GET['value']); // STUB

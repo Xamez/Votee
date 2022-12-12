@@ -106,3 +106,25 @@ label { font-weight: 600; }
 .toast-icon-success { background-color: #39b259; }
 .toast-icon-warning { background-color: #ee9500; }
 .toast-icon-danger { background-color: #eb4e2c; }
+
+
+
+
+.title {
+	display: flex;
+	flex-direction: row;
+}
+.title:before, .title:after{
+	content: "";
+	flex: 1 1;
+	border-bottom: 1px solid;
+	margin: auto;
+}
+.title:before {
+	margin-right: 10px;
+	margin-left: 10%;
+}
+.title:after {
+	margin-left: 10px;
+	margin-right: 10%;
+}
