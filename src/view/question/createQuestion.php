@@ -11,7 +11,7 @@
             </div>
             <div class="flex flex-col">
                 <label for="vote_desc_id">Description :</label>
-                <textarea class="max-h-52" maxlength="100" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
+                <textarea class="max-h-52" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
         <h1 class="text-2xl font-bold text-center text-dark">Organisation</h1>
