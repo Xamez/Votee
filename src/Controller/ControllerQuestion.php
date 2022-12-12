@@ -7,6 +7,7 @@ use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\Texte;
+use App\Votee\Model\DataObject\VoteTypes;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -39,9 +40,11 @@ class ControllerQuestion extends AbstractController {
 
     public static function createQuestion(): void {
         $nbSections = $_POST['nbSections'];
+        $voteTypes = VoteTypes::toArray();
         self::afficheVue('view.php',
             [
                 "nbSections" => $nbSections,
+                "voteTypes" => $voteTypes,
                 "pagetitle" => "Creation",
                 "cheminVueBody" => "question/createQuestion.php",
                 "title" => "Créer un vote",
