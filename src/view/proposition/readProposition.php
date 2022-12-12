@@ -1,5 +1,6 @@
 <?php
 
+use App\Votee\Controller\ControllerQuestion;
 use App\Votee\Lib\ConnexionUtilisateur;
 
 require "propositionHeader.php";
@@ -46,34 +47,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     }
 }
 echo '</div>';
+
 if ($question->getPeriodeActuelle() == 'Période de vote') {
-    if ($question->getTypeVote() == 'VoteMajoritaire' ) {
-        echo '<div class="flex">
-                <div class="p-3 rounded-l-xl w-28 text-white font-semibold" style="background-color: #c6c6f4">
-                    <a href="./frontController.php?controller=question&action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=-2">Insuffisant</a>
-                </div>
-                 <div class="p-3 rounded-l-xl w-28 -ml-3.5 text-white font-semibold text-center" style="background-color: #b8b8f8">
-                   <a href="./frontController.php?controller=question&action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=-1">Passable</a>
-                 </div>
-                 <div class="p-3 rounded-l-xl w-28 -ml-3.5 text-white font-semibold text-center" style="background-color: #aea4ff">
-                   <a href="./frontController.php?controller=question&action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=1">Bien</a>
-                 </div>
-                 <div class="p-3 rounded-xl w-28 -ml-3.5 text-white font-semibold text-center" style="background-color: #8080d7">
-                   <a href="./frontController.php?controller=question&action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=2">Très Bien</a>
-                 </div>
-             </div>
-        ';
-    }
-    else if ($question->getTypeVote() == 'VoteOuiNon') {
-        echo '
-        <div class="flex">
-            <div class="p-3 rounded-l-xl w-28 text-white font-semibold" style="background-color: #b8b8f8">
-                <a href="./frontController.php?controller=question&action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=0">Non</a>
-            </div>
-             <div class="p-3 rounded-xl w-28 -ml-3.5 text-white font-semibold text-center" style="background-color: #aea4ff">
-               <a href="./frontController.php?controller=question&action=createVote&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '&value=1">Oui</a>
-             </div>
-         </div>
-        ';
-    }
+    ControllerQuestion::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition);
 }

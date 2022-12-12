@@ -35,6 +35,8 @@ class VoteRepository extends AbstractRepository {
         );
     }
 
+    public abstract function getVoteDesign($idQuestion, $idVotant, $idProposition): string;
+
     function ajouterVote(string $idProposition, string $login, int $note) : bool {
         $sql ="CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -47,8 +49,8 @@ class VoteRepository extends AbstractRepository {
         }
     }
 
-    function getProcedureInsert(): string { return ""; }
-    function getProcedureUpdate(): string { return ""; }
+    function getProcedureInsert(): string { return "AjouterVotes"; }
+    function getProcedureUpdate(): string { return "ModifierVotes"; }
     function getProcedureDelete(): string { return ""; }
 
 }
