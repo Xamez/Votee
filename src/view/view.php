@@ -22,7 +22,7 @@
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
             <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
-            <a href=""><span class="link-underline link-underline-color">Demande</span></a>
+            <a href="./frontController.php?controller=demande&action=readAllDemande"><span class="link-underline link-underline-color">Demande</span></a>
         </div>
         <div class="flex gap-4 items-center">
         <?php
@@ -37,7 +37,8 @@
                         <span class="material-symbols-outlined">logout</span>
                       </a>';
             } else {
-              echo 'Erreur';
+                echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
+                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
             }
         } else {
             echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 

@@ -10,12 +10,21 @@ class Utilisateur extends AbstractDataObject {
     private string $motDePasse;
     private string $nom;
     private string $prenom;
+    private string $nbQuestRestant;
 
-    public function __construct(string $login, string $motDePasse, string $nom, string $prenom) {
+    public function __construct(
+        string $login,
+        string $motDePasse,
+        string $nom,
+        string $prenom,
+        string $nbQuestRestant,
+    )
+    {
         $this->login = $login;
         $this->motDePasse = $motDePasse;
         $this->nom = $nom;
         $this->prenom = $prenom;
+        $this->nbQuestRestant = $nbQuestRestant;
     }
 
     public static function construireDepuisFormulaire (array $tableauFormulaire) : Utilisateur {
@@ -23,6 +32,7 @@ class Utilisateur extends AbstractDataObject {
             MotDePasse::hacher($tableauFormulaire['password']),
             $tableauFormulaire['nom'],
             $tableauFormulaire['prenom'],
+            0,
         );
     }
 
@@ -32,9 +42,13 @@ class Utilisateur extends AbstractDataObject {
             "MOTDEPASSE" => $this->getMotDePasse(),
             "NOM" => $this->getNom(),
             "PRENOM" => $this->getPrenom(),
+            "NBQUESTRESTANT" => $this->getNbQuestRestant(),
         );
     }
 
+    public function getNbQuestRestant(): string { return $this->nbQuestRestant; }
+
+    public function setNbQuestRestant(string $nbQuestRestant): void { $this->nbQuestRestant = $nbQuestRestant; }
 
     public function getMotDePasse(): string { return $this->motDePasse; }
 

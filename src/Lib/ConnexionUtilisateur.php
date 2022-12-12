@@ -20,7 +20,7 @@ class ConnexionUtilisateur {
         Session::getInstance()->supprimer(static::$cleConnexion);
     }
 
-    public static function getUtilisateurConnecte(): ?Utilisateur {
+        public static function getUtilisateurConnecte(): ?Utilisateur {
         $login = self::estConnecte() ? Session::getInstance()->lire(static::$cleConnexion) : null;
         if ($login != null) {
             $utilisateur = (new UtilisateurRepository())->select($login);
@@ -33,13 +33,12 @@ class ConnexionUtilisateur {
         return self::estConnecte() && $utilisateur == Session::getInstance()->lire(static::$cleConnexion);
     }
 
-//    public static function estAdministrateur() : bool {
-//        if (self::estConnecte()) {
-//            $utilisateur = (new UtilisateurRepository())->select(Session::getInstance()->lire(static::$cleConnexion));
-//            return $utilisateur->isEstAdmin();
-//        }
-//        return false;
-//    }
+    public static function estAdministrateur() : bool {
+        if (self::estConnecte()) {
+            return (new UtilisateurRepository())->selectAdministrateur(Session::getInstance()->lire(static::$cleConnexion));
+        }
+        return false;
+    }
 
     public static function getRoleQuestion($idQuestion): ?string {
         if (self::estConnecte()) {
