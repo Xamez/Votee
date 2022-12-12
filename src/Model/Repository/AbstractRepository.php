@@ -11,10 +11,6 @@ abstract class AbstractRepository {
         $sql = "CALL " . $this->getProcedureInsert(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        var_dump("<br><br>");
-        var_dump($values);
-        var_dump("<br>REQUETE : <br>");
-        var_dump($sql);
         try {
             $pdoStatement->execute($values);
             return true;
@@ -47,14 +43,14 @@ abstract class AbstractRepository {
         }
     }
 
-    public function selectAll() {
+    public function selectAll() : array {
         $object = [];
         $sql = "SELECT * FROM {$this->getNomTable()}";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
             $pdoStatement->execute();
         } catch (PDOException) {
-            return null;
+            return $object;
         }
         foreach ($pdoStatement as $formatTableau) $object[] = $this->construire($formatTableau);
         return $object;
@@ -89,7 +85,7 @@ abstract class AbstractRepository {
         return $object;
     }
 
-    public function select($valeurClePrimaire) {
+    public function select($valeurClePrimaire) : ?AbstractDataObject {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("valueTag" => $valeurClePrimaire);
@@ -99,7 +95,7 @@ abstract class AbstractRepository {
         return $result ? $this->construire($result) : null;
     }
 
-    public function selectByMultiKey(array $valeurAttributs) {
+    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
         $ligne = "";
         foreach ($valeurAttributs as $key => $valeurAttribut) {
             $ligne .= $key . "= :" . $key . ' AND ';
@@ -117,7 +113,7 @@ abstract class AbstractRepository {
 
     protected abstract function getNomClePrimaire(): string;
 
-    protected abstract function construire(array $objetFormatTableau);
+    protected abstract function construire(array $objetFormatTableau) : AbstractDataObject;
 
     protected abstract function getNomsColonnes(): array;
 
