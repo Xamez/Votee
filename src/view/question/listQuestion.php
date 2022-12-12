@@ -66,4 +66,8 @@ foreach ($questionsVota as $question) {
     </a>';
 }
 
-echo '</div></div><a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" href="./frontController.php?controller=question&action=section">Créer un vote</a>';
+echo '</div>
+      </div>
+      <a class="w-36 flex p-2 justify-center text-white bg-main font-semibold rounded-lg" 
+        href="./frontController.php?controller=question&action=section">Créer un vote
+      </a>';

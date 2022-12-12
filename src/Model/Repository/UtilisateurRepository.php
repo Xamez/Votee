@@ -12,6 +12,7 @@ class UtilisateurRepository extends AbstractRepository {
             'MOTDEPASSE',
             'NOM',
             'PRENOM',
+            'NBQUESTRESTANT',
         );
     }
 
@@ -39,6 +40,7 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['MOTDEPASSE'],
             $utilisateurFormatTableau['NOM'],
             $utilisateurFormatTableau['PRENOM'],
+            $utilisateurFormatTableau['NBQUESTRESTANT']
         );
     }
 
@@ -68,8 +70,8 @@ class UtilisateurRepository extends AbstractRepository {
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idProposition" => $idProposition);
-        $pdoStatement->execute($values);
+        $value = array("idProposition" => $idProposition);
+        $pdoStatement->execute($value);
 
         foreach ($pdoStatement as $utilisateur) {
             $coAuteurs[] = $this->construire($utilisateur);
@@ -84,10 +86,19 @@ class UtilisateurRepository extends AbstractRepository {
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idProposition" => $idProposition);
+        $value = array("idProposition" => $idProposition);
 
-        $pdoStatement->execute($values);
+        $pdoStatement->execute($value);
         $responsable = $pdoStatement->fetch();
         return $responsable ? $this->construire($responsable): null;
+    }
+
+    public function selectAdministrateur($login) {
+        $sql = "SELECT * FROM Administrateurs WHERE login = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array("loginTag" => $login);
+        $pdoStatement->execute($value);
+        $isAdmin = $pdoStatement->fetch();
+        return (bool)$isAdmin;
     }
 }

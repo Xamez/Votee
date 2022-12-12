@@ -15,7 +15,6 @@ class ControllerUtilisateur extends AbstractController {
         $utilisateur = (new UtilisateurRepository())->select($_POST['login']);
         if ($utilisateur) {
             if (MotDePasse::verifier($_POST['password'], $utilisateur->getMotDePasse())) {
-                var_dump($utilisateur);
                 (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
                 (new Notification())->ajouter("success","L'utilisateur est connecté");
                 self::redirection("?controller=question&action=readAllQuestion");
@@ -37,6 +36,7 @@ class ControllerUtilisateur extends AbstractController {
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
         (new UtilisateurRepository())->sauvegarder($utilisateur);
         (new Notification())->ajouter("success","L'utilisateur a été créé");
+        (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
         self::redirection("?controller=question&action=readAllQuestion");
     }
 
