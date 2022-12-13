@@ -17,10 +17,11 @@ class VoteRepository {
     }
 
     public function construire(array $voteFormatTableau) : Vote {
-        $idQuestion = (new PropositionRepository())->getIdQuestion($voteFormatTableau["IDPROPOSITION"]);
+        var_dump($voteFormatTableau);
+        $idQuestion = (new PropositionRepository())->getIdQuestion($voteFormatTableau["idProposition"]);
         $question = (new QuestionRepository())->select($idQuestion);
         $voteType = $question->getVoteType();
-        return new Vote($voteFormatTableau["IDPROPOSITION"], $voteFormatTableau["LOGIN"], $voteFormatTableau["NOTEPROPOSITION"], $voteType);
+        return new Vote($voteFormatTableau["idProposition"], $voteFormatTableau["loginVotant"], $voteFormatTableau["noteProposition"], VoteTypes::getFromKey($voteType));
     }
 
     protected function getNomsColonnes() : array {

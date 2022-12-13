@@ -84,7 +84,7 @@ class ControllerQuestion extends AbstractController {
             foreach ($propositions as $proposition) {
                 $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
             }
-            $organisateur = (new UtilisateurRepository())->select($question->getLoginVotant());
+            $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             if($question->getPeriodeActuelle() == "Période des résultats"){
                 $idPropositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
                 $notes = array();
@@ -134,7 +134,7 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
             date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
             $_POST['organisateur'],
-            $_POST['typeVote']
+            $_POST['voteType']
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         if ($idQuestion) {
@@ -184,8 +184,8 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createVote($idQuestion, $idVotant, $idProposition) : void {
-        $vote = (new VoteRepository())->construire([$idQuestion, $idVotant, $idProposition]);
-        $voteType = strval($vote->getVoteType());
+        $vote = (new VoteRepository())->construire(["idProposition" => $idProposition, "loginVotant" => $idVotant, "noteProposition" => 0]);
+        $voteType = $vote->getVoteType()->name;
         echo $voteType;
         $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
         $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
