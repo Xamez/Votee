@@ -1,6 +1,6 @@
 <?php
 
-use App\Votee\Controller\ControllerQuestion;
+use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
 
 require "propositionHeader.php";
@@ -17,7 +17,7 @@ echo '</div><div class="flex gap-2 justify-between">
             <div class="flex gap-2">
                 <span class="material-symbols-outlined">reply</span>
                 <p>Retour</p>
-            </div
+            </div>
         </a>';
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
@@ -49,5 +49,5 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
 echo '</div>';
 
 if ($question->getPeriodeActuelle() == 'Période de vote') {
-    ControllerQuestion::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition);
+    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition);
 }

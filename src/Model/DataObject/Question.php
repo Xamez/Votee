@@ -51,7 +51,7 @@ class Question extends AbstractDataObject {
             "DATEDEBUTVOTE" => $this->getDateDebutVote(),
             "DATEFINVOTE" => $this->getDateFinVote(),
             "LOGIN" => $this->getLogin(),
-            "voteType" => $this->getVoteType(),
+            "TYPEVOTE" => $this->getVoteType(),
         );
     }
 

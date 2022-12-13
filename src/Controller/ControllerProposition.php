@@ -10,9 +10,36 @@ use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
 use App\Votee\Model\Repository\TexteRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
+use App\Votee\Model\Repository\VoteRepository;
 use App\Votee\parsedown\Parsedown;
 
-class ControllerProposition extends AbstractController{
+class ControllerProposition extends AbstractController {
+
+    public static function createVote($idQuestion, $idVotant, $idProposition) : void {
+        $vote = (new VoteRepository())->construire(["idProposition" => $idProposition, "loginVotant" => $idVotant, "noteProposition" => 0]);
+        $voteType = $vote->getVoteType()->name;
+        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
+        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
+        $voteUrl = 'proposition/vote/' . $voteType . '.php';
+        self::afficheVue($voteUrl,
+            [
+                "idQuestion" => $idQuestion,
+                "idVotant" => $idVotant,
+                "idProposition" => $idProposition,
+            ]);
+    }
+
+    public static function createdVote() : void {
+        $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
+        if ($vote) {
+            (new Notification())->ajouter("success", "Le vote a bien été effectué.");
+        }
+        else{
+            (new Notification())->ajouter("warning", "Le vote existe déjà.");
+        }
+        //self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+    }
+
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
