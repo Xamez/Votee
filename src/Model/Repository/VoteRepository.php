@@ -39,13 +39,18 @@ class VoteRepository {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
-            // TODO : SUPPRIMER MSG DE DEBUG
-            echo "ID PROPO: " .$idProposition . "<br>";
-            echo "LOGIN: " .$login . "<br>";
-            echo "NOTE: " . $note . "<br>";
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
+    }
+
+    function getNote(string $idProposition, string $login) : int {
+        $sql = "SELECT note FROM Voter WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idPropositionTag" => $idProposition, "loginTag" => $login);
+        $pdoStatement->execute($values);
+        $result = $pdoStatement->fetch();
+        if ($result === false) return 0;
+        return $result["NOTE"];
     }
 
     function getProcedureInsert(): string { return "AjouterVotes"; }
