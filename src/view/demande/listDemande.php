@@ -1,7 +1,7 @@
 <?php
 echo '<div class="flex flex-col gap-10 mt-10">
-<h1 class="title text-dark text-2xl font-semibold">Attente</h1>
-<div class="flex flex-col gap-3">';
+        <h1 class="title text-dark text-2xl font-semibold">Attente</h1>
+        <div class="flex flex-col gap-3">';
 foreach ($demandesAttente as $key=>$demande) {
     echo '<a href="./frontController.php?controller=demande&action=readDemande&idDemande='. rawurlencode($key) . '">
             <div class="flex bg-light justify-between p-2 items-center rounded">
@@ -21,6 +21,7 @@ foreach ($demandesAttente as $key=>$demande) {
              </div>
           </a>';
 }
+if (!$demandesAttente) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
 echo '</div>
     <h1 class="title text-dark text-2xl font-semibold">Acceptée</h1>
     <div class="flex flex-col gap-3">';
@@ -43,9 +44,10 @@ foreach ($demandesAccepte as $key=>$demande) {
              </div>
           </a>';
 }
+if (!$demandesAccepte) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
 echo '</div>
-<h1 class="title text-dark text-2xl font-semibold">Refusée</h1>
-<div class="flex flex-col gap-3">';
+      <h1 class="title text-dark text-2xl font-semibold">Refusée</h1>
+      <div class="flex flex-col gap-3">';
 foreach ($demandesRefuse as $key=>$demande) {
     echo '<a href="./frontController.php?controller=demande&action=readDemande&idDemande='. rawurlencode($key). '">
             <div class="flex bg-light justify-between p-2 items-center rounded">
@@ -65,4 +67,6 @@ foreach ($demandesRefuse as $key=>$demande) {
              </div>
           </a>';
 }
-echo '</div></div>';
+if (!$demandesRefuse) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
+echo '</div>
+    </div>';

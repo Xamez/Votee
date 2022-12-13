@@ -26,7 +26,7 @@ echo '</div>'
     <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">
     <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Ajouter" />
 </form>
-<form method="get" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
+<form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {

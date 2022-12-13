@@ -1,8 +1,7 @@
 <?php
-
 use App\Votee\Lib\ConnexionUtilisateur;
-
 require "propositionHeader.php";
+
 echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());

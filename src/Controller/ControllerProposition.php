@@ -101,25 +101,25 @@ class ControllerProposition extends AbstractController{
     }
 
     public static function updatedProposition(): void {
-        $idProposition = $_GET['idProposition'];
+        $idProposition = $_POST['idProposition'];
         if (!ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
         }
         $isOk = true;
-        for ($i = 0; $i < $_GET['nbSections'] && $isOk; $i++) {
-            $textsection = nl2br(htmlspecialchars($_GET['section' . $i]));
-            $texte = new Texte($_GET['idQuestion'], $_GET['idSection' . $i], $idProposition, $textsection, NULL);
+        for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
+            $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
+            $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $textsection, NULL);
             $isOk = (new TexteRepository())->modifier($texte);
         }
-        if ($_GET['coAuteur'] != "") {
-            $isOk &= (new PropositionRepository())->ajouterCoauteur($_GET['coAuteur'], $idProposition);
+        if ($_POST['coAuteur'] != "") {
+            $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'], $idProposition);
         }
 
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été modifiée.");
         else (new Notification())->ajouter("danger", "La proposition n'a pas pu être modifiée.");
-        self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_GET['idQuestion'] . "&idProposition=" . $_GET['idProposition']);
+        self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
     }
 
     public static function readProposition(): void {
