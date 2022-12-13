@@ -185,7 +185,12 @@ class ControllerQuestion extends AbstractController {
 
     public static function createVote($idQuestion, $idVotant, $idProposition) : void {
         $vote = (new VoteRepository())->construire([$idQuestion, $idVotant, $idProposition]);
-
+        $voteType = strval($vote->getVoteType());
+        echo $voteType;
+        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
+        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
+        $voteType .= ".php";
+        echo $voteType;
     }
 
     public static function createdVote() : void {
