@@ -9,7 +9,7 @@ if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()
             </div>
           </a>';
 } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
-    echo '<a href="./frontController.php?controller=demande&action=createDemande">
+    echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=question">
             <div class="flex gap-2">
                 <p>Faire une demande</p>
                 <span class="material-symbols-outlined">file_copy</span>

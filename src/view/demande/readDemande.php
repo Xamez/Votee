@@ -15,7 +15,7 @@ echo '<div class="flex items-center gap-2">
         </span>
      </div>';
 
-if (ConnexionUtilisateur::estAdministrateur()) {
+if (ConnexionUtilisateur::estAdministrateur() || ConnexionUtilisateur::estOrganisateur($demande->getIdQuestion())) {
     echo '<div class="flex justify-center gap-10">
             <a class="w-36 flex p-2 justify-center text-white bg-green font-semibold rounded-lg" 
                 href="./frontController.php?controller=demande&action=setDemande&statut=accepte&idDemande=' . rawurlencode($demande->getIdDemande()) .  '">Accepter
