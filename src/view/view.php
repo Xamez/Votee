@@ -22,14 +22,14 @@
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
             <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
-            <a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                <span class="link-underline link-underline-color">Demande
             <?php
                 use App\Votee\Model\Repository\DemandeRepository;
                 use App\Votee\Lib\ConnexionUtilisateur;
                 use App\Votee\Lib\Notification;
 
                 if (ConnexionUtilisateur::estConnecte()) {
+                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
+                            <span class="link-underline link-underline-color">Demande';
                     $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
                     if ($utilisateur != null) {
                         $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
@@ -39,9 +39,10 @@
                             }
                         }
                     }
+                    echo '</span></a>';
                 }
             ?>
-           </span></a>
+
         </div>
         <div class="flex gap-4 items-center">
         <?php

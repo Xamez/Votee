@@ -28,6 +28,10 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function section(): void {
+        if (!ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Nombre de sections",
@@ -38,6 +42,10 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createQuestion(): void {
+        if (!ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $nbSections = $_POST['nbSections'];
         self::afficheVue('view.php',
             [
@@ -51,14 +59,17 @@ class ControllerQuestion extends AbstractController {
     public static function readAllQuestion(): void {
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         if ($utilisateur == null) {
-            Notification::ajouter("danger", "Vous devez être connecté pour accéder à cette page.");
-            self::redirection("?action=home");
+            $questionsOrga = [];
+            $questionsRepre = [];
+            $questionsCoau = [];
+            $questionsVota = [];
+        } else {
+            $login = $utilisateur->getLogin();
+            $questionsOrga = (new QuestionRepository())->selectQuestionOrga($login);
+            $questionsRepre = (new QuestionRepository())->selectQuestionRepre($login);
+            $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
+            $questionsVota = (new QuestionRepository())->selectQuestionVota($login);
         }
-        $login = $utilisateur->getLogin();
-        $questionsOrga = (new QuestionRepository())->selectQuestionOrga($login);
-        $questionsRepre = (new QuestionRepository())->selectQuestionRepre($login);
-        $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
-        $questionsVota = (new QuestionRepository())->selectQuestionVota($login);
         self::afficheVue('view.php',
             [
                 "questionsOrga" => $questionsOrga,
@@ -125,8 +136,11 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createdQuestion(): void {
+        if (!ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $question = new Question(NULL,
-            $_POST['typeVote'],
             $_POST['visibilite'],
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
@@ -135,6 +149,7 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
             date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
             $_POST['organisateur'],
+            $_POST['typeVote'],
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;

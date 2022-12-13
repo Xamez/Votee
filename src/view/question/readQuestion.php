@@ -9,22 +9,31 @@ echo '<div class="flex items-center gap-2">
                 . htmlspecialchars($organisateur->getNom()) . ' ' . htmlspecialchars($organisateur->getPrenom()) .
         '</div>
         </p>
-      </div>';
+      </div>
+      <p>
+        <span class="text-main font-semibold">Période actuelle : </span>' .
+            $question->getPeriodeActuelle() . '
+      </p>
+      <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
+      <div>';
 
-echo '<p><span class="text-main font-semibold">Période actuelle : </span>';
-echo $question->getPeriodeActuelle() . '</p>';
-
-echo '<h1 class="title text-dark text-2xl font-semibold">Organisation</h1><div>';
 foreach ($sections as  $key=>$section) {
     echo '<p class="text-xl text-main font-bold">' . $key + 1  . ' - '
-        . htmlspecialchars($section->getTitreSection()) . '</p>';
+            . htmlspecialchars($section->getTitreSection()) . '
+          </p>';
 }
 
-echo '</div><h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-        <p><span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>
-        <p><span class="text-xl text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
-
-echo '<h1 class="title text-dark text-2xl font-semibold">Proposition</h1>';
+echo '</div>
+      <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+      <p>
+        <span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> 
+        Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'
+      </p>
+      <p>
+        <span class="text-xl text-main font-bold text-lg">Période de vote : </span> 
+        Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'
+      </p>
+      <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>';
 foreach ($propositions as $key=>$proposition) {
     echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
@@ -56,7 +65,7 @@ if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organi
 echo '<div class="flex justify-end">
          <a href="./frontController.php?controller=proposition&action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
             <div class="flex gap-2">
-                <p>Demandes</p>
+                <p>Faire une demande</p>
                 <span class="material-symbols-outlined">file_copy</span>
             </div>
          </a>
