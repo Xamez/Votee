@@ -16,6 +16,7 @@ use App\Votee\parsedown\Parsedown;
 class ControllerProposition extends AbstractController {
 
     public static function createVote($idQuestion, $idVotant, $idProposition) : void {
+        $note = (new VoteRepository())->getNote($idProposition, $idVotant);
         $vote = (new VoteRepository())->construire(["idProposition" => $idProposition, "loginVotant" => $idVotant, "noteProposition" => 0]);
         $voteType = $vote->getVoteType()->name;
         $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
@@ -26,6 +27,7 @@ class ControllerProposition extends AbstractController {
                 "idQuestion" => $idQuestion,
                 "idVotant" => $idVotant,
                 "idProposition" => $idProposition,
+                "note" => $note,
             ]);
     }
 
@@ -37,7 +39,7 @@ class ControllerProposition extends AbstractController {
         else{
             (new Notification())->ajouter("warning", "Le vote existe déjà.");
         }
-        //self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+        self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
     }
 
 
