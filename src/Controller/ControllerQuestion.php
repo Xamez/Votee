@@ -11,7 +11,6 @@ use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
-use App\Votee\Model\Repository\VoteRepository;
 
 class ControllerQuestion extends AbstractController {
 
@@ -137,6 +136,7 @@ class ControllerQuestion extends AbstractController {
             $_POST['voteType']
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
+        var_dump($idQuestion);
         if ($idQuestion) {
             $isOk = true;
             for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
@@ -147,11 +147,11 @@ class ControllerQuestion extends AbstractController {
             else {
                 (new QuestionRepository())->supprimer($idQuestion);
                 (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-                self::redirection("?action=readAllQuestion");
             }
+            self::redirection("?action=readAllQuestion");
         } else {
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-            self::redirection("?action=readAllQuestion");
+            //self::redirection("?action=readAllQuestion");
         }
     }
 
@@ -180,27 +180,6 @@ class ControllerQuestion extends AbstractController {
         $isOk = (new QuestionRepository())->modifierQuestion($_GET['idQuestion'], $_GET['description'], 'visible');
         if ($isOk) (new Notification())->ajouter("success", "La question a été modifiée.");
         else (new Notification())->ajouter("warning", "La modification de la question a échoué.");
-        self::redirection("?action=readQuestion&idQuestion=" . $_GET['idQuestion']);
-    }
-
-    public static function createVote($idQuestion, $idVotant, $idProposition) : void {
-        $vote = (new VoteRepository())->construire(["idProposition" => $idProposition, "loginVotant" => $idVotant, "noteProposition" => 0]);
-        $voteType = $vote->getVoteType()->name;
-        echo $voteType;
-        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
-        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
-        $voteType .= ".php";
-        echo $voteType;
-    }
-
-    public static function createdVote() : void {
-        $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['value']);
-        if ($vote) {
-            (new Notification())->ajouter("success", "Le vote a bien été effectué.");
-        }
-        else{
-            (new Notification())->ajouter("warning", "Le vote existe déjà.");
-        }
         self::redirection("?action=readQuestion&idQuestion=" . $_GET['idQuestion']);
     }
 

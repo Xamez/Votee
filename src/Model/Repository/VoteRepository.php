@@ -17,7 +17,6 @@ class VoteRepository {
     }
 
     public function construire(array $voteFormatTableau) : Vote {
-        var_dump($voteFormatTableau);
         $idQuestion = (new PropositionRepository())->getIdQuestion($voteFormatTableau["idProposition"]);
         $question = (new QuestionRepository())->select($idQuestion);
         $voteType = $question->getVoteType();
@@ -33,13 +32,18 @@ class VoteRepository {
     }
 
     function ajouterVote(string $idProposition, string $login, int $note) : bool {
-        $sql ="CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
+        $sql = "CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idPropositionTag" => $idProposition, "loginTag" => $login, "noteTag" => $note);
         try {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
+            // TODO : SUPPRIMER MSG DE DEBUG
+            echo "ID PROPO: " .$idProposition . "<br>";
+            echo "LOGIN: " .$login . "<br>";
+            echo "NOTE: " . $note . "<br>";
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
