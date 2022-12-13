@@ -28,7 +28,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function section(): void {
-        if (!ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
             self::redirection("?controller=question&readAllQuestion");
         }
@@ -42,7 +42,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createQuestion(): void {
-        if (!ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
             self::redirection("?controller=question&readAllQuestion");
         }
@@ -136,7 +136,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createdQuestion(): void {
-        if (!ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
             self::redirection("?controller=question&readAllQuestion");
         }
