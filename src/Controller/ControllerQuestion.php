@@ -185,7 +185,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function createVote($idQuestion, $idVotant, $idProposition) : void {
         $vote = (new VoteRepository())->construire([$idQuestion, $idVotant, $idProposition]);
-        $vote->getVoteDesign($idQuestion);
+
     }
 
     public static function createdVote() : void {
