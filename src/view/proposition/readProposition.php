@@ -27,14 +27,6 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
                     <p>Editer</p>
                 </div
             </a>';
-        if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant') {
-            echo ' <a href="./frontController.php?controller=proposition&action=selectFusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
-                <div class="flex gap-2">
-                    <span class="material-symbols-outlined">upload</span>
-                    <p>Fusionner</p>
-                </div
-            </a>';
-        }
         echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">delete</span>
@@ -42,6 +34,14 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
                 </div>
             </a>
             </div>';
+    }
+    if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
+        echo ' <a href="./frontController.php?controller=proposition&action=createFusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+                <div class="flex gap-2">
+                    <span class="material-symbols-outlined">upload</span>
+                    <p>Fusionner</p>
+                </div
+            </a>';
     }
 }
 echo '</div>';

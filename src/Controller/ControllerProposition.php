@@ -16,6 +16,10 @@ class ControllerProposition extends AbstractController{
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une proposition !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         if ($question) {
             self::afficheVue('view.php',
@@ -34,6 +38,11 @@ class ControllerProposition extends AbstractController{
     }
 
     public static function createdProposition(): void {
+        $question = (new QuestionRepository())->select($_POST['idQuestion']);
+        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une proposition !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $idProposition = (new PropositionRepository())->ajouterProposition('visible');
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
@@ -47,7 +56,7 @@ class ControllerProposition extends AbstractController{
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion']);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion'], 1);
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
         else {
             (new PropositionRepository())->supprimer($idProposition);
@@ -105,7 +114,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&action=readAllQuestion");
         }
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
@@ -125,7 +134,7 @@ class ControllerProposition extends AbstractController{
     public static function readProposition(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&action=readAllQuestion");
         }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
@@ -160,7 +169,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&action=readAllQuestion");
         }
         $idQuestion = $_GET['idQuestion'];
         self::afficheVue('view.php',
@@ -178,7 +187,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'coauteur') {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&action=readAllQuestion");
         }
         if ((new PropositionRepository())->supprimer($idProposition)) {
             (new Notification())->ajouter("success", "La proposition a été supprimée.");
@@ -206,52 +215,52 @@ class ControllerProposition extends AbstractController{
     }
 
 
-    public static function selectFusion(): void {
-        if (!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == "representant") {
-            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
-        }
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        self::afficheVue('view.php',
-            [
-                "pagetitle" => "Créer la fusion",
-                "cheminVueBody" => "proposition/selectFusion.php",
-                "title" => $question->getTitre(),
-                "subtitle" => $question->getDescription()
-            ]);
-    }
+//    public static function selectFusion(): void {
+//
+//
+//        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+//        self::afficheVue('view.php',
+//            [
+//                "pagetitle" => "Créer la fusion",
+//                "cheminVueBody" => "proposition/selectFusion.php",
+//                "title" => $question->getTitre(),
+//                "subtitle" => $question->getDescription()
+//            ]);
+//    }
 
     public static function createFusion(): void {
-        if (!ConnexionUtilisateur::getRoleProposition($_POST['idProposition']) == "representant") {
+        if (!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) != "representant") {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&action=readAllQuestion");
         }
-        $question = (new QuestionRepository())->select($_POST['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByKey($_POST['idQuestion']);
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
 
-        $textes1 = (new TexteRepository())->selectAllByKey($_POST['idProposition']);
+        $idProposition1 = ConnexionUtilisateur::getPropByLogin($_GET['idQuestion']);
+
+        $textes1 = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         foreach ($textes1 as $texte) {
             $parsedown = new Parsedown();
             $texte->setTexte($parsedown->text($texte->getTexte()));
         }
 
-        $textes2 = (new TexteRepository())->selectAllByKey($_POST['idProposition1']);
+        $textes2 = (new TexteRepository())->selectAllByKey($idProposition1);
         foreach ($textes2 as $texte) {
             $parsedown = new Parsedown();
             $texte->setTexte($parsedown->text($texte->getTexte()));
         }
 
-        $responsable1 = (new UtilisateurRepository())->selectResp($_POST['idProposition']);
-        $responsable2 = (new UtilisateurRepository())->selectResp($_POST['idProposition1']);
+        $responsable1 = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
+        $responsable2 = (new UtilisateurRepository())->selectResp($idProposition1);
 
-        $coAuteurs1 = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition']);
-        $coAuteurs2 = (new UtilisateurRepository())->selectCoAuteur($_POST['idProposition1']);
+        $coAuteurs1 = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+        $coAuteurs2 = (new UtilisateurRepository())->selectCoAuteur($idProposition1);
         $coAuteurs = array_unique(array_merge($coAuteurs1, $coAuteurs2), SORT_REGULAR);
         if (in_array($responsable1, $coAuteurs)) unset($coAuteurs[array_search($responsable1, $coAuteurs)]);
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Lire la fusion",
-                "idPropositions" => array($_POST['idProposition'], $_POST['idProposition1']),
+                "idPropositions" => array($_GET['idProposition'], $idProposition1),
                 "question" => $question,
                 "sections" => $sections,
                 "coAuteurs" => $coAuteurs,
@@ -267,7 +276,7 @@ class ControllerProposition extends AbstractController{
     public static function createdFusion(): void {
         if (!ConnexionUtilisateur::getRoleProposition($_POST['idProposition1']) == "representant") {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&action=readAllQuestion");
         }
         (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
         (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
@@ -280,7 +289,7 @@ class ControllerProposition extends AbstractController{
         foreach ($_POST['coAuteurs'] as $coAuteur) {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idProposition);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['responsable'], $idProposition, $_POST['idQuestion']);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['responsable'], $idProposition, $_POST['idQuestion'], 1);
 
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {

@@ -3,6 +3,8 @@
         <div>
             <textarea class="w-80 border-2" placeholder="Motif de la demande" name="motif" required></textarea>
         </div>
-        <input class="p-2 w-48 text-white bg-main font-semibold rounded-lg" type="submit" value="Confirmer" />
+        <input type="hidden" name="titreDemande" value="<?= $titreDemande ?>">
+        <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>">
+        <input class="p-2 w-48 text-white bg-main font-semibold rounded-lg" type="submit" value="Confirmer"/>
     </form>
 </div>

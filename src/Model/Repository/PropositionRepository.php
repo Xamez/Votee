@@ -40,6 +40,19 @@ class PropositionRepository extends AbstractRepository {
         );
     }
 
+    public function selectPropById($idQuestion, $login): ?int {
+        $sql = "SELECT p.IDPROPOSITION
+            FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
+            JOIN Propositions p ON r.idProposition = p.idProposition
+            JOIN RedigerR rr ON p.idProposition = rr.idProposition
+            WHERE rr.login = :loginTag AND q.idQuestion= :idQuestionTag";
+        $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute($values);
+        $idProposition = $pdoStatement->fetch();
+        return $idProposition ? $idProposition[0] : null;
+    }
+
     public function modifierProposition(string $idProposition, string $visibilite) {
         $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -59,10 +72,14 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterRepresentant(string $login, int $idProposition, int $idQuestion):bool {
-        $sql = "CALL AjouterRedigerR(:loginTag, :idPropositionTag, :idQuestionTag)";
+    public function AjouterRepresentant($login, $idProposition, $idQuestion, $isFusion):bool {
+        $sql = "CALL AjouterRepPropRedigerR(:login, :idProposition, :idQuestion, :isFusion)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array(":loginTag"=>$login, "idPropositionTag"=>$idProposition, "idQuestionTag"=>$idQuestion);
+        $values = array(
+            "login" => $login,
+            "idProposition" => $idProposition,
+            "idQuestion" => $idQuestion,
+            "isFusion" => $isFusion);
         try {
             $pdoStatement->execute($values);
             return true;
@@ -70,6 +87,18 @@ class PropositionRepository extends AbstractRepository {
             return false;
         }
     }
+
+//    public function ajouterRepresentant(string $login, int $idProposition, int $idQuestion):bool {
+//        $sql = "CALL AjouterRedigerR(:loginTag, :idPropositionTag, :idQuestionTag)";
+//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+//        $values = array(":loginTag"=>$login, "idPropositionTag"=>$idProposition, "idQuestionTag"=>$idQuestion);
+//        try {
+//            $pdoStatement->execute($values);
+//            return true;
+//        } catch (PDOException) {
+//            return false;
+//        }
+//    }
 
     public function ajouterCoAuteur(string $login, int $idProposition):bool {
         $sql = "CALL AjouterRedigerCA(:utilisateur, :idProposition)";

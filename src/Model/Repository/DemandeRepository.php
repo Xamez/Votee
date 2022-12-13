@@ -7,7 +7,6 @@ use PDOException;
 
 class DemandeRepository extends AbstractRepository {
 
-
     public function getNomTable(): string { return "Effectuer"; }
 
     public function getNomClePrimaire(): string { return "IDDEMANDE"; }
@@ -17,9 +16,11 @@ class DemandeRepository extends AbstractRepository {
             $objetFormatTableau['LOGINDESTINATAIRE'],
             $objetFormatTableau['LOGIN'],
             $objetFormatTableau['IDDEMANDE'],
+            $objetFormatTableau['ETATDEMANDE'],
+            $objetFormatTableau['TITREDEMANDE'],
             $objetFormatTableau['TEXTEDEMANDE'],
-            $objetFormatTableau['ROLEDEMANDE'],
-            $objetFormatTableau['ETATDEMANDE']
+            $objetFormatTableau['IDPROPOSITION'],
+            $objetFormatTableau['IDQUESTION'],
         );
     }
 
@@ -28,9 +29,11 @@ class DemandeRepository extends AbstractRepository {
             'LOGINDESTINATAIRE',
             'LOGIN',
             'IDDEMANDE',
-            'TEXTEDEMANDE',
-            'ROLEDEMANDE',
             'ETATDEMANDE',
+            'TITREDEMANDE',
+            'TEXTEDEMANDE',
+            'IDPROPOSITION',
+            'IDQUESTION',
         );
     }
 
@@ -65,12 +68,14 @@ class DemandeRepository extends AbstractRepository {
     }
 
     public function ajouterDemande(Demande $demande): bool {
-        $sql = "CALL AjouterDemandes(:loginDTag, :loginTag, :txtTag, :roleTag)";
+        $sql = "CALL AjouterDemandes(:loginDTag, :loginTag, :titreTag, :txtTag, :idPropTag, :idQuestionTag)";
         $values = array(
             "loginDTag" => $demande->getLoginDestinataire(),
             "loginTag" => $demande->getLogin(),
+            "titreTag" => $demande->getTitreDemande(),
             "txtTag" => $demande->getTexteDemande(),
-            "roleTag" => $demande->getRoleDemande(),
+            "idPropTag" => $demande->getIdProposition(),
+            "idQuestionTag" => $demande->getIdQuestion()
         );
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -82,9 +87,14 @@ class DemandeRepository extends AbstractRepository {
     }
 
     public function updateDemande($demande) : bool {
-        $sql = "CALL ModifierDemandes(:idDemandeTag, :etatTag)";
+        $sql = "CALL ModifierDemandes(:idDemandeTag, :etatTag, :idPropTag, :idQuestionTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idDemandeTag" => $demande->getIdDemande(), "etatTag" => $demande->getEtatDemande());
+        $values = array(
+            "idDemandeTag" => $demande->getIdDemande(),
+            "etatTag" => $demande->getEtatDemande(),
+            "idPropTag" => $demande->getIdProposition(),
+            "idQuestionTag" => $demande->getIdQuestion(),
+        );
         try {
             $pdoStatement->execute($values);
             return true;

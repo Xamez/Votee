@@ -7,24 +7,32 @@ class Demande {
     private string $loginDestinataire;
     private string $login;
     private ?int $idDemande;
-    private string $texteDemande;
-    private string $roleDemande;
     private string $etatDemande;
+    private string $titreDemande;
+    private string $texteDemande;
+
+    private ?string $idProposition;
+
+    private ?string $idQuestion;
 
     public function __construct(
         string $loginDestinataire,
         string $login,
-        ?int $idDemande,
+        ?int   $idDemande,
+        string $etatDemande,
+        string $titreDemande,
         string $texteDemande,
-        string $roleDemande,
-        string $etatDemande)
+        ?string $idProposition,
+        ?string $idQuestion)
     {
         $this->loginDestinataire = $loginDestinataire;
         $this->login = $login;
         $this->idDemande = $idDemande;
-        $this->texteDemande = $texteDemande;
-        $this->roleDemande = $roleDemande;
         $this->etatDemande = $etatDemande;
+        $this->titreDemande = $titreDemande;
+        $this->texteDemande = $texteDemande;
+        $this->idProposition = $idProposition;
+        $this->idQuestion = $idQuestion;
     }
 
 
@@ -33,11 +41,21 @@ class Demande {
             "LOGINDESTINATAIRE" => $this->getLoginDestinataire(),
             "LOGIN" => $this->getLogin(),
             "IDDEMANDE" => $this->getIdDemande(),
-            "TEXTEDEMANDE" => $this->getTexteDemande(),
-            "ROLEDEMANDE" => $this->getRoleDemande(),
             "ETATDEMANDE" => $this->getEtatDemande(),
+            "TITREDEMANDE" => $this->getTitreDemande(),
+            "TEXTEDEMANDE" => $this->getTexteDemande(),
+            "IDPROPOSITION" => $this->getIdProposition(),
+            "IDQUESTION" => $this->getIdQuestion(),
         );
     }
+
+    public function getIdProposition(): ?string { return $this->idProposition; }
+
+    public function setIdProposition(?string $idProposition): void { $this->idProposition = $idProposition; }
+
+    public function getIdQuestion(): ?string { return $this->idQuestion; }
+
+    public function setIdQuestion(?string $idQuestion): void { $this->idQuestion = $idQuestion; }
 
     public function getLoginDestinataire(): string { return $this->loginDestinataire; }
 
@@ -55,9 +73,9 @@ class Demande {
 
     public function setTexteDemande(string $texteDemande): void { $this->texteDemande = $texteDemande; }
 
-    public function getRoleDemande(): string { return $this->roleDemande; }
+    public function getTitreDemande(): string { return $this->titreDemande; }
 
-    public function setRoleDemande(string $roleDemande): void { $this->roleDemande = $roleDemande; }
+    public function setTitreDemande(string $titreDemande): void { $this->titreDemande = $titreDemande; }
 
     public function getEtatDemande(): string { return $this->etatDemande; }
 

@@ -2,6 +2,8 @@
 namespace App\Votee\Lib;
 use App\Votee\Model\DataObject\Utilisateur;
 use App\Votee\Model\HTTP\Session;
+use App\Votee\Model\Repository\PropositionRepository;
+use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 
 class ConnexionUtilisateur {
@@ -41,11 +43,32 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    public static function creerProposition($idQuestion): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            $nbPropRestant = (new QuestionRepository)->getPropRestant($idQuestion, $utilisateur->getLogin());
+            return !($nbPropRestant == null) && $nbPropRestant > 0;
+        }
+        return false;
+    }
+
+    public static function creerFusion(): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            return $utilisateur->getNbFusionRestant() > 0;
+        }
+        return false;
+    }
+
     public static function estAdministrateur() : bool {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->selectAdministrateur(Session::getInstance()->lire(static::$cleConnexion));
         }
         return false;
+    }
+
+    public static function estOrganisateur($idQuestion): bool {
+        return self::getRoleQuestion($idQuestion) == "organisateur";
     }
 
     public static function getRoleQuestion($idQuestion): ?string {
@@ -58,6 +81,13 @@ class ConnexionUtilisateur {
     public static function getRoleProposition($idProposition): ?string {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->getRoleProposition(Session::getInstance()->lire(static::$cleConnexion),$idProposition);
+        }
+        return null;
+    }
+
+    public static function getPropByLogin($idQuestion): ?int {
+        if (self::estConnecte()) {
+            return (new PropositionRepository())->selectPropById($idQuestion, Session::getInstance()->lire(static::$cleConnexion));
         }
         return null;
     }
