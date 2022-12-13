@@ -6,7 +6,7 @@ use App\Votee\Model\DataObject\Vote;
 use App\Votee\Model\DataObject\VoteTypes;
 use PDOException;
 
-class VoteRepository extends AbstractRepository {
+class VoteRepository {
 
     function getNomTable(): string {
         return "Voter";
@@ -20,22 +20,16 @@ class VoteRepository extends AbstractRepository {
         $idQuestion = (new PropositionRepository())->getIdQuestion($voteFormatTableau["IDPROPOSITION"]);
         $question = (new QuestionRepository())->select($idQuestion);
         $voteType = $question->getVoteType();
-        return match ($voteType) {
-            VoteTypes::JUGEMENT_MAJORITAIRE => new JugementMajoritaire($voteFormatTableau["IDPROPOSITION"], $voteFormatTableau["LOGIN"], $voteFormatTableau["NOTEPROPOSITION"]),
-            VoteTypes::OUI_NON => new OuiNon($voteFormatTableau["IDPROPOSITION"], $voteFormatTableau["LOGIN"], $voteFormatTableau["NOTEPROPOSITION"]),
-            default => throw new PDOException("Le type de vote n'est pas reconnu"),
-        };
+        return new Vote($voteFormatTableau["IDPROPOSITION"], $voteFormatTableau["LOGIN"], $voteFormatTableau["NOTEPROPOSITION"], $voteType);
     }
 
-    protected function getNomsColonnes(): array {
+    protected function getNomsColonnes() : array {
         return array(
             'IDPROPOSITION',
             'LOGIN',
             'NOTE',
         );
     }
-
-    public abstract function getVoteDesign($idQuestion, $idVotant, $idProposition): string;
 
     function ajouterVote(string $idProposition, string $login, int $note) : bool {
         $sql ="CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
