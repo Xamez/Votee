@@ -20,14 +20,15 @@ echo '</div><div class="flex gap-2 justify-between">
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
         || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
-        echo '
-            <a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+        echo '<a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion='
+                    . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">edit</span>
                     <p>Editer</p>
                 </div
             </a>';
-        echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+        echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion='
+                    . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">delete</span>
                     <p>Supprimer</p>
@@ -35,15 +36,26 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
             </a>
             </div>';
     }
+    //TODO Empecher la fusion si on a pas une proposition dans la meme question
     if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
-        echo ' <a href="./frontController.php?controller=demande&action=createDemande&titreDemande=fusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+        if (ConnexionUtilisateur::creerFusion($idProposition)) {
+            echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
+                . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">upload</span>
-                    <p>Fusionner</p>
+                    <p>Créer une fusion</p>
                 </div
-            </a>';
+              </a>';
+        } else {
+            echo ' <a href="./frontController.php?controller=demande&action=createDemande&titreDemande=fusion&idQuestion='
+                . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+                <div class="flex gap-2">
+                    <span class="material-symbols-outlined">file_copy</span>
+                    <p>Demander une fusion</p>
+                </div
+              </a>';
+        }
     }
-    //href="./frontController.php?controller=proposition&action=createFusion&idQuestion=
 }
 echo '</div>';
 if ($question->getPeriodeActuelle() == 'Période de vote') {
