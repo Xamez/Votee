@@ -55,11 +55,12 @@ if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organi
     </div>';
 }
 
-$role = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
-if ($role == 'votant' || $role == 'organisateur') {
-    echo '
+if (sizeof($propositions) > 0) {
+    $role = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
+    if ($role == 'votant' || $role == 'organisateur') {
+        echo '
     <div class="flex">
-         <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+         <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
             <div class="flex gap-2">
                 <p>Voter pour tous</p>
                 <span class="material-symbols-outlined">how_to_vote</span>
@@ -67,6 +68,7 @@ if ($role == 'votant' || $role == 'organisateur') {
          </a>
     </div>
     ';
+    }
 }
 
 echo '

@@ -44,7 +44,18 @@ class ControllerProposition extends AbstractController {
 
     public static function voterPropositions() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        foreach ($propositions as $proposition) {
+            $idProposition = $proposition->getIdProposition();
+            $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
+            $textess = (new TexteRepository())->selectAllByKey($idProposition);
+            $textes[$idProposition] = $textess;
+            foreach ($textess as $texte) {
+                $parsedown = new Parsedown();
+                $texte->setTexte($parsedown->text($texte->getTexte()));
+            }
+        }
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Voter",
@@ -52,6 +63,9 @@ class ControllerProposition extends AbstractController {
                 "title" => "Voter",
                 "subtitle" => "Voter pour les propositions de la question : " . $question->getTitre(),
                 "propositions" => $propositions,
+                "sections" => $sections,
+                "textes" => $textes,
+                "responsables" => $responsables,
                 "idQuestion" => $_GET['idQuestion'],
             ]);
     }
