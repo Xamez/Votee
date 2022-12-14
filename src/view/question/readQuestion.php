@@ -62,22 +62,24 @@ if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organi
          </a>
       </div>';
 }
-echo '<div class="flex justify-end">';
 
-if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
-    echo '<a href="./frontController.php?controller=proposition&action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">            
+if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) != 'representant') {
+    echo '<div class="flex justify-end">';
+    if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+        echo '<a href="./frontController.php?controller=proposition&action=createProposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">            
             <div class="flex gap-2">
                 <p>Créer une proposition</p>
                 <span class="material-symbols-outlined">add_circle</span>
             </div>
           </a>';
-} else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
-    echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=proposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+    } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+        echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=proposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
             <div class="flex gap-2">
                 <p>Faire une demande</p>
                 <span class="material-symbols-outlined">file_copy</span>
             </div>
          </a>';
+    }
+    echo '</div>';
 }
-echo ' </div>
-    </div>';
+echo '</div>';

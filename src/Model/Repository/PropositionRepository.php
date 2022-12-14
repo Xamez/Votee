@@ -84,21 +84,10 @@ class PropositionRepository extends AbstractRepository {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
-
-//    public function ajouterRepresentant(string $login, int $idProposition, int $idQuestion):bool {
-//        $sql = "CALL AjouterRedigerR(:loginTag, :idPropositionTag, :idQuestionTag)";
-//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-//        $values = array(":loginTag"=>$login, "idPropositionTag"=>$idProposition, "idQuestionTag"=>$idQuestion);
-//        try {
-//            $pdoStatement->execute($values);
-//            return true;
-//        } catch (PDOException) {
-//            return false;
-//        }
-//    }
 
     public function ajouterCoAuteur(string $login, int $idProposition):bool {
         $sql = "CALL AjouterRedigerCA(:utilisateur, :idProposition)";

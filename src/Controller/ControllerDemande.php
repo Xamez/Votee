@@ -5,7 +5,6 @@ namespace App\Votee\Controller;
 use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Demande;
-use App\Votee\Model\DataObject\Utilisateur;
 use App\Votee\Model\Repository\DemandeRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
@@ -15,7 +14,7 @@ class ControllerDemande extends AbstractController {
     public static function readAllDemande(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByDest($utilisateur->getLogin());
@@ -40,37 +39,10 @@ class ControllerDemande extends AbstractController {
             ]);
     }
 
-    public static function historiqueDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
-        }
-        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-        $demandes = (new DemandeRepository())->getDemandeByUtil($utilisateur->getLogin());
-        $demandesAccepte = [];
-        $demandesRefuse = [];
-        $demandesAttente = [];
-        foreach ($demandes as $demande) {
-            $utilisateur = (new UtilisateurRepository())->select($demande->getLogin());
-            if ($demande->getEtatDemande() == 'accepte') $demandesAccepte[] = [$utilisateur, $demande];
-            if ($demande->getEtatDemande() == 'refuse') $demandesRefuse[] = [$utilisateur, $demande];
-            if ($demande->getEtatDemande() == 'attente') $demandesAttente[] = [$utilisateur, $demande];
-        }
-        self::afficheVue('view.php',
-            [
-                "demandesAccepte" => $demandesAccepte,
-                "demandesRefuse" => $demandesRefuse,
-                "demandesAttente" => $demandesAttente,
-                "pagetitle" => "Historique de mes demandes",
-                "cheminVueBody" => "demande/listDemande.php",
-                "title" => "Historique de mes demandes",
-            ]);
-    }
-
     public static function readDemande(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
         $auteur = (new UtilisateurRepository())->select($demande->getLogin());
@@ -104,17 +76,18 @@ class ControllerDemande extends AbstractController {
     public static function createDemande(): void {;
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $titreDemande = $_GET['titreDemande'];
         if (!in_array($titreDemande, ['question','fusion', 'proposition'], true )) {
             (new Notification())->ajouter("danger","Erreur lors du chargement de la page !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
+        $idQuestion = array_key_exists('idQuestion', $_GET) ? $_GET['idQuestion'] : null;
         // TODO verifier que idQUestion ne change pas et jsp comment faire
         self::afficheVue('view.php',
             [
-                "idQuestion" => $_GET['idQuestion'],
+                "idQuestion" => $idQuestion,
                 "titreDemande" => $titreDemande,
                 "pagetitle" => "Demande",
                 "cheminVueBody" => "demande/createDemande.php",
@@ -126,29 +99,30 @@ class ControllerDemande extends AbstractController {
     public static function createdDemande(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger", "Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $idProposition = array_key_exists('idProposition', $_POST) ? $_POST['idProposition'] : null;
         $idQuestion = array_key_exists('idQuestion', $_POST) ? $_POST['idQuestion'] : null;
-        var_dump($idQuestion);
         $destinataire = '';
         if ($_POST['titreDemande'] == 'question') $destinataire = 'admin';
         else if ($_POST['titreDemande'] == 'proposition') $destinataire = (new QuestionRepository())->select($idQuestion)->getLogin();
-
-        // else if ($_POST['titreDemande'] == 'fusion') $destinataire = 'admin';
+        else if ($_POST['titreDemande'] == 'fusion') $destinataire = 'STUB';
+        // TODO Destinataire doit etre le representant de la question (normalement ya une methode qui get
+        // selon une proposition, le login du representant, bref on la get et apres c'est ok
+        // TODO Changer la forme du bouton fusion (faire demande fusion => creer fusion
         $demande = new Demande(
             $destinataire,
             ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),
             null,
-            $_POST['motif'],
-            $_POST['titreDemande'],
             'attente',
+            $_POST['titreDemande'],
+            $_POST['motif'],
             $idProposition,
             $idQuestion
         );
         $isOk = (new DemandeRepository())->ajouterDemande($demande);
         if ($isOk) (new Notification())->ajouter("success", "La demande a été envoyée !");
         else (new Notification())->ajouter("warning", "La demande n'a pas été envoyée !");
-        self::redirection("?controller=demande&action=readAllDemande");
+        self::redirection("?controller=utilisateur&action=historiqueDemande");
     }
 }

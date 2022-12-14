@@ -4,6 +4,6 @@
         <a class="p-2 w-48 text-center text-white bg-main font-semibold rounded-lg"
            href="./frontController.php?controller=proposition&action=deletedProposition&idQuestion=<?= rawurldecode($idQuestion) ?>&idProposition=<?= rawurldecode($idProposition) ?>">Oui</a>
         <a class="p-2 w-48 text-center text-white bg-main font-semibold rounded-lg"
-           href="./frontController.php?controller=question&action=readAllQuestion">Non</a>
+           href="./frontController.php?controller=question&action=all">Non</a>
     </div>
 </div>
