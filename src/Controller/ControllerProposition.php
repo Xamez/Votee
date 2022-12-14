@@ -42,6 +42,20 @@ class ControllerProposition extends AbstractController {
         self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
     }
 
+    public static function voterPropositions() : void {
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Voter",
+                "cheminVueBody" => "proposition/voterPropositions.php",
+                "title" => "Voter",
+                "subtitle" => "Voter pour les propositions de la question : " . $question->getTitre(),
+                "propositions" => $propositions,
+                "idQuestion" => $_GET['idQuestion'],
+            ]);
+    }
+
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
