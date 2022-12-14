@@ -18,10 +18,9 @@
         }
         ?>
     </div>
-    <input type="hidden" name="organisateur" value="<?= $representant->getLogin()?>">
-    <input type="hidden" name="nbSections" value="<?= sizeof($sections);?>">
-    <input type="hidden" name="idQuestion" value="<?= $idQuestion;?>">
-    <input type="hidden" name="isFusion" value="0">
+    <input type="hidden" name="organisateur" value="<?= $representant->getLogin() ?>">
+    <input type="hidden" name="nbSections" value="<?= sizeof($sections) ?>">
+    <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>">
     <div class="flex justify-center">
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
     </div>

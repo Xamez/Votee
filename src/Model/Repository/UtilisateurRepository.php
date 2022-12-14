@@ -3,6 +3,7 @@
 namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Utilisateur;
+use PDOException;
 
 class UtilisateurRepository extends AbstractRepository {
 
@@ -42,6 +43,23 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['PRENOM'],
             $utilisateurFormatTableau['NBQUESTRESTANT']
         );
+    }
+
+    public function inscrire(Utilisateur $utilisateur): bool {
+        $sql = "CALL AjouterUtilisateurs(:loginTag, :mdpTag, :nomTag, :prenomTag)";
+        $values = array(
+            "loginTag" => $utilisateur->getLogin(),
+            "mdpTag" => $utilisateur->getMotDePasse(),
+            "nomTag" => $utilisateur->getNom(),
+            "prenomTag" => $utilisateur->getPrenom(),
+        );
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     public function getRoleQuestion($login, $idQuestion): ?string {

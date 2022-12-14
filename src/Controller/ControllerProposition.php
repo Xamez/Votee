@@ -60,7 +60,7 @@ class ControllerProposition extends AbstractController{
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion'],  $_POST['isFusion']);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion'], 0);
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
         else {
             (new PropositionRepository())->supprimer($idProposition);
@@ -233,44 +233,44 @@ class ControllerProposition extends AbstractController{
 //    }
 
     public static function createFusion(): void {
-        if (!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) != "representant") {
-            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
 
-        $idProposition1 = ConnexionUtilisateur::getPropByLogin($_GET['idQuestion']);
+        $idPropAMerge = ConnexionUtilisateur::getPropByLogin($_GET['idQuestion']);
 
-        $textes1 = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
-        foreach ($textes1 as $texte) {
+        $textesCourant = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
+        foreach ($textesCourant as $texte) {
             $parsedown = new Parsedown();
             $texte->setTexte($parsedown->text($texte->getTexte()));
         }
 
-        $textes2 = (new TexteRepository())->selectAllByKey($idProposition1);
-        foreach ($textes2 as $texte) {
+        $texteAMerge = (new TexteRepository())->selectAllByKey($idPropAMerge);
+        foreach ($texteAMerge as $texte) {
             $parsedown = new Parsedown();
             $texte->setTexte($parsedown->text($texte->getTexte()));
         }
 
-        $responsable1 = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
-        $responsable2 = (new UtilisateurRepository())->selectResp($idProposition1);
+        $respCourant = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
+        $respAMerge = (new UtilisateurRepository())->selectResp($idPropAMerge);
 
-        $coAuteurs1 = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
-        $coAuteurs2 = (new UtilisateurRepository())->selectCoAuteur($idProposition1);
-        $coAuteurs = array_unique(array_merge($coAuteurs1, $coAuteurs2), SORT_REGULAR);
-        if (in_array($responsable1, $coAuteurs)) unset($coAuteurs[array_search($responsable1, $coAuteurs)]);
+        $coAuteursCourant = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+        $coAuteursAMerge = (new UtilisateurRepository())->selectCoAuteur($idPropAMerge);
+
+
+        $coAuteurs[] = $respCourant;
+        //$coAuteurs[] = array_unique(array_merge($coAuteursCourant, $coAuteursAMerge), SORT_REGULAR);
+        //if (in_array($respCourant, $coAuteurs)) unset($coAuteurs[array_search($respCourant, $coAuteurs)]);
+        // TODO gerer les coaAuteur
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Lire la fusion",
-                "idPropositions" => array($_GET['idProposition'], $idProposition1),
+                "idPropositions" => array($_GET['idProposition'], $idPropAMerge),
                 "question" => $question,
                 "sections" => $sections,
                 "coAuteurs" => $coAuteurs,
-                "textes" => array($textes1, $textes2),
-                "responsable" => $responsable1, // Proposition header
-                "responsables" => array($responsable1, $responsable2),
+                "textes" => array($textesCourant, $texteAMerge),
+                "responsable" => $respAMerge, // Proposition header
+                "responsables" => array($respCourant, $respAMerge),
                 "cheminVueBody" => "proposition/createFusion.php",
                 "title" => $question->getTitre(),
                 "subtitle" => $question->getDescription()
@@ -278,26 +278,22 @@ class ControllerProposition extends AbstractController{
     }
 
     public static function createdFusion(): void {
-        if (!ConnexionUtilisateur::getRoleProposition($_POST['idProposition1']) == "representant") {
-            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
-        (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
-        (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');
-        $idProposition = (new PropositionRepository())->ajouterProposition('visible');
+        (new PropositionRepository())->modifierProposition($_POST['idPropCourant'], 'invisible');
+        (new PropositionRepository())->modifierProposition($_POST['idPropAMerge'], 'invisible');
+        $idNewProp = (new PropositionRepository())->ajouterProposition('visible');
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $_POST['section' . $i], NULL);
+            $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idNewProp, $_POST['section' . $i], NULL);
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
         foreach ($_POST['coAuteurs'] as $coAuteur) {
-            $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idProposition);
+            $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idNewProp);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['responsable'], $idProposition, $_POST['idQuestion'], 1);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['respCourant'], $idNewProp, $_POST['idQuestion'], 1);
 
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {
-            (new PropositionRepository())->supprimer($idProposition);
+            (new PropositionRepository())->supprimer($idNewProp);
             (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'visible');
             (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'visible');
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");

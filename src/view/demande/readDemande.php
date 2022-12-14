@@ -10,21 +10,34 @@ echo '<div class="flex items-center gap-2">
        '</div>
         </p>
      </div>';
+echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
+if ($demande->getTitreDemande() == 'proposition') {
+    echo '<span class="font-semibold text-lg">Demande de création d\'une proposition :</span>';
+    echo '<a class="w-36 p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($demande->getIdQuestion()) .'">Voir la question</a>';
+} else if ($demande->getTitreDemande() == 'question') {
+    echo '<span class="font-semibold text-lg">Demande de création d\'une question :</span>';
+} else if ($demande->getTitreDemande() == 'fusion') {
+    echo '<span class="font-semibold text-lg">Demande de création d\'une fusion :</span>';
+    echo '<a class="w-40 p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?controller=proposition&action=readProposition&idQuestion='
+            . rawurlencode($demande->getIdQuestion()) .'&idProposition=' . rawurlencode($demande->getIdProposition()) .'">Voir la proposition</a>';
+}
 
-
-
-echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
-        <span>' .htmlspecialchars($demande->getTexteDemande()) . '
+echo '<span>' .htmlspecialchars($demande->getTexteDemande()) . '
         </span>
      </div>';
 
-if (ConnexionUtilisateur::estAdministrateur() || ConnexionUtilisateur::estOrganisateur($demande->getIdQuestion())) {
-    echo '<div class="flex justify-center gap-10">
+if ($demande->getEtatDemande() == 'attente') {
+    if (
+        ($demande->getTitreDemande() == 'fusion' && ConnexionUtilisateur::estRepresentant($demande->getIdProposition()))
+        || ($demande->getTitreDemande() == 'question' && ConnexionUtilisateur::estAdministrateur())
+        || ($demande->getTitreDemande() == 'proposition' && ConnexionUtilisateur::estOrganisateur($demande->getIdQuestion()))) {
+        echo '<div class="flex justify-center gap-10">
             <a class="w-36 flex p-2 justify-center text-white bg-green font-semibold rounded-lg" 
-                href="./frontController.php?controller=demande&action=setDemande&statut=accepte&idDemande=' . rawurlencode($demande->getIdDemande()) .  '">Accepter
+                href="./frontController.php?controller=demande&action=setDemande&statut=accepte&idDemande=' . rawurlencode($demande->getIdDemande()) . '">Accepter
             </a>
             <a class="w-36 flex p-2 justify-center text-white bg-red font-semibold rounded-lg" 
-                href="./frontController.php?controller=demande&action=setDemande&statut=refuse&idDemande=' . rawurlencode($demande->getIdDemande()) .  '">Refuser
+                href="./frontController.php?controller=demande&action=setDemande&statut=refuse&idDemande=' . rawurlencode($demande->getIdDemande()) . '">Refuser
             </a>
           </div>';
+    }
 }

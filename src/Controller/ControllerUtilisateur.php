@@ -36,7 +36,7 @@ class ControllerUtilisateur extends AbstractController {
             self::redirection("?controller=utilisateur&action=inscription");
         }
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
-        (new UtilisateurRepository())->sauvegarder($utilisateur);
+        (new UtilisateurRepository())->inscrire($utilisateur);
         (new Notification())->ajouter("success","L'utilisateur a été créé");
         (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
         self::redirection("?action=home");
@@ -76,10 +76,10 @@ class ControllerUtilisateur extends AbstractController {
     }
 
     public static function information(): void {
-        self::afficheVue("utilisateur/compte.php",
+        self::afficheVue("view.php",
             [
                 "pagetitle" => "Compte",
-                "cheminVueBody" => "utilisateur/compte.php",
+                "cheminVueBody" => "utilisateur/information.php",
                 "title" => "Mon compte",
             ]);
     }

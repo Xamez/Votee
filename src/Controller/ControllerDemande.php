@@ -58,14 +58,17 @@ class ControllerDemande extends AbstractController {
 
     public static function setDemande(): void {
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
-        if (!ConnexionUtilisateur::estAdministrateur() && !ConnexionUtilisateur::estOrganisateur($demande->getIdQuestion())) {
-            (new Notification())->ajouter("danger","Vous devez être administrateur ou organisateur de la question !");
-            self::redirection("?controller=demande&action=readAllDemande");
-        }
         if ($demande->getEtatDemande() != 'attente') {
             (new Notification())->ajouter("danger","La demande a déjà été traitée !");
             self::redirection("?controller=demande&action=readAllDemande");
         }
+        if (!(($demande->getTitreDemande() == 'fusion' && ConnexionUtilisateur::estRepresentant($demande->getIdProposition()))
+            || ($demande->getTitreDemande() == 'question' && ConnexionUtilisateur::estAdministrateur())
+            || ($demande->getTitreDemande() == 'proposition' && ConnexionUtilisateur::estOrganisateur($demande->getIdQuestion())))) {
+            (new Notification())->ajouter("danger","Vous n'avez pas les permissions !");
+            self::redirection("?controller=demande&action=readAllDemande");
+        }
+
         $demande->setEtatDemande($_GET['statut']);
         $isOk = (new DemandeRepository())->updateDemande($demande);
         if ($isOk) (new Notification())->ajouter("success","La demande a été mise à jour !");
@@ -84,10 +87,12 @@ class ControllerDemande extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $idQuestion = array_key_exists('idQuestion', $_GET) ? $_GET['idQuestion'] : null;
+        $idProposition = array_key_exists('idProposition', $_GET) ? $_GET['idProposition'] : null;
         // TODO verifier que idQUestion ne change pas et jsp comment faire
         self::afficheVue('view.php',
             [
                 "idQuestion" => $idQuestion,
+                "idProposition" => $idProposition,
                 "titreDemande" => $titreDemande,
                 "pagetitle" => "Demande",
                 "cheminVueBody" => "demande/createDemande.php",
@@ -106,10 +111,7 @@ class ControllerDemande extends AbstractController {
         $destinataire = '';
         if ($_POST['titreDemande'] == 'question') $destinataire = 'admin';
         else if ($_POST['titreDemande'] == 'proposition') $destinataire = (new QuestionRepository())->select($idQuestion)->getLogin();
-        else if ($_POST['titreDemande'] == 'fusion') $destinataire = 'STUB';
-        // TODO Destinataire doit etre le representant de la question (normalement ya une methode qui get
-        // selon une proposition, le login du representant, bref on la get et apres c'est ok
-        // TODO Changer la forme du bouton fusion (faire demande fusion => creer fusion
+        else if ($_POST['titreDemande'] == 'fusion') $destinataire = (new UtilisateurRepository())->selectResp($idProposition)->getLogin();
         $demande = new Demande(
             $destinataire,
             ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),

@@ -40,12 +40,13 @@ class PropositionRepository extends AbstractRepository {
         );
     }
 
+    /** Retourne l'id d'une proposition (visible) d'un login dans une question */
     public function selectPropById($idQuestion, $login): ?int {
         $sql = "SELECT p.IDPROPOSITION
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
             JOIN Propositions p ON r.idProposition = p.idProposition
             JOIN RedigerR rr ON p.idProposition = rr.idProposition
-            WHERE rr.login = :loginTag AND q.idQuestion= :idQuestionTag";
+            WHERE rr.login = :loginTag AND q.idQuestion= :idQuestionTag AND q.VISIBILITE = 'visible'";
         $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute($values);
@@ -127,4 +128,13 @@ class PropositionRepository extends AbstractRepository {
         return $result[0];
     }
 
+    public function getFusionRestant(int $idProposition, string $login): ?int {
+        $sql = "SELECT nbFusionRestant FROM ScoreFusion WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idPropositionTag"=>$idProposition, "loginTag" => $login);
+
+        $pdoStatement->execute($values);
+        $nbFusionRestant = $pdoStatement->fetch();
+        return $nbFusionRestant ? $nbFusionRestant[0] : null;
+    }
 }

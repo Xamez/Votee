@@ -52,10 +52,11 @@ class ConnexionUtilisateur {
         return false;
     }
 
-    public static function creerFusion(): bool {
+    public static function creerFusion($idProposition): bool {
         if (self::estConnecte()) {
             $utilisateur = self::getUtilisateurConnecte();
-            return $utilisateur->getNbFusionRestant() > 0;
+            $nbFusionRestant = (new PropositionRepository())->getFusionRestant($idProposition, $utilisateur->getLogin());
+            return !($nbFusionRestant == null) && $nbFusionRestant > 0;
         }
         return false;
     }
@@ -69,6 +70,10 @@ class ConnexionUtilisateur {
 
     public static function estOrganisateur($idQuestion): bool {
         return self::getRoleQuestion($idQuestion) == "organisateur";
+    }
+
+    public static function estRepresentant($idProposition): bool {
+        return self::getRoleProposition($idProposition) == "representant";
     }
 
     public static function getRoleQuestion($idQuestion): ?string {
@@ -85,6 +90,7 @@ class ConnexionUtilisateur {
         return null;
     }
 
+    /** Retourne l'id de la proposition de l'utilisateur connecté dans une question donnée */
     public static function getPropByLogin($idQuestion): ?int {
         if (self::estConnecte()) {
             return (new PropositionRepository())->selectPropById($idQuestion, Session::getInstance()->lire(static::$cleConnexion));
