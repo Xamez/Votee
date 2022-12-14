@@ -44,21 +44,38 @@ foreach ($propositions as $key=>$proposition) {
 }
 echo '<div class="flex gap-2 justify-between">';
 if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
-    echo '<div class="flex justify-start">
+    echo
+    '<div class="flex">
          <a href="./frontController.php?controller=question&action=updateQuestion&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
             <div class="flex gap-2">
                 <p>Editer</p>
                 <span class="material-symbols-outlined">edit</span>
             </div>
          </a>
-      </div>';
+    </div>';
 }
-echo '<div class="flex justify-end">
+
+$role = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
+if ($role == 'votant' || $role == 'organisateur') {
+    echo '
+    <div class="flex">
+         <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
+            <div class="flex gap-2">
+                <p>Voter pour tous</p>
+                <span class="material-symbols-outlined">how_to_vote</span>
+            </div>
+         </a>
+    </div>
+    ';
+}
+
+echo '
+    <div class="flex">
          <a href="./frontController.php?controller=proposition&action=createProposition&idQuestion='. rawurldecode($question->getIdQuestion()) .'">
             <div class="flex gap-2">
                 <p>Demandes</p>
                 <span class="material-symbols-outlined">file_copy</span>
             </div>
          </a>
-      </div>
-    </div>';
+    </div>
+</div>';
