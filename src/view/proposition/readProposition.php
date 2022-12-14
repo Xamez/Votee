@@ -36,13 +36,14 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
             </div>';
     }
     if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
-        echo ' <a href="./frontController.php?controller=proposition&action=createFusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
+        echo ' <a href="./frontController.php?controller=demande&action=createDemande&titreDemande=fusion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">upload</span>
                     <p>Fusionner</p>
                 </div
             </a>';
     }
+    //href="./frontController.php?controller=proposition&action=createFusion&idQuestion=
 }
 echo '</div>';
 if ($question->getPeriodeActuelle() == 'Période de vote') {

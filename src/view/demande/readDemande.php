@@ -9,8 +9,11 @@ echo '<div class="flex items-center gap-2">
     . htmlspecialchars($auteur->getNom()) . ' ' . htmlspecialchars($auteur->getPrenom()) .
        '</div>
         </p>
-     </div>
-     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
+     </div>';
+
+
+
+echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <span>' .htmlspecialchars($demande->getTexteDemande()) . '
         </span>
      </div>';

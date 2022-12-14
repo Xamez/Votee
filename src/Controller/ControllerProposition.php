@@ -16,9 +16,11 @@ class ControllerProposition extends AbstractController{
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+        if (!ConnexionUtilisateur::estConnecte()
+            || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())
+            || ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'representant') {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une proposition !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&all");
         }
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         if ($question) {
@@ -39,9 +41,11 @@ class ControllerProposition extends AbstractController{
 
     public static function createdProposition(): void {
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
-        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+        if (!ConnexionUtilisateur::estConnecte()
+            || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())
+            || ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'representant') {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une proposition !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&all");
         }
         $idProposition = (new PropositionRepository())->ajouterProposition('visible');
         $isOk = true;
@@ -56,11 +60,11 @@ class ControllerProposition extends AbstractController{
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion'], 1);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion'],  $_POST['isFusion']);
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
         else {
             (new PropositionRepository())->supprimer($idProposition);
-            (new Notification())->ajouter("danger", "L'ajout de la proposition a échoué.");
+            (new Notification())->ajouter("warning", "L'ajout de la proposition a échoué.");
         }
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
@@ -83,7 +87,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&readAllQuestion");
+            self::redirection("?controller=question&all");
         }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($idProposition);
@@ -114,7 +118,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
@@ -134,7 +138,7 @@ class ControllerProposition extends AbstractController{
     public static function readProposition(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
@@ -169,7 +173,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $idQuestion = $_GET['idQuestion'];
         self::afficheVue('view.php',
@@ -187,7 +191,7 @@ class ControllerProposition extends AbstractController{
         if (!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'coauteur') {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         if ((new PropositionRepository())->supprimer($idProposition)) {
             (new Notification())->ajouter("success", "La proposition a été supprimée.");
@@ -231,7 +235,7 @@ class ControllerProposition extends AbstractController{
     public static function createFusion(): void {
         if (!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) != "representant") {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -276,7 +280,7 @@ class ControllerProposition extends AbstractController{
     public static function createdFusion(): void {
         if (!ConnexionUtilisateur::getRoleProposition($_POST['idProposition1']) == "representant") {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=readAllQuestion");
+            self::redirection("?controller=question&action=all");
         }
         (new PropositionRepository())->modifierProposition($_POST['idProposition1'], 'invisible');
         (new PropositionRepository())->modifierProposition($_POST['idProposition2'], 'invisible');

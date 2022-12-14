@@ -21,7 +21,7 @@
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?controller=question&action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
+            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Vote</span></a>
             <?php
                 use App\Votee\Model\Repository\DemandeRepository;
                 use App\Votee\Lib\ConnexionUtilisateur;
@@ -49,7 +49,7 @@
         if (ConnexionUtilisateur::estConnecte()) {
             $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
             if ($utilisateur != null) {
-                echo '<a href="./frontController.php?controller=demande&action=historiqueDemande">' .
+                echo '<a href="./frontController.php?controller=utilisateur&action=compte">' .
                     htmlspecialchars($utilisateur->getPrenom()) . ' ' . htmlspecialchars($utilisateur->getNom()) . '
                       </a>
                       <a class="flex items-center" href="frontController.php?controller=utilisateur&action=deconnecter">
