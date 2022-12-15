@@ -2,36 +2,35 @@
 
 namespace App\Votee\Model\DataObject;
 
-class Vote extends AbstractDataObject
-{
+class Vote extends AbstractDataObject {
+
     private int $idProposition;
-    private string $login;
+    private string $loginVotant;
     private int $note;
 
-    public function __construct(int $idProposition,string $login,int $note)
-    {
+    public function __construct(int $idProposition, string $loginVotant, $note) {
         $this->idProposition = $idProposition;
-        $this->login = $login;
-        $this->note = $note;
+        $this->loginVotant = $loginVotant;
+        $this->note =  $note;
     }
 
-    public function formatTableau(): array{
+    public function formatTableau() : array {
         return array (
             "IDPROPOSITION" => $this->getIdProposition(),
-            "LOGIN" => $this->getLogin(),
+            "LOGIN" => $this->getLoginVotant(),
             "NOTEPROPOSITION" => $this->getNote(),
         );
     }
 
-    public function getIdProposition(): int { return $this->idProposition; }
+    public function getIdProposition() : int { return $this->idProposition; }
 
-    public function setIdProposition(int $idProposition): void { $this->idProposition = $idProposition; }
+    public function setIdProposition(int $idProposition) : void { $this->idProposition = $idProposition; }
 
-    public function getLogin(): string { return $this->login; }
+    public function getLoginVotant() : string { return $this->loginVotant; }
 
-    public function setLogin(string $login): void{ $this->login = $login; }
+    public function setLoginVotant(string $loginVotant) : void{ $this->loginVotant = $loginVotant; }
 
     public function getNote() : int {return $this->note; }
 
-    public function setNote(int $note): void { $this->note = $note; }
+    public function setNote(int $note) : void { $this->note = $note; }
 }
