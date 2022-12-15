@@ -84,7 +84,7 @@ class ControllerQuestion extends AbstractController {
                 $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
-            if($question->getPeriodeActuelle() == "Période des résultats"){
+            /*if($question->getPeriodeActuelle() == "Période des résultats"){
                 $idPropositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
                 $notes = array();
                 foreach ($propositions as $proposition) {
@@ -104,7 +104,7 @@ class ControllerQuestion extends AbstractController {
                         "title" => $question->getTitre(),
                         "subtitle" => $question->getDescription()
                     ]);
-            } else {
+            } else {*/
                 self::afficheVue('view.php',
                     [
                         "question" => $question,
@@ -117,7 +117,7 @@ class ControllerQuestion extends AbstractController {
                         "title" => $question->getTitre(),
                         "subtitle" => $question->getDescription()
                     ]);
-            }
+            //}
         } else {
             self::error("La question n'existe pas");
         }

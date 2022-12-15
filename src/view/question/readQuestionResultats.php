@@ -18,7 +18,7 @@ foreach ($sections as  $key=>$section) {
 }
 
 echo '</div><h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-        <p><span class="text-xl text-main font-bold text-lg">Période décriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>
+        <p><span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'.</p>
         <p><span class="text-xl text-main font-bold text-lg">Période de vote : </span> Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'.</p>';
 
 echo '<h1 class="title text-dark text-2xl font-semibold">Résultats des propositions</h1>';

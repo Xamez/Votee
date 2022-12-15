@@ -1,0 +1,3 @@
+<?php
+
+echo "C LE DESIGN DE RESULTAT DE OUI NON";
