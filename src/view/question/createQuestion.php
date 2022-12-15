@@ -7,7 +7,7 @@
             </div>
             <div class="flex flex-col">
                 <label for="vote_desc_id">Description :</label>
-                <textarea class="max-h-52" maxlength="100" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
+                <textarea class="max-h-52" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
         <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
@@ -53,12 +53,19 @@
         <div>
             <div class="flex gap-10 items-end">
                 <p class="w-36 font-semibold">Type de Vote :</p>
-
-                <select name="typeVote">
-                    <option value="VoteMajoritaire">Jugement Majoritaire</option>
-                    <option value="VoteOuiNon">Vote "Oui" "Non"</option>
+                <select name="typeVote" class="p-2 rounded-md">
+                    <?php
+                    foreach ($voteTypes as $key => $value) {
+                        echo '<option value="' . $key . '">' . $value . '</option>';
+                    }
+                    ?>
                 </select>
             </div>
+        </div>
+        <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
+        <div>
+            <label for="login_id">login</label> :
+            <input type="text" placeholder="tjean" name="login" id="login_id" required/>
         </div>
     </div>
     <input type="text" hidden name="organisateur" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
