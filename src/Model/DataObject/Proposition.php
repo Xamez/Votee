@@ -7,11 +7,19 @@ class Proposition extends AbstractDataObject {
     private int $idProposition;
     private int $idQuestion;
     private string $visibilite;
+    private ?string $idPropFusionParent;
 
-    public function __construct(int $idProposition, int $idQuestion, string $visibilite) {
+
+    public function __construct(
+        int $idProposition,
+        int $idQuestion,
+        string $visibilite,
+        ?string $idPropFusionParent
+    ) {
         $this->idProposition = $idProposition;
         $this->idQuestion = $idQuestion;
         $this->visibilite = $visibilite;
+        $this->idPropFusionParent = $idPropFusionParent;
     }
 
     public function formatTableau(): array {
@@ -19,8 +27,14 @@ class Proposition extends AbstractDataObject {
             "IDPROPOSITION" => $this->getIdProposition(),
             "IDQUESTION" => $this->getIdQuestion(),
             "VISIBILITEPROPOSITION" => $this->getVisibilite(),
+            "IDPROPFUSIONPARENT" => $this->getIdPropFusionParent()
         );
     }
+
+
+    public function getIdPropFusionParent(): ?string { return $this->idPropFusionParent; }
+
+    public function setIdPropFusionParent(?string $idPropFusionParent): void { $this->idPropFusionParent = $idPropFusionParent; }
 
     public function getVisibilite(): string { return $this->visibilite; }
 
