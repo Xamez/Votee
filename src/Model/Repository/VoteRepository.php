@@ -32,7 +32,11 @@ class VoteRepository {
     }
 
     function ajouterVote(string $idProposition, string $login, int $note) : bool {
-        $sql = "CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
+        if ($this->getNote($idProposition, $login) == 0) {
+            $sql = "CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
+        } else {
+            $sql = "CALL ModifierVotes(:loginTag, :idPropositionTag, :noteTag)";
+        }
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idPropositionTag" => $idProposition, "loginTag" => $login, "noteTag" => $note);
         try {
@@ -51,6 +55,34 @@ class VoteRepository {
         $result = $pdoStatement->fetch();
         if ($result === false) return 0;
         return $result["NOTE"];
+    }
+
+    function getNotes(string $idQuestion, string $idProposition) : array {
+        $sql = "SELECT login FROM Existe WHERE IDQUESTION = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idQuestionTag" => $idQuestion);
+        $pdoStatement->execute($values);
+        $result = $pdoStatement->fetchAll();
+        $notes = array();
+        foreach ($result as $votant) {
+            echo $votant["LOGIN"] . "<br>";
+            $notes[$votant["LOGIN"]] = $this->getNote($idProposition, $votant["LOGIN"]);
+        }
+        var_dump($notes);
+        echo "<br>";
+        return $notes;
+    }
+
+    function getGetResultats(string $idQuestion) : array {
+        $resultats = array();
+        $notes = array();
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        foreach ($propositions as $proposition)
+            $notes[$proposition->getIdProposition()] = $this->getNotes($idQuestion, $proposition->getIdProposition());
+        foreach ($notes as $idProposition => $note)
+            $resultats[$idProposition] = array_count_values($note);
+        var_dump($resultats);
+        return $resultats;
     }
 
     function getProcedureInsert(): string { return "AjouterVotes"; }
