@@ -2,7 +2,7 @@
 use App\Votee\Lib\ConnexionUtilisateur;
 require "propositionHeader.php";
 
-echo '</p><div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
+echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
     $sectionDescHTML = $textes[$index]->getTexte();
@@ -10,7 +10,8 @@ foreach ($sections as $index=>$section) {
     echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <div class="proposition-markdown break-all text-justify">' . $sectionDescHTML . '</div>';
 }
-echo '</div><div class="flex gap-2 justify-between">
+echo '</div>
+      <div class="flex gap-2 justify-between">
         <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
             <div class="flex gap-2">
                 <span class="material-symbols-outlined">reply</span>
@@ -36,8 +37,8 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
             </a>
             </div>';
     }
-    //TODO Empecher la fusion si on a pas une proposition dans la meme question
-    if ($question->getVisibilite = 'visible' && ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
+    //TODO Empecher la fusion si on a pas une proposition dans la meme question et si notre proposition est invisible
+    if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
                 . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
