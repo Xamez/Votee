@@ -15,12 +15,12 @@ foreach ($propositions as $proposition) {
 
 
     echo '
-<div class="flex pr-3">
-    <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2 items-center">
-        <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
+    <div class="flex pr-3">
+        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2 items-center">
+            <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
+        </div>
     </div>
-</div>
-';
+    ';
 
     echo '<div class="proposition flex flex-row flex-grow items-center cursor-pointer">';
 
