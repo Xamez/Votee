@@ -115,6 +115,7 @@ class ControllerProposition extends AbstractController {
                 "textes" => $textes,
                 "responsables" => $responsables,
                 "voteUrl" => $voteUrl,
+                "resultats" => $resultats,
                 "idQuestion" => $_GET['idQuestion'],
             ]);
     }

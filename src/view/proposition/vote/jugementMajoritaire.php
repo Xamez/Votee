@@ -8,7 +8,7 @@ $labels = ["Insuffisant", "Passable", "Bien", "Très Bien"];
 
 for ($i = 0; $i < 4; $i++) {
     echo '
-    <form class="p-3 rounded-xl w-28' . ($i > 0 ? " -ml-3.5 " : " ") . 'text-white text-center cursor-pointer" style="background-color: #' . ($values[$i] == $note ? "22C55E" : $colors[$i]) . '" method="post" action="frontController.php?controller=proposition&action=createdVote">
+    <form class="p-3 rounded-xl w-28' . ($i > 0 ? " -ml-3.5 " : " ") . 'text-white text-center" style="background-color: #' . ($values[$i] == $note ? "22C55E" : $colors[$i]) . '" method="post" action="frontController.php?controller=proposition&action=createdVote">
         <input type="hidden" name="idQuestion" value="' . rawurlencode($idQuestion) . '">
         <input type="hidden" name="idProposition" value="' . rawurlencode($idProposition) . '">
         <input type="hidden" name="idVotant" value="' . $idVotant . '">
