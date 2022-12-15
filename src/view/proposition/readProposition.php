@@ -12,14 +12,8 @@ foreach ($sections as $index=>$section) {
     echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <div class="proposition-markdown break-all text-justify">' . $sectionDescHTML . '</div>';
 }
-echo '</div>
-      <div class="flex gap-2 justify-between">
-        <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
-            <div class="flex gap-2">
-                <span class="material-symbols-outlined">reply</span>
-                <p>Retour</p>
-            </div
-        </a>';
+echo '</div>';
+
 if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
         || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
@@ -28,7 +22,7 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">edit</span>
                     <p>Editer</p>
-                </div
+                </div>
             </a>';
         echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion='
                     . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
@@ -46,7 +40,7 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">upload</span>
                     <p>Créer une fusion</p>
-                </div
+                </div>
               </a>';
         } else {
             echo ' <a href="./frontController.php?controller=demande&action=createDemande&titreDemande=fusion&idQuestion='
@@ -54,7 +48,7 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">file_copy</span>
                     <p>Demander une fusion</p>
-                </div
+                </div>
               </a>';
         }
     }
@@ -64,3 +58,14 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
 if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période de vote') {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
 }
+
+echo '
+<div class="flex gap-2 justify-between">
+    <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
+        <div class="flex gap-2">
+            <span class="material-symbols-outlined">reply</span>
+            <p>Retour</p>
+        </div>
+    </a>
+<div>
+';

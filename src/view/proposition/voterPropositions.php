@@ -8,6 +8,8 @@ echo '<script type="text/javascript" src="assets/js/accordion.js"></script>';
 echo '<div class="flex flex-col gap-y-4">';
 foreach ($propositions as $proposition) {
 
+    if ($proposition->getVisibilite() == 'invisible') continue;
+
     $idProposition = $proposition->getIdProposition();
 
     echo '

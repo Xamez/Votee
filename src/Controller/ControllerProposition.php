@@ -89,7 +89,6 @@ class ControllerProposition extends AbstractController {
         $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
         $voteUrl = 'proposition/vote/resultat/' . $voteType . '.php';
 
-        $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
