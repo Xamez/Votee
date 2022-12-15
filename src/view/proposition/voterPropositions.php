@@ -22,7 +22,7 @@ foreach ($propositions as $proposition) {
                     if ($aVote[$idProposition]) {
                         echo '
                             <div class="bg-main items-center flex gap-1 text-white shadow-md rounded-2xl w-fit p-2" >
-                                <p > Déjà voté </p >
+                                <p>Déjà voté</p>
                             </div >
                             ';
                     }
