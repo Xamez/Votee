@@ -35,17 +35,18 @@ echo '</div>
         Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'
       </p>
       <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>';
-foreach ($propositions as $key=>$proposition) {
-    $roleProposition = ConnexionUtilisateur::getRoleProposition($proposition->getIdProposition());
+foreach ($propositions as $proposition) {
+    $idProposition = $proposition->getIdProposition();
+    $roleProposition = ConnexionUtilisateur::getRoleProposition($idProposition);
 
     if ($proposition->getVisibilite() == 'visible') {
-        echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
+        echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($idProposition).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
                 <div class="flex items-center gap-2">
                     <p class="font-bold text-dark">Proposition de : </p>
                     <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                         <span class="material-symbols-outlined">account_circle</span>' .
-            htmlspecialchars($responsables[$key]->getNom()) . ' ' . htmlspecialchars($responsables[$key]->getPrenom()) .
+            htmlspecialchars($responsables[$idProposition]->getNom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getPrenom()) .
             '   </div>
                 </div>
                 <span class="material-symbols-outlined">arrow_forward_ios</span>
@@ -53,13 +54,13 @@ foreach ($propositions as $key=>$proposition) {
           </a>';
     } else {
         if ($roleProposition == 'representant' || $roleProposition == 'coauteur' || $roleQuestion == 'organisateur') {
-            echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($proposition->getIdProposition()).'">
+            echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($idProposition).'">
             <div class="flex bg-light justify-between p-2 items-center rounded">
                 <div class="flex items-center gap-2">
                     <p class="font-bold text-dark">Proposition de : </p>
                     <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                         <span class="material-symbols-outlined">account_circle</span>' .
-                htmlspecialchars($responsables[$key]->getNom()) . ' ' . htmlspecialchars($responsables[$key]->getPrenom()) .
+                htmlspecialchars($responsables[$idProposition]->getNom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getPrenom()) .
                 '</div>
                 </div>
                 <div class="flex gap-2">';
@@ -87,7 +88,8 @@ if ($roleQuestion == 'organisateur') {
 if (sizeof($propositions) > 0) {
     $role = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
     if ($question->getPeriodeActuelle() == 'Période de vote') {
-        if ($role == 'votant' || $role == 'organisateur') {
+        // TODO : GERER L ORDRE DES ROLES ET VIRER REPR
+        if ($role == 'votant' || $role == 'organisateur' || $role == 'representant') {
             echo '
             <div class="flex">
                  <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">

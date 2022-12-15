@@ -22,11 +22,10 @@ class ConnexionUtilisateur {
         Session::getInstance()->supprimer(static::$cleConnexion);
     }
 
-        public static function getUtilisateurConnecte(): ?Utilisateur {
+    public static function getUtilisateurConnecte(): ?Utilisateur {
         $login = self::estConnecte() ? Session::getInstance()->lire(static::$cleConnexion) : null;
         if ($login != null) {
-            $utilisateur = (new UtilisateurRepository())->select($login);
-            return $utilisateur;
+            return (new UtilisateurRepository())->select($login);
         }
         return null;
     }

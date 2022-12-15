@@ -1,21 +1,42 @@
 <?php
 
-$colors = ['red-400', 'orange-400', 'yellow-400', 'green-400', 'cyan-400'];
+$values = ['-2', '-1', '0', '1', '2'];
+$colors = ['f87171', 'fb923c', 'facc15', '4ade80', '22d3ee'];
 
-echo '<div class="">';
+# TODO: investiguer pourquoi j'ai besoin de get deux fois le [$idProposition]
 
 foreach ($propositions as $proposition) {
+
+    echo '<div class="flex flex-row justify-end">';
+
     $idProposition = $proposition->getIdProposition();
-    echo '<div class="flex flex-row">';
-    for ($i = 0; $i < sizeof($resultats[$idProposition]); $i++) {
-        echo '
-        <div class="" style="width: ' . $resultats[$idProposition][$i] . '%">
-            
-        </div>
-        ';
+    $resultats = $resultats[$idProposition];
+    $responsable = $responsables[$idProposition];
+
+
+    echo '
+<div class="flex pr-3">
+    <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2 items-center">
+        <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
+    </div>
+</div>
+';
+
+    echo '<div class="proposition flex flex-row flex-grow items-center cursor-pointer">';
+
+    echo '<div class="relative bg-black h-8" style="width: 2px; left: 50%;"></div>'; // affiche la médiane
+
+    for ($i = 0; $i < sizeof($values); $i++) {
+        foreach ($resultats[$idProposition] as $key => $val) {
+            if ($values[$i] == $key) {
+                echo '
+                <div class="flex h-8 items-center justify-center" style="width: ' . $val . '%; background-color: #' . $colors[$i] . '">
+                    <p class="text-center text-white">' . $val . '%</p>
+                </div>
+                ';
+            }
+        }
     }
     echo '</div>';
+    echo '</div>';
 }
-
-echo '</div>';
-

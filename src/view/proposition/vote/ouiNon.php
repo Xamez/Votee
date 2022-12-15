@@ -2,9 +2,9 @@
 
 echo '<div class="flex justify-center mx-auto gap-16">';
 
-$colors = ["b8b8f8", "aea4ff"];
-$values = ["-1", "1"];
-$labels = ["Non", "Oui"];
+$colors = ['b8b8f8', 'aea4ff'];
+$values = ['-1', '1'];
+$labels = ['Non', 'Oui'];
 
 for ($i = 0; $i < 2; $i++) {
     echo '
@@ -13,7 +13,7 @@ for ($i = 0; $i < 2; $i++) {
         <input type="hidden" name="idProposition" value="' . rawurlencode($idProposition) . '">
         <input type="hidden" name="idVotant" value="' . $idVotant . '">
         <input type="hidden" name="noteProposition" value="' . $values[$i] . '">
-        <input type="hidden" name="" value="' . $isRedirected . '">
+        <input type="hidden" name="isRedirected" value="' . $isRedirected . '">
         <input class="bg-transparent font-bold cursor-pointer" type="submit" value="' . $labels[$i] . '" />
     </form>
     ';

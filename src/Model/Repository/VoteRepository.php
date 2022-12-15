@@ -64,12 +64,8 @@ class VoteRepository {
         $pdoStatement->execute($values);
         $result = $pdoStatement->fetchAll();
         $notes = array();
-        foreach ($result as $votant) {
-            echo $votant["LOGIN"] . "<br>";
+        foreach ($result as $votant)
             $notes[$votant["LOGIN"]] = $this->getNote($idProposition, $votant["LOGIN"]);
-        }
-        var_dump($notes);
-        echo "<br>";
         return $notes;
     }
 
@@ -77,11 +73,19 @@ class VoteRepository {
         $resultats = array();
         $notes = array();
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
-        foreach ($propositions as $proposition)
-            $notes[$proposition->getIdProposition()] = $this->getNotes($idQuestion, $proposition->getIdProposition());
-        foreach ($notes as $idProposition => $note)
-            $resultats[$idProposition] = array_count_values($note);
-        var_dump($resultats);
+        foreach ($propositions as $proposition) {
+            $idProposition = $proposition->getIdProposition();
+            $notes[$idProposition] = $this->getNotes($idQuestion, $proposition->getIdProposition());
+            $resultats[$idProposition] = array_count_values($notes[$idProposition]);
+        }
+        // on calcule la proportion de chaque note pour chaque proposition en %
+        foreach ($resultats as $idProposition => $resultat)
+            foreach ($resultat as $note => $nombre)
+                $resultats[$idProposition][$note] = round($nombre / sizeof($notes[$idProposition]) * 100);
+        // on tri pour avoir la note la plus basse en premier
+        foreach ($resultats as $idProposition => $resultat)
+            ksort($resultats[$idProposition]);
+        // TODO: afficher les propo avec la tendance la plus haute (selon jugement majoritaire) en haut
         return $resultats;
     }
 
