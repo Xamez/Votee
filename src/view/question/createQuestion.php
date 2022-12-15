@@ -1,9 +1,5 @@
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=question&action=createdQuestion">
     <div class="flex flex-col gap-7 border-2 p-8 rounded-3xl">
-        <!--        <p>-->
-        <!--            <label for="visibilite_id">visibilite</label> :-->
-        <!--            <input type="text" placeholder="visible" name="visibilite" id="visibilite_id" required/>-->
-        <!--        </p>-->
         <div>
             <div class="flex flex-col">
                 <label for="systeme_vote_id">Titre :</label>
