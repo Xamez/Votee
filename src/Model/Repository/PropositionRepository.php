@@ -56,7 +56,7 @@ class PropositionRepository extends AbstractRepository {
         return $idProposition ? $idProposition[0] : null;
     }
 
-    public function modifierProposition(int $idProposition, string $visibilite, ?int $idPropFusionParent): bool {
+    public function modifierProposition($idProposition, $visibilite, $idPropFusionParent): bool {
         $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag, :idPropFusionParentTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
@@ -77,6 +77,7 @@ class PropositionRepository extends AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("visibiliteTag" => $visibite);
         $pdoStatement->execute($value);
+        var_dump($pdoStatement->errorInfo());
 
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT propositions_seq.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();
@@ -93,10 +94,14 @@ class PropositionRepository extends AbstractRepository {
             "oldIdProposition" => $oldIdProposition,
             "idQuestion" => $idQuestion,
             "isFusion" => $isFusion);
+        foreach ($values as $key => $value) {
+            echo 'key: ' . $key . ' value: ' . $value . '<br>';
+        }
         try {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
@@ -105,7 +110,7 @@ class PropositionRepository extends AbstractRepository {
         $sql = "CALL AjouterRedigerCA(:utilisateur, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
-            $pdoStatement->execute(array(":utilisateur"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute(array("utilisateur"=>$login, "idProposition"=>$idProposition));
             return true;
         } catch (PDOException) {
             return false;
@@ -116,7 +121,7 @@ class PropositionRepository extends AbstractRepository {
         $sql = "CALL SupprimerRedigerCA(:utilisateur, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
-            $pdoStatement->execute(array(":utilisateur"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute(array("utilisateur"=>$login, "idProposition"=>$idProposition));
             return true;
         } catch (PDOException) {
             return false;

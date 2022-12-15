@@ -31,7 +31,6 @@ class Proposition extends AbstractDataObject {
         );
     }
 
-
     public function getIdPropFusionParent(): ?string { return $this->idPropFusionParent; }
 
     public function setIdPropFusionParent(?string $idPropFusionParent): void { $this->idPropFusionParent = $idPropFusionParent; }

@@ -60,7 +60,7 @@ class ControllerProposition extends AbstractController{
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, $_POST['idQuestion'], 0);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
         else {
             (new PropositionRepository())->supprimer($idProposition);
@@ -85,7 +85,7 @@ class ControllerProposition extends AbstractController{
     public static function updateProposition(): void {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
+        if ($proposition->getVisibilite() == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
@@ -118,7 +118,7 @@ class ControllerProposition extends AbstractController{
         $idQuestion = $_POST['idQuestion'];
         $idProposition = $_POST['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
+        if ($proposition->getVisibilite() == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
@@ -177,7 +177,7 @@ class ControllerProposition extends AbstractController{
     public static function deleteProposition(): void {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
+        if ($proposition->getVisibilite() == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
             || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
@@ -196,7 +196,7 @@ class ControllerProposition extends AbstractController{
     public static function deletedProposition(): void {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite == 'invisible' ||!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'representant'
+        if ($proposition->getVisibilite() == 'invisible' ||!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'representant'
             || ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'coauteur') {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
@@ -227,19 +227,6 @@ class ControllerProposition extends AbstractController{
     }
 
 
-//    public static function selectFusion(): void {
-//
-//
-//        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-//        self::afficheVue('view.php',
-//            [
-//                "pagetitle" => "Créer la fusion",
-//                "cheminVueBody" => "proposition/selectFusion.php",
-//                "title" => $question->getTitre(),
-//                "subtitle" => $question->getDescription()
-//            ]);
-//    }
-
     public static function createFusion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -264,11 +251,9 @@ class ControllerProposition extends AbstractController{
         $coAuteursCourant = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
         $coAuteursAMerge = (new UtilisateurRepository())->selectCoAuteur($idPropAMerge);
 
-
-        $coAuteurs[] = $respCourant;
-        //$coAuteurs[] = array_unique(array_merge($coAuteursCourant, $coAuteursAMerge), SORT_REGULAR);
-        //if (in_array($respCourant, $coAuteurs)) unset($coAuteurs[array_search($respCourant, $coAuteurs)]);
-        // TODO gerer les coaAuteur
+        $coAuteurs = array_unique(array_merge($coAuteursCourant, $coAuteursAMerge), SORT_REGULAR);
+        if (!in_array($respCourant, $coAuteurs)) $coAuteurs[] = $respCourant;
+        if (in_array($respAMerge, $coAuteurs)) unset($coAuteurs[array_search($respAMerge, $coAuteurs)]);
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Lire la fusion",
@@ -286,14 +271,16 @@ class ControllerProposition extends AbstractController{
     }
 
     public static function createdFusion(): void {
-        (new PropositionRepository())->modifierProposition($_POST['idPropCourant'], 'invisible', null);
-        (new PropositionRepository())->modifierProposition($_POST['idPropAMerge'], 'invisible', null);
-        $idNewProp = (new PropositionRepository())->ajouterProposition('visible');
-        (new PropositionRepository())->modifierProposition($_POST['idPropCourant'], 'invisible', $idNewProp);
-        (new PropositionRepository())->modifierProposition($_POST['idPropAMerge'], 'invisible', $idNewProp);
+        $respCourant = $_POST['respCourant'];
+        $respAMerge = $_POST['respAMerge'];
         $idOldProp = $_POST['idPropCourant'];
         $idOldPropMerge = $_POST['idPropAMerge'];
         $isOk = true;
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', null);
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', null);
+        $idNewProp = (new PropositionRepository())->ajouterProposition('visible');
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', $idNewProp);
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', $idNewProp);
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idNewProp, $_POST['section' . $i], null);
             $isOk = (new TexteRepository())->sauvegarder($texte);
@@ -301,15 +288,15 @@ class ControllerProposition extends AbstractController{
         foreach ($_POST['coAuteurs'] as $coAuteur) {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idNewProp);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['newResp'], $idNewProp, $idOldProp, $_POST['idQuestion'], 1);
-        $isOk &= (new PropositionRepository())->ajouterCoAuteur($_POST['newResp'], $idOldProp);
-        $isOk &= (new PropositionRepository())->ajouterCoAuteur($_POST['newResp'], $idOldPropMerge);
+        $isOk &= (new PropositionRepository())->ajouterRepresentant($respAMerge, $idNewProp, $idOldPropMerge, $_POST['idQuestion'], 1);
+        (new PropositionRepository())->ajouterCoAuteur($respAMerge, $idOldProp);
+        (new PropositionRepository())->ajouterCoAuteur($respCourant, $idOldPropMerge);
 
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {
             (new PropositionRepository())->supprimer($idNewProp);
-            (new PropositionRepository())->modifierProposition($_POST['idPropCourant'], 'visible', null);
-            (new PropositionRepository())->modifierProposition($_POST['idPropAMerge'], 'visible', null);
+            (new PropositionRepository())->modifierProposition($idOldProp, 'visible', null);
+            (new PropositionRepository())->modifierProposition($idOldPropMerge, 'visible', null);
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
         }
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);

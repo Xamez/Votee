@@ -29,7 +29,8 @@
         ?>
     </div>
     <div class="flex justify-center">
-        <input type="hidden" name="newResp" value="<?= $responsable->getLogin() ?>">
+        <input type="hidden" name="respCourant" value="<?= $responsables[0]->getLogin() ?>">
+        <input type="hidden" name="respAMerge" value="<?= $responsables[1]->getLogin() ?>">
         <input type="hidden" name="idPropCourant" value="<?= $idPropositions[0] ?>">
         <input type="hidden" name="idPropAMerge" value="<?= $idPropositions[1] ?>">
         <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion() ?>">
