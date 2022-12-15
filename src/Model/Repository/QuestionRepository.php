@@ -17,7 +17,8 @@ class QuestionRepository extends AbstractRepository {
             'DATEDEBUTVOTE',
             'DATEFINVOTE',
             'LOGIN',
-            'TYPEVOTE');
+            'TYPEVOTE'
+        );
     }
 
     function getNomTable(): string {
@@ -67,14 +68,23 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
-    public function ajouterQuestion(Question $question): ?int {
-        if ($this->sauvegarder($question)) {
-            $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
-            $pdoLastInsert->execute();
-            $lastInserId = $pdoLastInsert->fetch();
-            return intval($lastInserId[0]);
-        } else {
-            return null;
+    public function ajouterQuestion(Question $question):int {
+        $this->sauvegarder($question);
+        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
+        $pdoLastInsert->execute();
+        $lastInserId = $pdoLastInsert->fetch();
+        return intval($lastInserId[0]);
+    }
+
+    public function ajouterOrganisateur(string $login):bool {
+        $sql = "CALL AjouterOrganisateurs(:loginTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array("loginTag"=>$login);
+        try {
+            $pdoStatement->execute($value);
+            return true;
+        } catch (PDOException) {
+            return false;
         }
     }
 
@@ -124,7 +134,7 @@ class QuestionRepository extends AbstractRepository {
 
     public function selectAllCustom($sql, $param): array {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array(":paramTag"=>$param);
+        $value = array("paramTag"=>$param);
         $pdoStatement->execute($value);
 
         $questions = $pdoStatement->fetchAll();
@@ -135,4 +145,15 @@ class QuestionRepository extends AbstractRepository {
         }
         return $questionsFormatObjet;
     }
+
+    public function getPropRestant(int $idQuestion, string $login): ?int {
+        $sql = "SELECT nbPropRestant FROM ScorePropositions WHERE IDQUESTION = :idQuestionTag AND LOGIN = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idQuestionTag"=>$idQuestion, "loginTag" => $login);
+
+        $pdoStatement->execute($values);
+        $nbPropRestant = $pdoStatement->fetch();
+        return $nbPropRestant ? $nbPropRestant[0] : null;
+    }
+
 }

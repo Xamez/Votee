@@ -24,16 +24,18 @@
                     </div>';
             }
             echo '<textarea class="border-2 max-h-96 h-52" maxlength="2000"  name="section' . $index . '" id="section' . $index . '" required></textarea>
-                  <input type="hidden" name="idSection' . $index . '" value="' . $section->getIdSection() . '">';
+                  <input type="hidden" name="idSection' . $index . '" value="' . $section-> getIdSection() . '">';
         }
         ?>
     </div>
     <div class="flex justify-center">
-        <input type="hidden" name="responsable" value="<?= $responsable->getLogin() ?>">
-        <input type="hidden" name="idProposition1" value="<?= $idPropositions[0] ?>">
-        <input type="hidden" name="idProposition2" value="<?= $idPropositions[1] ?>">
+        <input type="hidden" name="respCourant" value="<?= $responsables[0]->getLogin() ?>">
+        <input type="hidden" name="respAMerge" value="<?= $responsables[1]->getLogin() ?>">
+        <input type="hidden" name="idPropCourant" value="<?= $idPropositions[0] ?>">
+        <input type="hidden" name="idPropAMerge" value="<?= $idPropositions[1] ?>">
         <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion() ?>">
         <input type="hidden" name="nbSections" value="<?= sizeof($sections); ?>">
+        <input type="hidden" name="isFusion" value="1">
         <?php foreach ($coAuteurs as $coAuteur) echo '<input type="hidden" name="coAuteurs[]" value="' . $coAuteur->getLogin() . '">' ?>
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider"/>
     </div>

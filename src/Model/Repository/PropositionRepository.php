@@ -13,6 +13,7 @@ class PropositionRepository extends AbstractRepository {
             'IDPROPOSITION',
             'IDQUESTION',
             'VISIBILITEPROPOSITION',
+            'IDPROPFUSIONPARENT',
         );
 
     }
@@ -37,14 +38,38 @@ class PropositionRepository extends AbstractRepository {
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
             $propositionFormatTableau['VISIBILITEPROPOSITION'],
+            $propositionFormatTableau['IDPROPFUSIONPARENT']
         );
     }
 
-    public function modifierProposition(string $idProposition, string $visibilite) {
-        $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag)";
+    /** Retourne l'id d'une proposition (visible) d'un login dans une question */
+    public function selectPropById($idQuestion, $login): ?int {
+        $sql = "SELECT p.IDPROPOSITION
+            FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
+            JOIN Propositions p ON r.idProposition = p.idProposition
+            JOIN RedigerR rr ON p.idProposition = rr.idProposition
+            WHERE rr.login = :loginTag AND q.idQuestion= :idQuestionTag AND q.VISIBILITE = 'visible'";
+        $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idPropositionTag" => $idProposition, "visibiliteTag" => $visibilite);
         $pdoStatement->execute($values);
+        $idProposition = $pdoStatement->fetch();
+        return $idProposition ? $idProposition[0] : null;
+    }
+
+    public function modifierProposition($idProposition, $visibilite, $idPropFusionParent): bool {
+        $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag, :idPropFusionParentTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array(
+            "idPropositionTag" => $idProposition,
+            "visibiliteTag" => $visibilite,
+            "idPropFusionParentTag" => $idPropFusionParent
+        );
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     public function ajouterProposition(string $visibite):int {
@@ -59,10 +84,18 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterRepresentant(string $login, int $idProposition, int $idQuestion):bool {
-        $sql = "CALL AjouterRedigerR(:loginTag, :idPropositionTag, :idQuestionTag)";
+    public function AjouterRepresentant($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {
+        $sql = "CALL AjouterRepPropRedigerR(:login, :idProposition, :oldIdProposition, :idQuestion, :isFusion)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array(":loginTag"=>$login, "idPropositionTag"=>$idProposition, "idQuestionTag"=>$idQuestion);
+        $values = array(
+            "login" => $login,
+            "idProposition" => $idProposition,
+            "oldIdProposition" => $oldIdProposition,
+            "idQuestion" => $idQuestion,
+            "isFusion" => $isFusion);
+        foreach ($values as $key => $value) {
+            echo 'key: ' . $key . ' value: ' . $value . '<br>';
+        }
         try {
             $pdoStatement->execute($values);
             return true;
@@ -75,7 +108,7 @@ class PropositionRepository extends AbstractRepository {
         $sql = "CALL AjouterRedigerCA(:utilisateur, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
-            $pdoStatement->execute(array(":utilisateur"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute(array("utilisateur"=>$login, "idProposition"=>$idProposition));
             return true;
         } catch (PDOException) {
             return false;
@@ -86,7 +119,7 @@ class PropositionRepository extends AbstractRepository {
         $sql = "CALL SupprimerRedigerCA(:utilisateur, :idProposition)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
-            $pdoStatement->execute(array(":utilisateur"=>$login, "idProposition"=>$idProposition));
+            $pdoStatement->execute(array("utilisateur"=>$login, "idProposition"=>$idProposition));
             return true;
         } catch (PDOException) {
             return false;
@@ -99,6 +132,42 @@ class PropositionRepository extends AbstractRepository {
         $pdoStatement->execute(array("idPropositionTag"=>$idProposition));
         $result = $pdoStatement->fetch();
         return $result[0];
+    }
+
+    // TODO: à supprimer (?)
+    /*public function getNote(int $idProposition) {
+        $sql = "SELECT SUM(note) as total from voter WHERE idProposition = :idPropositionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idPropositionTag" => $idProposition));
+        $noteTotal = $pdoStatement->fetch();
+        return $noteTotal ? $noteTotal[0] : null;
+    }
+
+    public function selectGagnant(int $idQuestion) {
+        $sql = "SELECT GetPropositionGagnante(:idQuestionTag) FROM DUAL";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion));
+        $result = $pdoStatement->fetch();
+        return $result[0];
+    }*/
+
+    public function getFusionRestant(int $idProposition, string $login): ?int {
+        $sql = "SELECT nbFusionRestant FROM ScoreFusion WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idPropositionTag"=>$idProposition, "loginTag" => $login);
+
+        $pdoStatement->execute($values);
+        $nbFusionRestant = $pdoStatement->fetch();
+        return $nbFusionRestant ? $nbFusionRestant[0] : null;
+    }
+
+    public function getFilsFusion($idProposition):array {
+        $sql = "SELECT idProposition FROM Propositions WHERE idPropFusionParent = :idPropositionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array("idPropositionTag"=>$idProposition);
+        $pdoStatement->execute($value);
+        return array();
+        //TODO Gerer le retour du fetch all
     }
 
 }

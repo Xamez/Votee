@@ -28,6 +28,8 @@ main { flex: 1; }
 .bg-main { background-color: #8080D7; }
 .bg-dark { background-color: #2E3436; }
 .bg-home { background-color: #AFAFF3; }
+.bg-green { background-color: #a3e6c9; }
+.bg-red { background-color: #ee8579; }
 .shadow-button { filter: drop-shadow(8px 8px 0px #B8B8F8); }
 .bg-light {	background: rgba(174, 164, 255, 0.5); }
 
@@ -53,11 +55,13 @@ main { flex: 1; }
 input {	border-radius: 5px; }
 input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="datetime"], input[type="button"] {
 	padding: 10px;
+	border: solid 2px #e5e7eb;
 }
 
 textarea {
 	padding: 10px !important;
 	border-radius: 5px;
+	border: solid 2px #e5e7eb;
 }
 
 label { font-weight: 600; }
@@ -95,7 +99,7 @@ label { font-weight: 600; }
 	background-color: #eaf7ee;
 }
 .toast-warning {
-	border: #ee8579 solid 1px;
+	border: #eeaf79 solid 1px;
 	background-color: #fef7ea;
 }
 .toast-danger {
@@ -106,7 +110,6 @@ label { font-weight: 600; }
 .toast-icon-success { background-color: #39b259; }
 .toast-icon-warning { background-color: #ee9500; }
 .toast-icon-danger { background-color: #eb4e2c; }
-
 
 
 
