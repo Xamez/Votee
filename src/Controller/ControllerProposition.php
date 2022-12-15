@@ -82,6 +82,13 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function resultatPropositions() : void {
+
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $voteType = $question->getVoteType();
+        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
+        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
+        $voteUrl = 'proposition/vote/resultat/' . $voteType . '.php';
+
         $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -107,7 +114,7 @@ class ControllerProposition extends AbstractController {
                 "sections" => $sections,
                 "textes" => $textes,
                 "responsables" => $responsables,
-                "aVote" => $aVote,
+                "voteUrl" => $voteUrl,
                 "idQuestion" => $_GET['idQuestion'],
             ]);
     }
