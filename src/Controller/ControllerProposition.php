@@ -292,6 +292,7 @@ class ControllerProposition extends AbstractController{
         (new PropositionRepository())->modifierProposition($_POST['idPropCourant'], 'invisible', $idNewProp);
         (new PropositionRepository())->modifierProposition($_POST['idPropAMerge'], 'invisible', $idNewProp);
         $idOldProp = $_POST['idPropCourant'];
+        $idOldPropMerge = $_POST['idPropAMerge'];
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idNewProp, $_POST['section' . $i], null);
@@ -301,6 +302,8 @@ class ControllerProposition extends AbstractController{
             $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idNewProp);
         }
         $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['newResp'], $idNewProp, $idOldProp, $_POST['idQuestion'], 1);
+        $isOk &= (new PropositionRepository())->ajouterCoAuteur($_POST['newResp'], $idOldProp);
+        $isOk &= (new PropositionRepository())->ajouterCoAuteur($_POST['newResp'], $idOldPropMerge);
 
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {
