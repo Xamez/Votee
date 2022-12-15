@@ -17,7 +17,7 @@ echo '</div><div class="flex gap-2 justify-between">
                 <p>Retour</p>
             </div
         </a>';
-if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
+if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
         || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
         echo '<a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion='
@@ -37,7 +37,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
             </div>';
     }
     //TODO Empecher la fusion si on a pas une proposition dans la meme question
-    if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
+    if ($question->getVisibilite = 'visible' && ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
                 . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">

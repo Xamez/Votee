@@ -13,6 +13,7 @@ class PropositionRepository extends AbstractRepository {
             'IDPROPOSITION',
             'IDQUESTION',
             'VISIBILITEPROPOSITION',
+            'IDPROPFUSIONPARENT',
         );
 
     }
@@ -37,6 +38,7 @@ class PropositionRepository extends AbstractRepository {
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
             $propositionFormatTableau['VISIBILITEPROPOSITION'],
+            $propositionFormatTableau['IDPROPFUSIONPARENT']
         );
     }
 
@@ -54,11 +56,20 @@ class PropositionRepository extends AbstractRepository {
         return $idProposition ? $idProposition[0] : null;
     }
 
-    public function modifierProposition(string $idProposition, string $visibilite) {
-        $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag)";
+    public function modifierProposition(int $idProposition, string $visibilite, ?int $idPropFusionParent): bool {
+        $sql = "CALL ModifierPropositions(:idPropositionTag, :visibiliteTag, :idPropFusionParentTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idPropositionTag" => $idProposition, "visibiliteTag" => $visibilite);
-        $pdoStatement->execute($values);
+        $values = array(
+            "idPropositionTag" => $idProposition,
+            "visibiliteTag" => $visibilite,
+            "idPropFusionParentTag" => $idPropFusionParent
+        );
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     public function ajouterProposition(string $visibite):int {
@@ -73,19 +84,19 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function AjouterRepresentant($login, $idProposition, $idQuestion, $isFusion):bool {
-        $sql = "CALL AjouterRepPropRedigerR(:login, :idProposition, :idQuestion, :isFusion)";
+    public function AjouterRepresentant($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {
+        $sql = "CALL AjouterRepPropRedigerR(:login, :idProposition, :oldIdProposition, :idQuestion, :isFusion)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
             "login" => $login,
             "idProposition" => $idProposition,
+            "oldIdProposition" => $oldIdProposition,
             "idQuestion" => $idQuestion,
             "isFusion" => $isFusion);
         try {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
@@ -137,4 +148,14 @@ class PropositionRepository extends AbstractRepository {
         $nbFusionRestant = $pdoStatement->fetch();
         return $nbFusionRestant ? $nbFusionRestant[0] : null;
     }
+
+    public function getFilsFusion($idProposition):array {
+        $sql = "SELECT idProposition FROM Propositions WHERE idPropFusionParent = :idPropositionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $value = array("idPropositionTag"=>$idProposition);
+        $pdoStatement->execute($value);
+        return array();
+        //TODO Gerer le retour du fetch all
+    }
+
 }
