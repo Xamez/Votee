@@ -143,6 +143,10 @@ class ControllerQuestion extends AbstractController {
                 $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
                 $isOk = (new SectionRepository())->sauvegarder($section);
             }
+            foreach ($_POST['votant'] as $votant) {
+                $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $votant);
+            }
+            for ($i = 0; $i < sizeof($_POST['votant']); $i++)
             if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
             else {
                 (new QuestionRepository())->supprimer($idQuestion);
@@ -151,7 +155,7 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?action=readAllQuestion");
         } else {
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-            //self::redirection("?action=readAllQuestion");
+            self::redirection("?action=readAllQuestion");
         }
     }
 

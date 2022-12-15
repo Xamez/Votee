@@ -4,7 +4,7 @@ use App\Votee\Controller\ControllerProposition;
 
 echo '<script type="text/javascript" src="assets/js/accordion.js"></script>';
 
-ControllerProposition::afficheVue($voteUrl, []);
+ControllerProposition::afficheVue($voteUrl, ["propositions" => $propositions, "resultats" => $resultats]);
 
 echo '
 <div class="flex gap-2 justify-between">

@@ -98,7 +98,7 @@ class ControllerProposition extends AbstractController {
             $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             $textess = (new TexteRepository())->selectAllByKey($idProposition);
             $textes[$idProposition] = $textess;
-            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) > 0;
+            $resultats[$idProposition] = (new VoteRepository())->getGetResultats($question->getIdQuestion());
             foreach ($textess as $texte) {
                 $parsedown = new Parsedown();
                 $texte->setTexte($parsedown->text($texte->getTexte()));

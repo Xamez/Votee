@@ -53,7 +53,7 @@
                 </div>
             </div>
         </div>
-        <h1 class="text-2xl font-bold text-center text-dark"> Type de Vote<h1/>
+        <h1 class="text-2xl font-bold text-center text-dark">Type de Vote<h1/>
         <div>
             <div class="flex gap-10 items-end">
                 <p class="w-36 font-semibold">Type de Vote :</p>
@@ -66,10 +66,11 @@
                 </select>
             </div>
         </div>
+        <!-- TODO: A FAIRE (utiliser un for en php car 1 ligne comme la 73 = 1 élément dans le tableau en post $_POST['votant'] -->
         <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
         <div>
-            <label for="login_id">login</label> :
-            <input type="text" placeholder="tjean" name="login" id="login_id" required/>
+            <label for="login_id">Login du votant</label> :
+            <input type="text" placeholder="tjean" name="votant[]" id="login_id" required/>
         </div>
     </div>
     <input type="text" hidden name="organisateur" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
