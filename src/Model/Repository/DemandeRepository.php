@@ -2,6 +2,7 @@
 
 namespace App\Votee\Model\Repository;
 
+use App\Votee\Model\DataObject\AbstractDataObject;
 use App\Votee\Model\DataObject\Demande;
 use PDOException;
 
@@ -11,7 +12,7 @@ class DemandeRepository extends AbstractRepository {
 
     public function getNomClePrimaire(): string { return "IDDEMANDE"; }
 
-    public function construire(array $objetFormatTableau) {
+    public function construire(array $objetFormatTableau) : AbstractDataObject {
         return new Demande(
             $objetFormatTableau['LOGINDESTINATAIRE'],
             $objetFormatTableau['LOGIN'],

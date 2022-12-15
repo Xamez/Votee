@@ -2,7 +2,7 @@
 
 namespace App\Votee\Model\DataObject;
 
-class Demande {
+class Demande extends AbstractDataObject {
 
     private string $loginDestinataire;
     private string $login;
