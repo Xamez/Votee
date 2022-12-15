@@ -57,17 +57,30 @@ if (ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organi
 
 if (sizeof($propositions) > 0) {
     $role = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
-    if ($role == 'votant' || $role == 'organisateur') {
-        echo '
-    <div class="flex">
-         <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
-            <div class="flex gap-2">
-                <p>Voter pour tous</p>
-                <span class="material-symbols-outlined">how_to_vote</span>
+    if ($question->getPeriodeActuelle() == 'Période de vote') {
+        if ($role == 'votant' || $role == 'organisateur') {
+            echo '
+            <div class="flex">
+                 <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
+                    <div class="flex gap-2">
+                        <p>Voter pour tous</p>
+                        <span class="material-symbols-outlined">how_to_vote</span>
+                    </div>
+                 </a>
             </div>
-         </a>
-    </div>
-    ';
+            ';
+        }
+    } else if ($question->getPeriodeActuelle() == 'Période des résultats') {
+        echo '
+            <div class="flex">
+                 <a href="./frontController.php?controller=proposition&action=resultatPropositions&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
+                    <div class="flex gap-2">
+                        <p>Voir les résultats</p>
+                        <span class="material-symbols-outlined">list_alt</span>
+                    </div>
+                 </a>
+            </div>
+            ';
     }
 }
 

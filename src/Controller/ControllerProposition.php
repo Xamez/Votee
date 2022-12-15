@@ -15,7 +15,7 @@ use App\Votee\parsedown\Parsedown;
 
 class ControllerProposition extends AbstractController {
 
-    public static function createVote($idQuestion, $idVotant, $idProposition) : void {
+    public static function createVote($idQuestion, $idVotant, $idProposition, $isRedirected) : void {
         $note = (new VoteRepository())->getNote($idProposition, $idVotant);
         $vote = (new VoteRepository())->construire(["idProposition" => $idProposition, "loginVotant" => $idVotant, "noteProposition" => 0]);
         $voteType = $vote->getVoteType()->name;
@@ -28,21 +28,30 @@ class ControllerProposition extends AbstractController {
                 "idVotant" => $idVotant,
                 "idProposition" => $idProposition,
                 "note" => $note,
+                "isRedirected" => $isRedirected
             ]);
     }
 
     public static function createdVote() : void {
+        $role = ConnexionUtilisateur::getRoleProposition($_POST['idProposition']);
+        if (!$role == 'representant' || !$role == 'votant') {
+            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
+            self::redirection("?controller=question&readAllQuestion");
+        }
         $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
-        if ($vote) {
+        if ($vote)
             (new Notification())->ajouter("success", "Le vote a bien été effectué.");
-        }
-        else{
+        else
             (new Notification())->ajouter("warning", "Le vote existe déjà.");
-        }
-        self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+        if ($_POST["isRedirected"] ?? false)
+            self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+        else
+            self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
+
     }
 
     public static function voterPropositions() : void {
+        $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
@@ -51,6 +60,7 @@ class ControllerProposition extends AbstractController {
             $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             $textess = (new TexteRepository())->selectAllByKey($idProposition);
             $textes[$idProposition] = $textess;
+            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) > 0;
             foreach ($textess as $texte) {
                 $parsedown = new Parsedown();
                 $texte->setTexte($parsedown->text($texte->getTexte()));
@@ -66,10 +76,41 @@ class ControllerProposition extends AbstractController {
                 "sections" => $sections,
                 "textes" => $textes,
                 "responsables" => $responsables,
+                "aVote" => $aVote,
                 "idQuestion" => $_GET['idQuestion'],
             ]);
     }
 
+    public static function resultatPropositions() : void {
+        $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        foreach ($propositions as $proposition) {
+            $idProposition = $proposition->getIdProposition();
+            $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
+            $textess = (new TexteRepository())->selectAllByKey($idProposition);
+            $textes[$idProposition] = $textess;
+            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) > 0;
+            foreach ($textess as $texte) {
+                $parsedown = new Parsedown();
+                $texte->setTexte($parsedown->text($texte->getTexte()));
+            }
+        }
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Résultats",
+                "cheminVueBody" => "proposition/resultatPropositions.php",
+                "title" => "Résultats",
+                "subtitle" => "Résultats de la question : " . $question->getTitre(),
+                "propositions" => $propositions,
+                "sections" => $sections,
+                "textes" => $textes,
+                "responsables" => $responsables,
+                "aVote" => $aVote,
+                "idQuestion" => $_GET['idQuestion'],
+            ]);
+    }
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);

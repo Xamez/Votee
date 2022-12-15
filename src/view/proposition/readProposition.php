@@ -49,5 +49,5 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
 echo '</div>';
 
 if ($question->getPeriodeActuelle() == 'Période de vote') {
-    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition);
+    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
 }
