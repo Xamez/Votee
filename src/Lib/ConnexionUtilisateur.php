@@ -2,6 +2,8 @@
 namespace App\Votee\Lib;
 use App\Votee\Model\DataObject\Utilisateur;
 use App\Votee\Model\HTTP\Session;
+use App\Votee\Model\Repository\PropositionRepository;
+use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 
 class ConnexionUtilisateur {
@@ -20,7 +22,7 @@ class ConnexionUtilisateur {
         Session::getInstance()->supprimer(static::$cleConnexion);
     }
 
-    public static function getUtilisateurConnecte(): ?Utilisateur {
+        public static function getUtilisateurConnecte(): ?Utilisateur {
         $login = self::estConnecte() ? Session::getInstance()->lire(static::$cleConnexion) : null;
         if ($login != null) {
             $utilisateur = (new UtilisateurRepository())->select($login);
@@ -33,13 +35,46 @@ class ConnexionUtilisateur {
         return self::estConnecte() && $utilisateur == Session::getInstance()->lire(static::$cleConnexion);
     }
 
-//    public static function estAdministrateur() : bool {
-//        if (self::estConnecte()) {
-//            $utilisateur = (new UtilisateurRepository())->select(Session::getInstance()->lire(static::$cleConnexion));
-//            return $utilisateur->isEstAdmin();
-//        }
-//        return false;
-//    }
+    public static function creerQuestion(): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            return $utilisateur->getNbQuestRestant() > 0;
+        }
+        return false;
+    }
+
+    public static function creerProposition($idQuestion): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            $nbPropRestant = (new QuestionRepository)->getPropRestant($idQuestion, $utilisateur->getLogin());
+            return !($nbPropRestant == null) && $nbPropRestant > 0;
+        }
+        return false;
+    }
+
+    public static function creerFusion($idProposition): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            $nbFusionRestant = (new PropositionRepository())->getFusionRestant($idProposition, $utilisateur->getLogin());
+            return !($nbFusionRestant == null) && $nbFusionRestant > 0;
+        }
+        return false;
+    }
+
+    public static function estAdministrateur() : bool {
+        if (self::estConnecte()) {
+            return (new UtilisateurRepository())->selectAdministrateur(Session::getInstance()->lire(static::$cleConnexion));
+        }
+        return false;
+    }
+
+    public static function estOrganisateur($idQuestion): bool {
+        return self::getRoleQuestion($idQuestion) == "organisateur";
+    }
+
+    public static function estRepresentant($idProposition): bool {
+        return self::getRoleProposition($idProposition) == "representant";
+    }
 
     public static function getRoleQuestion($idQuestion): ?string {
         if (self::estConnecte()) {
@@ -51,6 +86,14 @@ class ConnexionUtilisateur {
     public static function getRoleProposition($idProposition): ?string {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->getRoleProposition(Session::getInstance()->lire(static::$cleConnexion),$idProposition);
+        }
+        return null;
+    }
+
+    /** Retourne l'id de la proposition de l'utilisateur connecté dans une question donnée */
+    public static function getPropByLogin($idQuestion): ?int {
+        if (self::estConnecte()) {
+            return (new PropositionRepository())->selectPropById($idQuestion, Session::getInstance()->lire(static::$cleConnexion));
         }
         return null;
     }
