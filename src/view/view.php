@@ -21,23 +21,43 @@
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
-            <a href=""><span class="link-underline link-underline-color">Demande</span></a>
+            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Vote</span></a>
+            <?php
+                use App\Votee\Model\Repository\DemandeRepository;
+                use App\Votee\Lib\ConnexionUtilisateur;
+                use App\Votee\Lib\Notification;
+
+                if (ConnexionUtilisateur::estConnecte()) {
+                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
+                            <span class="link-underline link-underline-color">Demande';
+                    $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+                    if ($utilisateur != null) {
+                        $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
+                        if ($result != null) {
+                            if ($result > 0) {
+                                echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
+                            }
+                        }
+                    }
+                    echo '</span></a>';
+                }
+            ?>
+
         </div>
         <div class="flex gap-4 items-center">
         <?php
-        use App\Votee\Lib\ConnexionUtilisateur;
         if (ConnexionUtilisateur::estConnecte()) {
             $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
             if ($utilisateur != null) {
-                echo '<a>' .
+                echo '<a href="./frontController.php?controller=utilisateur&action=compte">' .
                     htmlspecialchars($utilisateur->getPrenom()) . ' ' . htmlspecialchars($utilisateur->getNom()) . '
                       </a>
                       <a class="flex items-center" href="frontController.php?controller=utilisateur&action=deconnecter">
                         <span class="material-symbols-outlined">logout</span>
                       </a>';
             } else {
-              echo 'Erreur';
+                echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
+                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
             }
         } else {
             echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
@@ -62,7 +82,6 @@
     </nav>
 </header>
 <?php
-use App\Votee\Lib\Notification;
     foreach (['success', 'warning', 'danger'] as $type) {
         if (Notification::contientMessage($type)) {
             foreach (Notification::lireMessages($type) as $key => $message) {

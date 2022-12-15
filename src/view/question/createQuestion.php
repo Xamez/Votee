@@ -1,9 +1,5 @@
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=question&action=createdQuestion">
-    <div class="flex flex-col gap-7 bg-light p-10 rounded-3xl">
-        <!--        <p>-->
-        <!--            <label for="visibilite_id">visibilite</label> :-->
-        <!--            <input type="text" placeholder="visible" name="visibilite" id="visibilite_id" required/>-->
-        <!--        </p>-->
+    <div class="flex flex-col gap-7 border-2 p-8 rounded-3xl">
         <div>
             <div class="flex flex-col">
                 <label for="systeme_vote_id">Titre :</label>
@@ -14,7 +10,7 @@
                 <textarea class="max-h-52" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
-        <h1 class="text-2xl font-bold text-center text-dark">Organisation</h1>
+        <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
         <div>
             <?php
 
@@ -28,7 +24,7 @@
             }
             ?>
         </div>
-        <h1 class="text-2xl font-bold text-center text-dark">Calendrier</h1>
+        <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
         <div>
             <div class="flex gap-10 items-end">
                 <p class="w-36 font-semibold">Période d'écriture :</p>
@@ -53,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <h1 class="text-2xl font-bold text-center text-dark"> Type de Vote<h1/>
+        <h1 class="title text-dark text-2xl font-semibold"> Type de Vote<h1/>
         <div>
             <div class="flex gap-10 items-end">
                 <p class="w-36 font-semibold">Type de Vote :</p>
