@@ -1,5 +1,5 @@
 <?php
-echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Représentant : 
+echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Responsable : 
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>'
     . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) .

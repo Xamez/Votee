@@ -1,4 +1,6 @@
 <?php
+
+use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
 require "propositionHeader.php";
 
@@ -11,22 +13,22 @@ foreach ($sections as $index=>$section) {
               <div class="proposition-markdown break-all text-justify">' . $sectionDescHTML . '</div>';
 }
 echo '</div>
-      <div class="flex gap-2 justify-between">
-        <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
-            <div class="flex gap-2">
-                <span class="material-symbols-outlined">reply</span>
-                <p>Retour</p>
-            </div
-        </a>';
+<div class="flex gap-2 justify-between">
+    <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
+        <div class="flex gap-2">
+            <span class="material-symbols-outlined">reply</span>
+            <p>Retour</p>
+        </div>
+    </a>';
 if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'écriture') {
-    if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
-        || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
+    if (ConnexionUtilisateur::getRolesProposition($idProposition) == 'representant'
+        || ConnexionUtilisateur::getRolesProposition($idProposition) == 'coauteur') {
         echo '<a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion='
                     . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">edit</span>
                     <p>Editer</p>
-                </div
+                </div>
             </a>';
         echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion='
                     . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
@@ -37,14 +39,14 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
             </a>';
     }
     //TODO Empecher la fusion si on a pas une proposition dans la meme question et si notre proposition est invisible
-    if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
+    if (ConnexionUtilisateur::getRolesProposition($idProposition) != 'representant') {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
                 . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">upload</span>
                     <p>Créer une fusion</p>
-                </div
+                </div>
               </a>';
         } else {
             echo ' <a href="./frontController.php?controller=demande&action=createDemande&titreDemande=fusion&idQuestion='
@@ -52,9 +54,13 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
                 <div class="flex gap-2">
                     <span class="material-symbols-outlined">file_copy</span>
                     <p>Demander une fusion</p>
-                </div
+                </div>
               </a>';
         }
     }
-    echo '</div>';
 }
+
+if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période de vote') {
+    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
+}
+echo '</div>';

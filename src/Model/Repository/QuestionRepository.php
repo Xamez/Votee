@@ -88,6 +88,18 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
+    public function ajouterVotant(int $idQuestion, string $votant) : bool {
+        $sql = "CALL AjouterVotantAQuestion(:idQuestionTag, :votantTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idQuestionTag" => $idQuestion, "votantTag" => $votant);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
     public function selectQuestionOrga($login): array {
         $sql = "SELECT * FROM Questions WHERE LOGIN IN (SELECT LOGIN FROM Organisateurs WHERE login = :paramTag)";
         return self::selectAllCustom($sql, $login);

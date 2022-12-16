@@ -5,7 +5,7 @@ use App\Votee\Lib\ConnexionUtilisateur;
 if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
     echo '<a href="./frontController.php?controller=question&action=section">            
             <div class="flex gap-2">
-                <p>Créer un vote</p>
+                <p>Créer une question</p>
                 <span class="material-symbols-outlined">add_circle</span>
             </div>
           </a>';
