@@ -46,7 +46,7 @@ foreach ($propositions as $proposition) {
                     <p class="font-bold text-dark">Proposition de : </p>
                     <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                         <span class="material-symbols-outlined">account_circle</span>' .
-            htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) .
+            htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) .
             '   </div>
                 </div>
                 <span class="material-symbols-outlined">arrow_forward_ios</span>
@@ -73,9 +73,10 @@ foreach ($propositions as $proposition) {
     }
 
 }
-echo '<div class="flex gap-2 justify-between">';
-if ($roleQuestion == 'organisateur') {
-    echo '<div class="flex justify-start">
+if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
+    echo '<div class="flex gap-2 justify-between">';
+    if ($roleQuestion == 'organisateur') {
+        echo '<div class="flex justify-start">
          <a href="./frontController.php?controller=question&action=updateQuestion&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
             <div class="flex gap-2">
                 <p>Editer</p>
@@ -83,6 +84,26 @@ if ($roleQuestion == 'organisateur') {
             </div>
          </a>
       </div>';
+    }
+    if ($roleQuestion != 'representant') {
+        echo '<div class="flex justify-end">';
+        if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+            echo '<a href="./frontController.php?controller=proposition&action=createProposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">            
+            <div class="flex gap-2">
+                <p>Créer une proposition</p>
+                <span class="material-symbols-outlined">add_circle</span>
+            </div>
+          </a>';
+        } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+            echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=proposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
+            <div class="flex gap-2">
+                <p>Faire une demande</p>
+                <span class="material-symbols-outlined">file_copy</span>
+            </div>
+         </a>';
+        }
+        echo '</div>';
+    }
 }
 
 if (sizeof($propositions) > 0) {
@@ -115,23 +136,5 @@ if (sizeof($propositions) > 0) {
     }
 }
 
-if ($roleQuestion != 'representant') {
-    echo '<div class="flex justify-end">';
-    if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
-        echo '<a href="./frontController.php?controller=proposition&action=createProposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">            
-            <div class="flex gap-2">
-                <p>Créer une proposition</p>
-                <span class="material-symbols-outlined">add_circle</span>
-            </div>
-          </a>';
-    } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
-        echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=proposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
-            <div class="flex gap-2">
-                <p>Faire une demande</p>
-                <span class="material-symbols-outlined">file_copy</span>
-            </div>
-         </a>';
-    }
-    echo '</div>';
-}
+
 echo '</div>';
