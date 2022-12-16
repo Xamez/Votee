@@ -34,20 +34,20 @@ class ControllerProposition extends AbstractController {
 
     public static function createdVote() : void {
         $role = ConnexionUtilisateur::getRoleProposition($_POST['idProposition']);
-        if (!$role == 'representant' || !$role == 'votant' || !$role == 'responsable') {
+        if ($role != 'representant' && $role != 'votant' && $role != 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
+        } else {
+            $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
+            if ($vote)
+                (new Notification())->ajouter("success", "Le vote a bien été effectué.");
+            else
+                (new Notification())->ajouter("warning", "Le vote existe déjà.");
+            if ($_POST["isRedirected"] ?? false)
+                self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+            else
+                self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
         }
-        $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
-        if ($vote)
-            (new Notification())->ajouter("success", "Le vote a bien été effectué.");
-        else
-            (new Notification())->ajouter("warning", "Le vote existe déjà.");
-        if ($_POST["isRedirected"] ?? false)
-            self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
-        else
-            self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
-
     }
 
     public static function voterPropositions() : void {
@@ -60,7 +60,7 @@ class ControllerProposition extends AbstractController {
             $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             $textess = (new TexteRepository())->selectAllByKey($idProposition);
             $textes[$idProposition] = $textess;
-            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) > 0;
+            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) != 0;
             foreach ($textess as $texte) {
                 $parsedown = new Parsedown();
                 $texte->setTexte($parsedown->text($texte->getTexte()));
