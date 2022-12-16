@@ -33,7 +33,7 @@ class ControllerQuestion extends AbstractController {
             [
                 "pagetitle" => "Nombre de sections",
                 "cheminVueBody" => "question/section.php",
-                "title" => "Créer un vote",
+                "title" => "Créer une question",
                 "subtitle" => "Définissez un nombre de section pour votre vote."
             ]);
     }
@@ -51,7 +51,7 @@ class ControllerQuestion extends AbstractController {
                 "voteTypes" => $voteTypes,
                 "pagetitle" => "Creation",
                 "cheminVueBody" => "question/createQuestion.php",
-                "title" => "Créer un vote",
+                "title" => "Créer une question",
             ]);
     }
 
@@ -136,7 +136,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updateQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
+        if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -152,7 +152,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
+        if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action= all");
         }

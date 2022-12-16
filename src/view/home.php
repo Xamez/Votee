@@ -34,7 +34,7 @@
             <img class="w-10/12 lg:w-1/2 rounded-3xl shadow-md" src="assets/resources/creer_vote.png" alt="Créer un vote">
             <div class="w-96 text-center lg:text-left">
                 <i class="fa fa-pen-to-square text-white text-2xl px-3 py-2 bg-main rounded-lg"></i>
-                <h3 class="text-white font-bold text-xl pt-2">Créer un vote, c'est trivial !</h3>
+                <h3 class="text-white font-bold text-xl pt-2">Créer une question, c'est trivial !</h3>
                 <p class="text-dark text-md pt-4">Réaliser un vote avec Votee pour déterminer simplement et rapidement l’opinion du public.<br/>Personnaliser votre vote comme bon vous semble.</p>
                 <div class="flex flex-row gap-x-4 justify-center lg:justify-start pt-3">
                     <a class="p-2 pl-6 pr-6 text-white bg-main rounded-lg font-semibold shadow" href="./frontController.php?action=section">Créer un vote</a>

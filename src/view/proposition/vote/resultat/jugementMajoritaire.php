@@ -3,8 +3,6 @@
 $values = ['-2', '-1', '0', '1', '2'];
 $colors = ['f87171', 'fb923c', 'facc15', '4ade80', '22d3ee'];
 
-# TODO: investiguer pourquoi j'ai besoin de get deux fois le [$idProposition]
-
 foreach ($resultats as $idProposition => $resultat) {
 
     echo '<div class="flex flex-col lg:flex-row justify-center">';

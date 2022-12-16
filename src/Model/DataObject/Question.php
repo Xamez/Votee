@@ -59,7 +59,7 @@ class Question extends AbstractDataObject {
 
     public function setIdQuestion(int $idQuestion): void { $this->idQuestion = $idQuestion; }
 
-    public function getVisibilite(): string { return $this->visibilite; }
+    public function isVisible() : bool { return $this->visibilite == 'visible'; }
 
     public function setVisibilite(string $visibilite): void { $this->visibilite = $visibilite; }
 
