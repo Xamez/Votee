@@ -46,7 +46,7 @@ foreach ($propositions as $proposition) {
                     <p class="font-bold text-dark">Proposition de : </p>
                     <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                         <span class="material-symbols-outlined">account_circle</span>' .
-            htmlspecialchars($responsables[$idProposition]->getNom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getPrenom()) .
+            htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) .
             '   </div>
                 </div>
                 <span class="material-symbols-outlined">arrow_forward_ios</span>
@@ -60,7 +60,7 @@ foreach ($propositions as $proposition) {
                     <p class="font-bold text-dark">Proposition de : </p>
                     <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                         <span class="material-symbols-outlined">account_circle</span>' .
-                htmlspecialchars($responsables[$idProposition]->getNom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getPrenom()) .
+                htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) .
                 '</div>
                 </div>
                 <div class="flex gap-2">';
