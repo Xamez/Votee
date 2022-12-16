@@ -34,7 +34,7 @@ class ControllerProposition extends AbstractController {
 
     public static function createdVote() : void {
         $role = ConnexionUtilisateur::getRoleProposition($_POST['idProposition']);
-        if (!$role == 'representant' || !$role == 'votant') {
+        if (!$role == 'representant' || !$role == 'votant' || !$role == 'responsable') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
         }
