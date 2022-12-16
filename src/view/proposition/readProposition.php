@@ -21,8 +21,8 @@ echo '</div>
         </div>
     </a>';
 if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'écriture') {
-    if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
-        || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
+    if (ConnexionUtilisateur::getRolesProposition($idProposition) == 'representant'
+        || ConnexionUtilisateur::getRolesProposition($idProposition) == 'coauteur') {
         echo '<a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion='
                     . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
@@ -39,7 +39,7 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
             </a>';
     }
     //TODO Empecher la fusion si on a pas une proposition dans la meme question et si notre proposition est invisible
-    if (ConnexionUtilisateur::getRoleProposition($idProposition) != 'representant') {
+    if (ConnexionUtilisateur::getRolesProposition($idProposition) != 'representant') {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
                 . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">

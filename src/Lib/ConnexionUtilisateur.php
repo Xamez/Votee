@@ -67,26 +67,18 @@ class ConnexionUtilisateur {
         return false;
     }
 
-    public static function estOrganisateur($idQuestion): bool {
-        return self::getRoleQuestion($idQuestion) == "organisateur";
-    }
-
-    public static function estRepresentant($idProposition): bool {
-        return self::getRoleProposition($idProposition) == "representant";
-    }
-
-    public static function getRoleQuestion($idQuestion): ?string {
+    public static function getRolesQuestion($idQuestion): array {
         if (self::estConnecte()) {
-            return (new UtilisateurRepository())->getRoleQuestion(Session::getInstance()->lire(static::$cleConnexion),$idQuestion);
+            return (new UtilisateurRepository())->getRolesQuestion(Session::getInstance()->lire(static::$cleConnexion),$idQuestion);
         }
-        return null;
+        return [];
     }
 
-    public static function getRoleProposition($idProposition): ?string {
+    public static function getRolesProposition($idProposition): array {
         if (self::estConnecte()) {
-            return (new UtilisateurRepository())->getRoleProposition(Session::getInstance()->lire(static::$cleConnexion),$idProposition);
+            return (new UtilisateurRepository())->getRolesProposition(Session::getInstance()->lire(static::$cleConnexion),$idProposition);
         }
-        return null;
+        return [];
     }
 
     /** Retourne l'id de la proposition de l'utilisateur connecté dans une question donnée */

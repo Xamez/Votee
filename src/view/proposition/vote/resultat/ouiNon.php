@@ -6,8 +6,6 @@ echo "A faire... Eh oui j'ai pas eu le temps je suis désolé :(";
 $values = ['-1', '0', '1'];
 $colors = ['f87171', 'facc15', '22d3ee'];
 
-# TODO: investiguer pourquoi j'ai besoin de get deux fois le [$idProposition]
-
 foreach ($propositions as $proposition) {
 
     echo '<div class="flex flex-row justify-end">';

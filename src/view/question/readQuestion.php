@@ -1,7 +1,7 @@
 <?php
 
 use App\Votee\Lib\ConnexionUtilisateur;
-$roleQuestion = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
+$rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
 
 echo '<div class="flex items-center gap-2">
         <p class="text-main font-semibold">Organisateur : 
@@ -34,37 +34,37 @@ echo '</div>
         <span class="text-xl text-main font-bold text-lg">Période de vote : </span> 
         Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'
       </p>
-      <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>';
+      <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
+      ';
+
 foreach ($propositions as $proposition) {
     $idProposition = $proposition->getIdProposition();
-    $roleProposition = ConnexionUtilisateur::getRoleProposition($idProposition);
+    $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
 
-    if ($proposition->getVisibilite() == 'visible') {
+    if ($proposition->isVisible()) {
         echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($idProposition).'">
-            <div class="flex bg-light justify-between p-2 items-center rounded">
-                <div class="flex items-center gap-2">
-                    <p class="font-bold text-dark">Proposition de : </p>
-                    <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-                        <span class="material-symbols-outlined">account_circle</span>' .
-            htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) .
-            '   </div>
-                </div>
+                <div class="flex bg-light justify-between p-2 items-center rounded">
+                    <div class="flex items-center gap-2">
+                        <p class="font-bold text-dark">Proposition de : </p>
+                        <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                            <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                        </div>
+                    </div>
                 <span class="material-symbols-outlined">arrow_forward_ios</span>
             </div>
           </a>';
     } else {
-        if ($roleProposition == 'representant' || $roleProposition == 'coauteur' || $roleQuestion == 'organisateur') {
+        if (count(array_intersect(['CoAuteur', 'Responsable'], $rolesQuestion)) > 0 || in_array("Organisateur", $rolesQuestion)) {
             echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. rawurlencode($idProposition).'">
-            <div class="flex bg-light justify-between p-2 items-center rounded">
-                <div class="flex items-center gap-2">
-                    <p class="font-bold text-dark">Proposition de : </p>
-                    <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-                        <span class="material-symbols-outlined">account_circle</span>' .
-                htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) .
-                '</div>
-                </div>
-                <div class="flex gap-2">';
-            if ($proposition->getVisibilite() == 'invisible') echo '<span class="material-symbols-outlined">visibility_off</span>';
+                    <div class="flex bg-light justify-between p-2 items-center rounded">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-dark">Proposition de : </p>
+                            <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                                <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                            </div>
+                        </div>
+                        <div class="flex gap-2">';
+            if (!$proposition->isVisible()) echo '<span class="material-symbols-outlined">visibility_off</span>';
             echo '<span class="material-symbols-outlined">arrow_forward_ios</span>
                 </div>
             </div>
@@ -75,42 +75,43 @@ foreach ($propositions as $proposition) {
 }
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     echo '<div class="flex gap-2 justify-between">';
-    if ($roleQuestion == 'organisateur') {
+    if (in_array("Organisateur", $rolesQuestion)) {
         echo '<div class="flex justify-start">
-         <a href="./frontController.php?controller=question&action=updateQuestion&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
-            <div class="flex gap-2">
-                <p>Editer</p>
-                <span class="material-symbols-outlined">edit</span>
-            </div>
-         </a>
-      </div>';
+                 <a href="./frontController.php?controller=question&action=updateQuestion&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
+                    <div class="flex gap-2">
+                        <p>Editer</p>
+                        <span class="material-symbols-outlined">edit</span>
+                    </div>
+                 </a>
+              </div>';
     }
-    if ($roleQuestion != 'representant') {
+    if (!in_array("Responsable", $rolesQuestion)) {
         echo '<div class="flex justify-end">';
-        if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
-            echo '<a href="./frontController.php?controller=proposition&action=createProposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">            
-            <div class="flex gap-2">
-                <p>Créer une proposition</p>
-                <span class="material-symbols-outlined">add_circle</span>
-            </div>
-          </a>';
-        } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
-            echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=proposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
-            <div class="flex gap-2">
-                <p>Faire une demande</p>
-                <span class="material-symbols-outlined">file_copy</span>
-            </div>
-         </a>';
+        if (ConnexionUtilisateur::estConnecte()) {
+            if (ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+                echo '<a href="./frontController.php?controller=proposition&action=createProposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">            
+                        <div class="flex gap-2">
+                            <p>Créer une proposition</p>
+                            <span class="material-symbols-outlined">add_circle</span>
+                        </div>
+                      </a>';
+            } else {
+                echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=proposition&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">
+                        <div class="flex gap-2">
+                            <p>Faire une demande</p>
+                            <span class="material-symbols-outlined">file_copy</span>
+                        </div>
+                     </a>';
+            }
         }
         echo '</div>';
     }
 }
 
 if (sizeof($propositions) > 0) {
-    $role = ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion());
     if ($question->getPeriodeActuelle() == 'Période de vote') {
         // TODO : GERER L ORDRE DES ROLES ET VIRER REPR
-        if ($role == 'votant' || $role == 'organisateur' || $role == 'representant') {
+        if (count(array_intersect(['Votant', 'Organisateur', 'Responsable'], $rolesQuestion)) > 0) {
             echo '
             <div class="flex">
                  <a href="./frontController.php?controller=proposition&action=voterPropositions&idQuestion=' . rawurldecode($question->getIdQuestion()) . '">

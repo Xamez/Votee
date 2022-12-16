@@ -26,11 +26,12 @@ echo '<span>' .htmlspecialchars($demande->getTexteDemande()) . '
         </span>
      </div>';
 
+$rolesPropo = ConnexionUtilisateur::getRolesProposition($demande->getIdProposition());
+$rolesQuest = ConnexionUtilisateur::getRolesQuestion($demande->getIdQuestion());
 if ($demande->getEtatDemande() == 'attente') {
-    if (
-        ($demande->getTitreDemande() == 'fusion' && ConnexionUtilisateur::estRepresentant($demande->getIdProposition()))
+    if (($demande->getTitreDemande() == 'fusion' && in_array("Responsable", $rolesPropo))
         || ($demande->getTitreDemande() == 'question' && ConnexionUtilisateur::estAdministrateur())
-        || ($demande->getTitreDemande() == 'proposition' && ConnexionUtilisateur::estOrganisateur($demande->getIdQuestion()))) {
+        || ($demande->getTitreDemande() == 'proposition' && in_array("Organisateur", $rolesQuest))) {
         echo '<div class="flex justify-center gap-10">
             <a class="w-36 flex p-2 justify-center text-white bg-green font-semibold rounded-lg" 
                 href="./frontController.php?controller=demande&action=setDemande&statut=accepte&idDemande=' . rawurlencode($demande->getIdDemande()) . '">Accepter

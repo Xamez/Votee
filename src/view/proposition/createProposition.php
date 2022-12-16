@@ -1,6 +1,6 @@
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=createdProposition">
     <div class="flex gap-2 items-center">
-        <p class="text-main font-semibold">Représentant :</p>
+        <p class="text-main font-semibold">Responsable :</p>
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>
             <?php echo htmlspecialchars($representant->getNom()) . ' ' . htmlspecialchars($representant->getPrenom()) ?>
