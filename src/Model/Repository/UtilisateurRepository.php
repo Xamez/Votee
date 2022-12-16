@@ -62,22 +62,37 @@ class UtilisateurRepository extends AbstractRepository {
         }
     }
 
-    public function getRoleQuestion($login, $idQuestion): ?string {
-        $sql = "SELECT GetRoleQuestion(:loginTag, :idQuestionTag) FROM DUAL";
-        $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($values);
-        $role = $pdoStatement->fetch();
-        return $role[0];
+
+    public function getRolesQuestion($login, $idQuestion): array {
+        $roles = [];
+        $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant"];
+        foreach ($procedures as $procedure) {
+            $sql = "SELECT :procedureTag(:loginTag, :idQuestionTag) FROM DUAL";
+            $sql = str_replace(":procedureTag", 'est' . $procedure, $sql);
+            $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+            $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
+            $pdoStatement->execute($values);
+            $result = $pdoStatement->fetch();
+            if ($result === false) continue;
+            $roles[] = $procedure;
+        }
+        return $roles;
     }
 
-    public function getRoleProposition($login, $idProposition): ?string {
-        $sql = "SELECT GetRoleProposition(:loginTag, :idPropositionTag) FROM DUAL";
-        $values = array("loginTag" => $login, "idPropositionTag" => $idProposition);
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($values);
-        $role = $pdoStatement->fetch();
-        return $role[0];
+    public function getRolesProposition($login, $idProposition): array {
+        $roles = [];
+        $procedures = ["Responsable", "CoAuteur"];
+        foreach ($procedures as $procedure) {
+            $sql = "SELECT :procedureTag(:loginTag, :idPropositionTag) FROM DUAL";
+            $sql = str_replace(":procedureTag", 'est' . $procedure . 'Prop', $sql);
+            $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+            $values = array("loginTag" => $login, "idPropositionTag" => $idProposition);
+            $pdoStatement->execute($values);
+            $result = $pdoStatement->fetch();
+            if ($result === false) continue;
+            $roles[] = $procedure;
+        }
+        return $roles;
     }
 
     public function selectCoAuteur($idProposition): array {

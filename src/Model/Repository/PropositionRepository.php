@@ -77,7 +77,6 @@ class PropositionRepository extends AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("visibiliteTag" => $visibite);
         $pdoStatement->execute($value);
-        var_dump($pdoStatement->errorInfo());
 
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT propositions_seq.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();
@@ -85,7 +84,7 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function AjouterRepresentant($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {
+    public function AjouterResponsable($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {
         $sql = "CALL AjouterRepPropRedigerR(:login, :idProposition, :oldIdProposition, :idQuestion, :isFusion)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
@@ -127,21 +126,14 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
-    public function getNote(int $idProposition) {
-        $sql = "SELECT SUM(note) as total from voter WHERE idProposition = :idPropositionTag";
+    public function getIdQuestion(int $idProposition) {
+        $sql = "SELECT idQuestion FROM Recevoir WHERE idProposition = :idPropositionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute(array("idPropositionTag" => $idProposition));
-        $noteTotal = $pdoStatement->fetch();
-        return $noteTotal ? $noteTotal[0] : null;
-    }
-
-    public function selectGagnant(int $idQuestion) {
-        $sql = "SELECT GetPropositionGagnante(:idQuestionTag) FROM DUAL";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion));
+        $pdoStatement->execute(array("idPropositionTag"=>$idProposition));
         $result = $pdoStatement->fetch();
         return $result[0];
     }
+
 
     public function getFusionRestant(int $idProposition, string $login): ?int {
         $sql = "SELECT nbFusionRestant FROM ScoreFusion WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";

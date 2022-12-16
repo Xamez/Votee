@@ -10,15 +10,121 @@ use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
 use App\Votee\Model\Repository\TexteRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
+use App\Votee\Model\Repository\VoteRepository;
 use App\Votee\parsedown\Parsedown;
 
-class ControllerProposition extends AbstractController{
+class ControllerProposition extends AbstractController {
+
+    public static function createVote($idQuestion, $idVotant, $idProposition, $isRedirected) : void {
+        $note = (new VoteRepository())->getNote($idProposition, $idVotant);
+        $vote = (new VoteRepository())->construire(["idProposition" => $idProposition, "loginVotant" => $idVotant, "noteProposition" => 0]);
+        $voteType = $vote->getVoteType()->name;
+        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
+        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
+        $voteUrl = 'proposition/vote/' . $voteType . '.php';
+        self::afficheVue($voteUrl,
+            [
+                "idQuestion" => $idQuestion,
+                "idVotant" => $idVotant,
+                "idProposition" => $idProposition,
+                "note" => $note,
+                "isRedirected" => $isRedirected
+            ]);
+    }
+
+    public static function createdVote() : void {
+        $role = ConnexionUtilisateur::getRolesProposition($_POST['idProposition']);
+        if ($role != 'representant' && $role != 'votant' && $role != 'organisateur') {
+            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
+            self::redirection("?controller=question&readAllQuestion");
+        } else {
+            $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
+            if ($vote)
+                (new Notification())->ajouter("success", "Le vote a bien été effectué.");
+            else
+                (new Notification())->ajouter("warning", "Le vote existe déjà.");
+            if ($_POST["isRedirected"] ?? false)
+                self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+            else
+                self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
+        }
+    }
+
+    public static function voterPropositions() : void {
+        $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        foreach ($propositions as $proposition) {
+            $idProposition = $proposition->getIdProposition();
+            $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
+            $textess = (new TexteRepository())->selectAllByKey($idProposition);
+            $textes[$idProposition] = $textess;
+            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) != 0;
+            foreach ($textess as $texte) {
+                $parsedown = new Parsedown();
+                $texte->setTexte($parsedown->text($texte->getTexte()));
+            }
+        }
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Voter",
+                "cheminVueBody" => "proposition/voterPropositions.php",
+                "title" => "Voter",
+                "subtitle" => "Voter pour les propositions de la question : " . $question->getTitre(),
+                "propositions" => $propositions,
+                "sections" => $sections,
+                "textes" => $textes,
+                "responsables" => $responsables,
+                "aVote" => $aVote,
+                "idQuestion" => $_GET['idQuestion'],
+            ]);
+    }
+
+    public static function resultatPropositions() : void {
+
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $voteType = $question->getVoteType();
+        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
+        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
+        $voteUrl = 'proposition/vote/resultat/' . $voteType . '.php';
+
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+        foreach ($propositions as $proposition) {
+            $idProposition = $proposition->getIdProposition();
+            $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
+            $textess = (new TexteRepository())->selectAllByKey($idProposition);
+            $textes[$idProposition] = $textess;
+            $resultats[$idProposition] = (new VoteRepository())->getGetResultats($question->getIdQuestion());
+            foreach ($textess as $texte) {
+                $parsedown = new Parsedown();
+                $texte->setTexte($parsedown->text($texte->getTexte()));
+            }
+        }
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Résultats",
+                "cheminVueBody" => "proposition/resultatPropositions.php",
+                "title" => "Résultats",
+                "subtitle" => "Résultats de la question : " . $question->getTitre(),
+                "propositions" => $propositions,
+                "sections" => $sections,
+                "textes" => $textes,
+                "responsables" => $responsables,
+                "voteUrl" => $voteUrl,
+                "resultats" => $resultats,
+                "idQuestion" => $_GET['idQuestion'],
+            ]);
+    }
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $roles = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
         if (!ConnexionUtilisateur::estConnecte()
             || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())
-            || ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'representant') {
+            || in_array('Responsable', $roles)) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
@@ -41,9 +147,10 @@ class ControllerProposition extends AbstractController{
 
     public static function createdProposition(): void {
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
+        $roles = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
         if (!ConnexionUtilisateur::estConnecte()
             || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())
-            || ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'representant') {
+            || in_array('Responsable', $roles)) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
@@ -60,7 +167,7 @@ class ControllerProposition extends AbstractController{
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
+        $isOk &= (new PropositionRepository())->AjouterResponsable($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été créée.");
         else {
             (new PropositionRepository())->supprimer($idProposition);
@@ -85,8 +192,8 @@ class ControllerProposition extends AbstractController{
     public static function updateProposition(): void {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite() == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
-            || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
+        $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
+        if ($proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
@@ -115,28 +222,26 @@ class ControllerProposition extends AbstractController{
     }
 
     public static function updatedProposition(): void {
-        $idQuestion = $_POST['idQuestion'];
         $idProposition = $_POST['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite() == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
-            || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
+        $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
+        if (!$proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-        $question = (new QuestionRepository())->select($idQuestion);
+        // $question = (new QuestionRepository())->select($idQuestion);
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $textsection, NULL);
             $isOk = (new TexteRepository())->modifier($texte);
         }
-        if ($_POST['coAuteur'] != "") {
+        if ($_POST['coAuteur'] != "")
             $isOk &= (new PropositionRepository())->ajouterCoauteur($_POST['coAuteur'], $idProposition);
-        }
 
         if ($isOk) (new Notification())->ajouter("success", "La proposition a été modifiée.");
         else (new Notification())->ajouter("danger", "La proposition n'a pas pu être modifiée.");
-        self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+        self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $idProposition);
     }
 
     public static function readProposition(): void {
@@ -177,8 +282,8 @@ class ControllerProposition extends AbstractController{
     public static function deleteProposition(): void {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite() == 'invisible' || !ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
-            || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
+        $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
+        if (!$proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -196,8 +301,8 @@ class ControllerProposition extends AbstractController{
     public static function deletedProposition(): void {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if ($proposition->getVisibilite() == 'invisible' ||!ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'representant'
-            || ConnexionUtilisateur::getRoleProposition($_GET['idProposition']) == 'coauteur') {
+        $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
+        if (!$proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -288,7 +393,7 @@ class ControllerProposition extends AbstractController{
         foreach ($_POST['coAuteurs'] as $coAuteur) {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idNewProp);
         }
-        $isOk &= (new PropositionRepository())->ajouterRepresentant($respAMerge, $idNewProp, $idOldPropMerge, $_POST['idQuestion'], 1);
+        $isOk &= (new PropositionRepository())->AjouterResponsable($respAMerge, $idNewProp, $idOldPropMerge, $_POST['idQuestion'], 1);
         (new PropositionRepository())->ajouterCoAuteur($respAMerge, $idOldProp);
         (new PropositionRepository())->ajouterCoAuteur($respCourant, $idOldPropMerge);
 

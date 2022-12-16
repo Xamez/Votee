@@ -6,6 +6,7 @@ use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
+use App\Votee\Model\DataObject\VoteTypes;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -32,7 +33,7 @@ class ControllerQuestion extends AbstractController {
             [
                 "pagetitle" => "Nombre de sections",
                 "cheminVueBody" => "question/section.php",
-                "title" => "Créer un vote",
+                "title" => "Créer une question",
                 "subtitle" => "Définissez un nombre de section pour votre vote."
             ]);
     }
@@ -43,12 +44,14 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&all");
         }
         $nbSections = $_POST['nbSections'];
+        $voteTypes = VoteTypes::toArray();
         self::afficheVue('view.php',
             [
                 "nbSections" => $nbSections,
+                "voteTypes" => $voteTypes,
                 "pagetitle" => "Creation",
                 "cheminVueBody" => "question/createQuestion.php",
-                "title" => "Créer un vote",
+                "title" => "Créer une question",
             ]);
     }
 
@@ -75,43 +78,22 @@ class ControllerQuestion extends AbstractController {
             $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
             $responsables = array();
             foreach ($propositions as $proposition) {
-                $responsables[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
+                $idProposition = $proposition->getIdProposition();
+                $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
-            if($question->getPeriodeActuelle() == "Période des résultats"){
-                $idPropositionGagnante = (new PropositionRepository())->selectGagnant($question->getIdQuestion());
-                $notes = array();
-                foreach ($propositions as $proposition) {
-                    $notes[] = (new PropositionRepository())->getNote($proposition->getIdProposition());
-                }
-                self::afficheVue('view.php',
-                    [
-                        "question" => $question,
-                        "notes" => $notes,
-                        "propositions" => $propositions,
-                        "responsables" => $responsables,
-                        "idPropositionGagnante" => $idPropositionGagnante,
-                        "sections" => $sections,
-                        "organisateur" => $organisateur,
-                        "pagetitle" => "Question",
-                        "cheminVueBody" => "question/readQuestionResultats.php",
-                        "title" => $question->getTitre(),
-                        "subtitle" => $question->getDescription()
-                    ]);
-            } else {
-                self::afficheVue('view.php',
-                    [
-                        "question" => $question,
-                        "propositions" => $propositions,
-                        "sections" => $sections,
-                        "organisateur" => $organisateur,
-                        "responsables" => $responsables,
-                        "pagetitle" => "Question",
-                        "cheminVueBody" => "question/readQuestion.php",
-                        "title" => $question->getTitre(),
-                        "subtitle" => $question->getDescription()
-                    ]);
-            }
+            self::afficheVue('view.php',
+                [
+                    "question" => $question,
+                    "propositions" => $propositions,
+                    "sections" => $sections,
+                    "organisateur" => $organisateur,
+                    "responsables" => $responsables,
+                    "pagetitle" => "Question",
+                    "cheminVueBody" => "question/readQuestion.php",
+                    "title" => $question->getTitre(),
+                    "subtitle" => $question->getDescription()
+                ]);
         } else {
             self::error("La question n'existe pas");
         }
@@ -131,7 +113,7 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
             date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
             $_POST['organisateur'],
-            $_POST['typeVote'],
+            $_POST['voteType']
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;
@@ -139,6 +121,10 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
+        foreach ($_POST['votant'] as $votant)
+            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $votant);
+        $idPersonne = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        (new QuestionRepository())->ajouterVotant($idQuestion, $idPersonne);
         if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
         else {
             (new QuestionRepository())->supprimer($idQuestion);
@@ -150,7 +136,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updateQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
+        if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -166,7 +152,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::getRoleQuestion($question->getIdQuestion()) == 'organisateur') {
+        if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action= all");
         }
