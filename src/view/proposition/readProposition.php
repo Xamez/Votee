@@ -12,8 +12,14 @@ foreach ($sections as $index=>$section) {
     echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
               <div class="proposition-markdown break-all text-justify">' . $sectionDescHTML . '</div>';
 }
-echo '</div>';
-
+echo '</div>
+<div class="flex gap-2 justify-between">
+    <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
+        <div class="flex gap-2">
+            <span class="material-symbols-outlined">reply</span>
+            <p>Retour</p>
+        </div>
+    </a>';
 if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (ConnexionUtilisateur::getRoleProposition($idProposition) == 'representant'
         || ConnexionUtilisateur::getRoleProposition($idProposition) == 'coauteur') {
@@ -52,20 +58,9 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
               </a>';
         }
     }
-    echo '</div>';
 }
 
 if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période de vote') {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
 }
-
-echo '
-<div class="flex gap-2 justify-between">
-    <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
-        <div class="flex gap-2">
-            <span class="material-symbols-outlined">reply</span>
-            <p>Retour</p>
-        </div>
-    </a>
-<div>
-';
+echo '</div>';
