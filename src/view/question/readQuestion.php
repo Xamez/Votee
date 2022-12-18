@@ -2,7 +2,6 @@
 
 use App\Votee\Lib\ConnexionUtilisateur;
 $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
-
 echo '<div class="flex items-center gap-2">
         <p class="text-main font-semibold">Organisateur : 
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">

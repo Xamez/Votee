@@ -4,25 +4,34 @@ use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
 require "propositionHeader.php";
 
+$roles = ConnexionUtilisateur::getRolesProposition($idProposition);
+$rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
+
+if ($fils) {
+    echo '<div class="flex gap-5">
+        <p class="text-main font-semibold">Fusionné avec : </p>';
+    foreach ($fils as $key=>$f) echo '<a class="text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
+            . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">Proposition ' . $key+1 . '</a>';
+    echo '</div>';
+}
+
 echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
-    $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-    $sectionDescHTML = $textes[$index]->getTexte();
-
-    echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-              <div class="proposition-markdown break-all text-justify">' . $sectionDescHTML . '</div>';
+    echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . htmlspecialchars($section->getTitreSection()) . '</h1>
+              <div class="proposition-markdown break-all text-justify">' . $textes[$index]->getTexte() . '</div>';
 }
-echo '</div>
-<div class="flex gap-2 justify-between">
-    <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . $question->getIdQuestion() . '">
-        <div class="flex gap-2">
-            <span class="material-symbols-outlined">reply</span>
-            <p>Retour</p>
+echo '
         </div>
-    </a>';
-if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'écriture') {
-    if (ConnexionUtilisateur::getRolesProposition($idProposition) == 'representant'
-        || ConnexionUtilisateur::getRolesProposition($idProposition) == 'coauteur') {
+        <div class="flex gap-2 justify-between">
+            <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
+                <div class="flex gap-2">
+                    <span class="material-symbols-outlined">reply</span>
+                    <p>Retour</p>
+                </div>
+            </a>';
+
+if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
+    if ((count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
         echo '<a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion='
                     . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
                 <div class="flex gap-2">
@@ -38,8 +47,8 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
                 </div>
             </a>';
     }
-    //TODO Empecher la fusion si on a pas une proposition dans la meme question et si notre proposition est invisible
-    if (ConnexionUtilisateur::getRolesProposition($idProposition) != 'representant') {
+    if (!in_array('Responsable', $roles)
+        && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($question->getIdQuestion()))) {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
                 . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
@@ -60,7 +69,7 @@ if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période d\'
     }
 }
 
-if ($visibilite == 'visible' && $question->getPeriodeActuelle() == 'Période de vote') {
+if ($visibilite && $question->getPeriodeActuelle() == 'Période de vote') {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
 }
 echo '</div>';

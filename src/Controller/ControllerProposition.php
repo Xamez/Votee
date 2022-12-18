@@ -33,8 +33,8 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function createdVote() : void {
-        $role = ConnexionUtilisateur::getRolesProposition($_POST['idProposition']);
-        if ($role != 'representant' && $role != 'votant' && $role != 'organisateur') {
+        $roles = ConnexionUtilisateur::getRolesProposition($_POST['idProposition']);
+        if (!(count(array_intersect(['Responsable', 'Organisateur','Votant'], $roles)) > 0)) {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
         } else {
@@ -134,7 +134,7 @@ class ControllerProposition extends AbstractController {
                 [
                     "pagetitle" => "Creation",
                     "sections" => $sections,
-                    "representant" => ConnexionUtilisateur::getUtilisateurConnecte(),
+                    "responsable" => ConnexionUtilisateur::getUtilisateurConnecte(),
                     "idQuestion" => $_GET['idQuestion'],
                     "cheminVueBody" => "proposition/createProposition.php",
                     "title" => $question->getTitre(),
@@ -193,7 +193,7 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_GET['idProposition'];
         $proposition = (new PropositionRepository())->select($idProposition);
         $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
-        if ($proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
+        if (!$proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
@@ -252,6 +252,11 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $proposition = (new PropositionRepository())->select($_GET['idProposition']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
+        $filsRaw = (new PropositionRepository())->getFilsFusion($_GET['idProposition']);
+        $fils = [];
+        foreach ($filsRaw as $filsR) {
+            $fils[] = (new PropositionRepository())->select($filsR[0]);
+        }
         foreach ($textes as $texte) {
             $parsedown = new Parsedown();
             $texte->setTexte($parsedown->text($texte->getTexte()));
@@ -262,8 +267,9 @@ class ControllerProposition extends AbstractController {
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
             self::afficheVue('view.php',
                 [
-                    "visibilite" => $proposition->getVisibilite(),
+                    "visibilite" => $proposition->isVisible(),
                     "question" => $question,
+                    "fils" => $fils,
                     "idProposition" => $_GET['idProposition'],
                     "sections" => $sections,
                     "coAuteurs" => $coAuteurs,
