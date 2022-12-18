@@ -150,8 +150,8 @@ class PropositionRepository extends AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("idPropositionTag"=>$idProposition);
         $pdoStatement->execute($value);
-        return array();
-        //TODO Gerer le retour du fetch all
+        $result = $pdoStatement->fetchAll();
+        return $result;
     }
 
 }

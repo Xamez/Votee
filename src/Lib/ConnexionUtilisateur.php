@@ -22,16 +22,12 @@ class ConnexionUtilisateur {
         Session::getInstance()->supprimer(static::$cleConnexion);
     }
 
-    public static function getUtilisateurConnecte(): ?Utilisateur {
+    public static function getUtilisateurConnecte() {
         $login = self::estConnecte() ? Session::getInstance()->lire(static::$cleConnexion) : null;
         if ($login != null) {
             return (new UtilisateurRepository())->select($login);
         }
         return null;
-    }
-
-    public static function estUtilisateur($utilisateur): bool {
-        return self::estConnecte() && $utilisateur == Session::getInstance()->lire(static::$cleConnexion);
     }
 
     public static function creerQuestion(): bool {
@@ -56,6 +52,16 @@ class ConnexionUtilisateur {
             $utilisateur = self::getUtilisateurConnecte();
             $nbFusionRestant = (new PropositionRepository())->getFusionRestant($idProposition, $utilisateur->getLogin());
             return !($nbFusionRestant == null) && $nbFusionRestant > 0;
+        }
+        return false;
+    }
+
+    public static function questionValide($idQuestion): bool {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            $idProposition = ConnexionUtilisateur::getPropByLogin($idQuestion);
+            $proposition = (new PropositionRepository())->select($idProposition);
+            if ($proposition->isVisible()) return true;
         }
         return false;
     }

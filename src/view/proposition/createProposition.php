@@ -3,7 +3,7 @@
         <p class="text-main font-semibold">Responsable :</p>
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>
-            <?php echo htmlspecialchars($representant->getNom()) . ' ' . htmlspecialchars($representant->getPrenom()) ?>
+            <?php echo htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
         </div>
         <label class="text-main font-semibold" for="coAuteur_id">CoAuteur :</label>
         <input placeholder="Login" class="border-2" type="text" name="coAuteur" id="coAuteur_id">
@@ -18,7 +18,7 @@
         }
         ?>
     </div>
-    <input type="hidden" name="organisateur" value="<?= $representant->getLogin() ?>">
+    <input type="hidden" name="organisateur" value="<?= $responsable->getLogin() ?>">
     <input type="hidden" name="nbSections" value="<?= sizeof($sections) ?>">
     <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>">
     <div class="flex justify-center">

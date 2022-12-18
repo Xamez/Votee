@@ -34,13 +34,13 @@ class ControllerQuestion extends AbstractController {
                 "pagetitle" => "Nombre de sections",
                 "cheminVueBody" => "question/section.php",
                 "title" => "Créer une question",
-                "subtitle" => "Définissez un nombre de section pour votre vote."
+                "subtitle" => "Définissez un nombre de section pour votre question."
             ]);
     }
 
     public static function createQuestion(): void {
         if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&all");
         }
         $nbSections = $_POST['nbSections'];
@@ -60,9 +60,9 @@ class ControllerQuestion extends AbstractController {
         $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Liste des votes",
+                "pagetitle" => "Liste des questions",
                 "cheminVueBody" => "question/all.php",
-                "title" => "Liste des votes",
+                "title" => "Liste des questions",
                 "questions" => $questions
             ]);
     }
@@ -101,7 +101,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function createdQuestion() : void {
         if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&action=all");
         }
         $question = new Question(NULL,

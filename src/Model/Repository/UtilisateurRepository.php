@@ -73,7 +73,7 @@ class UtilisateurRepository extends AbstractRepository {
             $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
             $pdoStatement->execute($values);
             $result = $pdoStatement->fetch();
-            if ($result === false) continue;
+            if ($result[0] == null) continue;
             $roles[] = $procedure;
         }
         return $roles;
@@ -89,7 +89,7 @@ class UtilisateurRepository extends AbstractRepository {
             $values = array("loginTag" => $login, "idPropositionTag" => $idProposition);
             $pdoStatement->execute($values);
             $result = $pdoStatement->fetch();
-            if ($result === false) continue;
+            if ($result[0] === null) continue;
             $roles[] = $procedure;
         }
         return $roles;
