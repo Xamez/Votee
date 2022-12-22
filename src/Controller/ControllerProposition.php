@@ -340,10 +340,20 @@ class ControllerProposition extends AbstractController {
 
     public static function createFusion(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $proposition = (new PropositionRepository())->select($_GET['idProposition']);
+        $roles = ConnexionUtilisateur::getRolesProposition($proposition->getIdProposition());
+        $rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
+        if (!in_array('Responsable', $roles)
+            && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($question->getIdQuestion()))) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&action=all");
+        }
+        if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == 'Période d\'écriture') {
+            (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée !");
+            self::redirection("?controller=question&action=all");
+        }
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-
         $idPropAMerge = ConnexionUtilisateur::getPropByLogin($_GET['idQuestion']);
-
         $textesCourant = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         foreach ($textesCourant as $texte) {
             $parsedown = new Parsedown();
@@ -386,6 +396,19 @@ class ControllerProposition extends AbstractController {
         $respAMerge = $_POST['respAMerge'];
         $idOldProp = $_POST['idPropCourant'];
         $idOldPropMerge = $_POST['idPropAMerge'];
+        $roles = ConnexionUtilisateur::getRolesProposition($idOldProp);
+        $rolesQuest = ConnexionUtilisateur::getRolesQuestion($_POST['idQuestion']);
+        $proposition = (new PropositionRepository())->select($idOldProp);
+        $question = (new QuestionRepository())->select($_POST['idQuestion']);
+        if (!in_array('Responsable', $roles)
+            && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($_POST['idQuestion']))) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&action=all");
+        }
+        if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == 'Période d\'écriture') {
+            (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée !");
+            self::redirection("?controller=question&action=all");
+        }
         $isOk = true;
         $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', null);
         $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', null);
