@@ -95,19 +95,19 @@ abstract class AbstractRepository {
         return $result ? $this->construire($result) : null;
     }
 
-    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
-        $ligne = "";
-        foreach ($valeurAttributs as $key => $valeurAttribut) {
-            $ligne .= $key . "= :" . $key . ' AND ';
-        }
-        $ligne = substr_replace($ligne, "", -5);
-        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($valeurAttributs);
-        $object = $pdoStatement->fetch();
-
-        return $this->construire($object);
-    }
+//    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
+//        $ligne = "";
+//        foreach ($valeurAttributs as $key => $valeurAttribut) {
+//            $ligne .= $key . "= :" . $key . ' AND ';
+//        }
+//        $ligne = substr_replace($ligne, "", -5);
+//        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
+//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+//        $pdoStatement->execute($valeurAttributs);
+//        $object = $pdoStatement->fetch();
+//
+//        return $this->construire($object);
+//    }
 
     protected abstract function getNomTable(): string;
 

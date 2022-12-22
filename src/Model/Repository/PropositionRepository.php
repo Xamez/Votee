@@ -43,7 +43,7 @@ class PropositionRepository extends AbstractRepository {
     }
 
     /** Retourne l'id d'une proposition (visible) d'un login dans une question */
-    public function selectPropById($idQuestion, $login): ?int {
+    public function selectPropById($idQuestion, $login): array {
         $sql = "SELECT p.IDPROPOSITION
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
             JOIN Propositions p ON r.idProposition = p.idProposition
@@ -52,8 +52,9 @@ class PropositionRepository extends AbstractRepository {
         $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute($values);
-        $idProposition = $pdoStatement->fetch();
-        return $idProposition ? $idProposition[0] : null;
+        $propositions = [];
+        foreach ($pdoStatement as $proposition) $propositions[] = $proposition[0];
+        return $propositions;
     }
 
     public function modifierProposition($idProposition, $visibilite, $idPropFusionParent): bool {
