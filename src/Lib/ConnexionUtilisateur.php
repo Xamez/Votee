@@ -58,7 +58,6 @@ class ConnexionUtilisateur {
 
     public static function questionValide($idQuestion): bool {
         if (self::estConnecte()) {
-            $utilisateur = self::getUtilisateurConnecte();
             $idProposition = ConnexionUtilisateur::getPropByLogin($idQuestion);
             $proposition = (new PropositionRepository())->select($idProposition);
             if ($proposition->isVisible()) return true;

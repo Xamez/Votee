@@ -1,6 +1,12 @@
 <?php
 use App\Votee\Lib\ConnexionUtilisateur;
 
+echo '<form action="./frontController.php?controller=question&action=all" method="GET">
+        <input id="search" name="search" type="text" placeholder="Titre de question" value="'. ($_GET['search'] ?? "") . '">
+        <input type="hidden" name="action" value="all">
+        <input type="hidden" name="controller" value="question">
+        <input id="submit" type="submit" value="Search">
+      </form>';
 if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
     echo '<a href="./frontController.php?controller=question&action=section">            
             <div class="flex gap-2">

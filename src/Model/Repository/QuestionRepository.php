@@ -68,6 +68,15 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
+    public function selectBySearch($search):array {
+        $questions = [];
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER(TITRE) LIKE '%:searchTag%'";
+        $sql = str_replace(":searchTag", strtolower($search), $sql);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute();
+        foreach ($pdoStatement as $formatTableau) $questions[] = $this->construire($formatTableau);
+        return $questions;
+    }
     public function ajouterQuestion(Question $question):int {
         $this->sauvegarder($question);
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT questions_seq.CURRVAL AS lastInsertId FROM DUAL");
@@ -76,17 +85,17 @@ class QuestionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterOrganisateur(string $login):bool {
-        $sql = "CALL AjouterOrganisateurs(:loginTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array("loginTag"=>$login);
-        try {
-            $pdoStatement->execute($value);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
+//    public function ajouterOrganisateur(string $login):bool {
+//        $sql = "CALL AjouterOrganisateurs(:loginTag)";
+//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+//        $value = array("loginTag"=>$login);
+//        try {
+//            $pdoStatement->execute($value);
+//            return true;
+//        } catch (PDOException) {
+//            return false;
+//        }
+//    }
 
     public function ajouterVotant(int $idQuestion, string $votant) : bool {
         $sql = "CALL AjouterVotantAQuestion(:idQuestionTag, :votantTag)";
