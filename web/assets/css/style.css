@@ -131,3 +131,23 @@ label { font-weight: 600; }
 	margin-left: 10px;
 	margin-right: 10%;
 }
+
+
+/* searchbar */
+.search-field {
+	border: none!important;
+}
+
+/* utilisateurs checkbox */
+.util-box:has(> input[type="checkbox"]:checked + label) {
+	border: solid 2px #39b259;
+	background-color: #7bcc5d;
+	color: white;
+}
+
+
+input[type=checkbox] {
+	display: none;
+}
+
+

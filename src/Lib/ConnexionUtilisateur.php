@@ -58,9 +58,9 @@ class ConnexionUtilisateur {
 
     public static function questionValide($idQuestion): bool {
         if (self::estConnecte()) {
-            $idProposition = ConnexionUtilisateur::getPropByLogin($idQuestion);
-            $proposition = (new PropositionRepository())->select($idProposition);
-            if ($proposition->isVisible()) return true;
+            $idProposition = ConnexionUtilisateur::getPropByLoginVisible($idQuestion);
+            if ($idProposition) return true;
+            else return false;
         }
         return false;
     }
@@ -87,9 +87,20 @@ class ConnexionUtilisateur {
     }
 
     /** Retourne l'id de la proposition de l'utilisateur connecté dans une question donnée */
-    public static function getPropByLogin($idQuestion): ?int {
+    public static function getPropByLogin($idQuestion): array {
         if (self::estConnecte()) {
             return (new PropositionRepository())->selectPropById($idQuestion, Session::getInstance()->lire(static::$cleConnexion));
+        }
+        return [];
+    }
+
+    public static function getPropByLoginVisible($idQuestion): ?int {
+        if (self::estConnecte()) {
+            $idPropositions = self::getPropByLogin($idQuestion);
+            foreach ($idPropositions as $idProposition) {
+                $proposition = (new PropositionRepository())->select($idProposition);
+                if ($proposition->isVisible()) return $idProposition;
+            }
         }
         return null;
     }

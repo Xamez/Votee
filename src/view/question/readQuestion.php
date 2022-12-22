@@ -84,7 +84,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
                  </a>
               </div>';
     }
-    if (!in_array("Responsable", $rolesQuestion)) {
+    if (!ConnexionUtilisateur::questionValide($question->getIdQuestion())) {
         echo '<div class="flex justify-end">';
         if (ConnexionUtilisateur::estConnecte()) {
             if (ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
