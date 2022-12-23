@@ -1,11 +1,14 @@
 <?php
 
+use App\Votee\Controller\AbstractController;
 use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
 require "propositionHeader.php";
 
 $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
 $rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
+$rawIdProposition = rawurlencode($idProposition);
+$rawIdQuestion = rawurlencode($question->getIdQuestion());
 
 if ($fils) {
     echo '<div class="flex gap-5">
@@ -22,49 +25,21 @@ foreach ($sections as $index=>$section) {
 }
 echo '
         </div>
-        <div class="flex gap-2 justify-between">
-            <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
-                <div class="flex gap-2">
-                    <span class="material-symbols-outlined">reply</span>
-                    <p>Retour</p>
-                </div>
-            </a>';
+        <div class="flex gap-2 justify-between">';
+            AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
 
 if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
     if ((count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
-        echo '<a href="./frontController.php?controller=proposition&action=updateProposition&idQuestion='
-                    . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
-                <div class="flex gap-2">
-                    <span class="material-symbols-outlined">edit</span>
-                    <p>Editer</p>
-                </div>
-            </a>';
-        echo '<a href="./frontController.php?controller=proposition&action=deleteProposition&idQuestion='
-                    . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
-                <div class="flex gap-2">
-                    <span class="material-symbols-outlined">delete</span>
-                    <p>Supprimer</p>
-                </div>
-            </a>';
+        AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'updateProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Editer', "logo" => 'edit']);
+        AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'deleteProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Supprimer', "logo" => 'delete']);
+
     }
     if (!in_array('Responsable', $roles)
         && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($question->getIdQuestion()))) {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
-            echo '<a href="./frontController.php?controller=proposition&action=createFusion&idQuestion='
-                . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
-                <div class="flex gap-2">
-                    <span class="material-symbols-outlined">upload</span>
-                    <p>Créer une fusion</p>
-                </div>
-              </a>';
+            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createFusion', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Créer une fusion', "logo" => 'upload']);
         } else {
-            echo ' <a href="./frontController.php?controller=demande&action=createDemande&titreDemande=fusion&idQuestion='
-                . rawurlencode($question->getIdQuestion()) . '&idProposition=' . rawurlencode($idProposition) . '">
-                <div class="flex gap-2">
-                    <span class="material-symbols-outlined">file_copy</span>
-                    <p>Demander une fusion</p>
-                </div>
-              </a>';
+            AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=fusion&idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Demander une fusion', "logo" => 'file_copy']);
         }
     }
 }

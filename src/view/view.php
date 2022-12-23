@@ -21,7 +21,7 @@
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Vote</span></a>
+            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
             <?php
                 use App\Votee\Model\Repository\DemandeRepository;
                 use App\Votee\Lib\ConnexionUtilisateur;
