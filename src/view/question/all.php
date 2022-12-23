@@ -1,4 +1,6 @@
 <?php
+
+use App\Votee\Controller\AbstractController;
 use App\Votee\Lib\ConnexionUtilisateur;
 
 echo '<form action="./frontController.php?controller=question&action=all" method="GET">
@@ -10,19 +12,9 @@ echo '<form action="./frontController.php?controller=question&action=all" method
         <input type="hidden" name="controller" value="question">
       </form>';
 if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
-    echo '<a href="./frontController.php?controller=question&action=section">            
-            <div class="flex gap-2">
-                <p>Créer une question</p>
-                <span class="material-symbols-outlined">add_circle</span>
-            </div>
-          </a>';
+    AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'section', 'title' => 'Créer une question', "logo" => 'add_circle']);
 } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
-    echo '<a href="./frontController.php?controller=demande&action=createDemande&titreDemande=question">
-            <div class="flex gap-2">
-                <p>Faire une demande</p>
-                <span class="material-symbols-outlined">file_copy</span>
-            </div>
-          </a>';
+    AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=question', 'title' => 'Faire une demande', "logo" => 'file_copy']);
 }
 foreach ($questions as $question) {
     echo '<a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">

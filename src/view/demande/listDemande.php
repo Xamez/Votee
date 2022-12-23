@@ -1,27 +1,17 @@
 <?php
 
-use App\Votee\Controller\ControllerDemande;
+use App\Votee\Controller\AbstractController;
 
-echo '<div class="flex flex-col gap-10 mt-10">
-        <h1 class="title text-dark text-2xl font-semibold">Attente</h1>
-        <div class="flex flex-col gap-3">';
-foreach ($demandesAttente as $demande) {
-    ControllerDemande::afficheVue('demande/demande.php', ['demande' => $demande]);
+$etats = ["Attente" => $demandesAttente, "Acceptée" => $demandesAccepte, "Refusée" => $demandesRefuse];
+
+echo '<div class="flex flex-col gap-10 mt-10">';
+foreach ($etats as $key=>$etat) {
+    echo '<h1 class="title text-dark text-2xl font-semibold">' . $key . '</h1>
+          <div class="flex flex-col gap-3">';
+    foreach ($etat as $demande) {
+        AbstractController::afficheVue('demande/demande.php', ['demande' => $demande]);
+    }
+    if (!$etat) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
+    echo '</div>';
 }
-if (!$demandesAttente) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
-echo '</div>
-    <h1 class="title text-dark text-2xl font-semibold">Acceptée</h1>
-    <div class="flex flex-col gap-3">';
-foreach ($demandesAccepte as $demande) {
-    ControllerDemande::afficheVue('demande/demande.php', ['demande' => $demande]);
-}
-if (!$demandesAccepte) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
-echo '</div>
-      <h1 class="title text-dark text-2xl font-semibold">Refusée</h1>
-      <div class="flex flex-col gap-3">';
-foreach ($demandesRefuse as $demande) {
-    ControllerDemande::afficheVue('demande/demande.php', ['demande' => $demande]);
-}
-if (!$demandesRefuse) echo '<span class="text-center">Vous n\'avez pas de demandes en cours</span>';
-echo '</div>
-    </div>';
+echo '</div>';
