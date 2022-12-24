@@ -6,9 +6,6 @@ use Exception;
 class Session {
     private static ?Session $instance = null;
 
-    /**
-     * @throws Exception
-     */
     private function __construct() {
         if (session_start() === false) {
             throw new Exception("La session n'a pas réussi à démarrer.");

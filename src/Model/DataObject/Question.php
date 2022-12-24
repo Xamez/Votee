@@ -60,6 +60,7 @@ class Question extends AbstractDataObject {
     public function setIdQuestion(int $idQuestion): void { $this->idQuestion = $idQuestion; }
 
     public function getVisibilite(): string { return $this->visibilite; }
+
     public function isVisible() : bool { return $this->visibilite == 'visible'; }
 
     public function setVisibilite(string $visibilite): void { $this->visibilite = $visibilite; }
@@ -95,7 +96,6 @@ class Question extends AbstractDataObject {
     public function getVoteType(): string {return $this->voteType;}
 
     public function setvoteType(string $voteType): void{$this->voteType = $voteType;}
-
 
     public function getPeriodeActuelle() : string {
         $date = date('Y-m-d');

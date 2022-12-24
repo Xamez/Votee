@@ -18,9 +18,7 @@ class ControllerDemande extends AbstractController {
         }
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByDest($utilisateur->getLogin());
-        $demandesAccepte = [];
-        $demandesRefuse = [];
-        $demandesAttente = [];
+        $demandesAccepte = $demandesRefuse = $demandesAttente = [];
         foreach ($demandes as $demande) {
             $utilisateur = (new UtilisateurRepository())->select($demande->getLogin());
             if ($demande->getEtatDemande() == 'accepte') $demandesAccepte[] = [$utilisateur, $demande];

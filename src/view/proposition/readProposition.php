@@ -12,20 +12,21 @@ $rawIdQuestion = rawurlencode($question->getIdQuestion());
 
 if ($fils) {
     echo '<div class="flex gap-5">
-        <p class="text-main font-semibold">Fusionné avec : </p>';
-    foreach ($fils as $key=>$f) echo '<a class="text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
-            . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">Proposition ' . $key+1 . '</a>';
+             <p class="text-main font-semibold">Fusionné avec : </p>';
+    foreach ($fils as $key=>$f) {
+        echo '<a class="text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
+                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">Proposition ' . $key+1 . '</a>';
+    }
     echo '</div>';
 }
 
 echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 foreach ($sections as $index=>$section) {
     echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . htmlspecialchars($section->getTitreSection()) . '</h1>
-              <div class="proposition-markdown break-all text-justify">' . $textes[$index]->getTexte() . '</div>';
+          <div class="proposition-markdown break-all text-justify">' . $textes[$index]->getTexte() . '</div>';
 }
-echo '
-        </div>
-        <div class="flex gap-2 justify-between">';
+echo '</div>
+      <div class="flex gap-2 justify-between">';
             AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
 
 if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {

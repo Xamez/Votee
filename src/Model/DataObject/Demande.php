@@ -10,9 +10,7 @@ class Demande extends AbstractDataObject {
     private string $etatDemande;
     private string $titreDemande;
     private string $texteDemande;
-
     private ?string $idProposition;
-
     private ?string $idQuestion;
 
     public function __construct(

@@ -48,6 +48,4 @@ class Texte extends AbstractDataObject {
     public function getTexte(): string { return $this->texte; }
 
     public function setTexte(string $texte): void { $this->texte = $texte; }
-
-
 }

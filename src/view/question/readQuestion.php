@@ -53,9 +53,9 @@ foreach ($propositions as $proposition) {
                             <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                         </div>
                     </div>
-                <span class="material-symbols-outlined">arrow_forward_ios</span>
-            </div>
-          </a>';
+                    <span class="material-symbols-outlined">arrow_forward_ios</span>
+                </div>
+              </a>';
     } else {
         if (count(array_intersect(['CoAuteur', 'Responsable'], $rolesQuestion)) > 0 || in_array("Organisateur", $rolesQuestion)) {
             echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition='. rawurlencode($idProposition).'">
@@ -92,7 +92,6 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     }
 }
 
-
 if (sizeof($propositions) > 0) {
     if ($question->getPeriodeActuelle() == 'Période de vote') {
         // TODO : GERER L ORDRE DES ROLES ET VIRER REPR
@@ -103,5 +102,4 @@ if (sizeof($propositions) > 0) {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'resultatPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voir les résultats', "logo" => 'list_alt']);
     }
 }
-
 echo '</div>';

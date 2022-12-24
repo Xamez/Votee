@@ -13,20 +13,11 @@ class SectionRepository extends AbstractRepository {
             'IDQUESTION',
             );
     }
-    function getNomTable(): string {
-        return "Sections";
-    }
+    function getNomTable(): string { return "Sections"; }
+    function getNomClePrimaire(): string { return "IDQUESTION"; }
 
-    function getNomClePrimaire(): string {
-        return "IDQUESTION";
-    }
-
-    function getProcedureInsert(): string {
-        return "AjouterSections";
-    }
-
+    function getProcedureInsert(): string { return "AjouterSections"; }
     function getProcedureDelete(): string { return ""; }
-
     function getProcedureUpdate(): string { return ""; }
 
     public function construire(array $sectionFormatTableau) : Section {

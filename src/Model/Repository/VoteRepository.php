@@ -8,13 +8,6 @@ use PDOException;
 
 class VoteRepository {
 
-    function getNomTable(): string {
-        return "Voter";
-    }
-
-    function getNomClePrimaire(): string {
-        return "IDPROPOSITION";
-    }
 
     public function construire(array $voteFormatTableau) : Vote {
         $idQuestion = (new PropositionRepository())->getIdQuestion($voteFormatTableau["idProposition"]);
@@ -31,11 +24,18 @@ class VoteRepository {
         );
     }
 
+    function getNomTable(): string { return "Voter"; }
+    function getNomClePrimaire(): string { return "IDPROPOSITION"; }
+
+    function getProcedureInsert(): string { return "AjouterVotes"; }
+    function getProcedureUpdate(): string { return "ModifierVotes"; }
+    function getProcedureDelete(): string { return ""; }
+
     function ajouterVote(string $idProposition, string $login, int $note) : bool {
         if ($this->getNote($idProposition, $login) == 0) {
-            $sql = "CALL AjouterVotes(:loginTag, :idPropositionTag, :noteTag)";
+            $sql = "CALL {$this->getProcedureInsert()}(:loginTag, :idPropositionTag, :noteTag)";
         } else {
-            $sql = "CALL ModifierVotes(:loginTag, :idPropositionTag, :noteTag)";
+            $sql = "CALL {$this->getProcedureUpdate()}(:loginTag, :idPropositionTag, :noteTag)";
         }
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idPropositionTag" => $idProposition, "loginTag" => $login, "noteTag" => $note);
@@ -48,10 +48,9 @@ class VoteRepository {
     }
 
     function getNote(string $idProposition, string $login) : int {
-        $sql = "SELECT note FROM Voter WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";
+        $sql = "SELECT note FROM {$this->getNomTable()} WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idPropositionTag" => $idProposition, "loginTag" => $login);
-        $pdoStatement->execute($values);
+        $pdoStatement->execute(array("idPropositionTag" => $idProposition, "loginTag" => $login));
         $result = $pdoStatement->fetch();
         if ($result === false) return 0;
         return $result["NOTE"];
@@ -60,8 +59,7 @@ class VoteRepository {
     function getNotes(string $idQuestion, string $idProposition) : array {
         $sql = "SELECT login FROM Existe WHERE IDQUESTION = :idQuestionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idQuestionTag" => $idQuestion);
-        $pdoStatement->execute($values);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
         $result = $pdoStatement->fetchAll();
         $notes = array();
         foreach ($result as $votant)
@@ -70,8 +68,7 @@ class VoteRepository {
     }
 
     function getGetResultats(string $idQuestion) : array {
-        $resultats = array();
-        $notes = array();
+        $resultats = $notes = [];
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
         foreach ($propositions as $proposition) {
             $idProposition = $proposition->getIdProposition();
@@ -88,9 +85,4 @@ class VoteRepository {
         // TODO: afficher les propo avec la tendance la plus haute (selon jugement majoritaire) en haut
         return $resultats;
     }
-
-    function getProcedureInsert(): string { return "AjouterVotes"; }
-    function getProcedureUpdate(): string { return "ModifierVotes"; }
-    function getProcedureDelete(): string { return ""; }
-
 }

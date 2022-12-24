@@ -8,7 +8,7 @@ use PDOException;
 abstract class AbstractRepository {
 
     public function sauvegarder(AbstractDataObject $object) : bool {
-        $sql = "CALL " . $this->getProcedureInsert(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $sql = "CALL {$this->getProcedureInsert()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -20,7 +20,7 @@ abstract class AbstractRepository {
     }
 
     public function modifier(AbstractDataObject $object) : bool {
-        $sql = "CALL " . $this->getProcedureUpdate(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $sql = "CALL {$this->getProcedureUpdate()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -32,7 +32,7 @@ abstract class AbstractRepository {
     }
 
     public function supprimer($valeurClePrimaire) : bool {
-        $sql = "CALL " . $this->getProcedureDelete(). "(:valueTag)";
+        $sql = "CALL {$this->getProcedureDelete()} (:valueTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
         try {
