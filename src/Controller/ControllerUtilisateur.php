@@ -87,14 +87,11 @@ class ControllerUtilisateur extends AbstractController {
     public static function readAllQuestion(): void {
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         if ($utilisateur == null) {
-            $questionsOrga = [];
-            $questionsRepre = [];
-            $questionsCoau = [];
-            $questionsVota = [];
+            $questionsOrga = $questionsRepre = $questionsCoau = $questionsVota = [];
         } else {
             $login = $utilisateur->getLogin();
             $questionsOrga = (new QuestionRepository())->selectQuestionOrga($login);
-            $questionsRepre = (new QuestionRepository())->selectQuestionRepre($login);
+            $questionsRepre = (new QuestionRepository())->selectQuestionResp($login);
             $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
             $questionsVota = (new QuestionRepository())->selectQuestionVota($login);
         }
@@ -117,9 +114,7 @@ class ControllerUtilisateur extends AbstractController {
         }
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByUtil($utilisateur->getLogin());
-        $demandesAccepte = [];
-        $demandesRefuse = [];
-        $demandesAttente = [];
+        $demandesAccepte = $demandesRefuse = $demandesAttente = [];
         foreach ($demandes as $demande) {
             $utilisateur = (new UtilisateurRepository())->select($demande->getLogin());
             if ($demande->getEtatDemande() == 'accepte') $demandesAccepte[] = [$utilisateur, $demande];

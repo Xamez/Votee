@@ -22,6 +22,7 @@ class ConnexionUtilisateur {
         Session::getInstance()->supprimer(static::$cleConnexion);
     }
 
+    /** Retourne le login de l'utilisateur connecté */
     public static function getUtilisateurConnecte() {
         $login = self::estConnecte() ? Session::getInstance()->lire(static::$cleConnexion) : null;
         if ($login != null) {
@@ -30,6 +31,7 @@ class ConnexionUtilisateur {
         return null;
     }
 
+    /** Retourne si l'utilisateur connecté peut créer une question */
     public static function creerQuestion(): bool {
         if (self::estConnecte()) {
             $utilisateur = self::getUtilisateurConnecte();
@@ -38,6 +40,7 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    /** Retourne si l'utilisateur connecté peut créer une proposition */
     public static function creerProposition($idQuestion): bool {
         if (self::estConnecte()) {
             $utilisateur = self::getUtilisateurConnecte();
@@ -47,6 +50,7 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    /** Retourne si l'utilisateur connecté peut créer une fusion */
     public static function creerFusion($idProposition): bool {
         if (self::estConnecte()) {
             $utilisateur = self::getUtilisateurConnecte();
@@ -56,6 +60,9 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    /**
+     * Retourne si l'utilisateur connecté possède une proposition visible pour la question donnée
+     */
     public static function questionValide($idQuestion): bool {
         if (self::estConnecte()) {
             $idProposition = ConnexionUtilisateur::getPropByLoginVisible($idQuestion);
@@ -72,6 +79,9 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    /** Retourne l'ensemble des roles de l'utilisateur connecté sur la question donnée
+     * parmis les roles suivants : "Organisateur", "Responsable", "CoAuteur", "Votant"
+     */
     public static function getRolesQuestion($idQuestion): array {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->getRolesQuestion(Session::getInstance()->lire(static::$cleConnexion),$idQuestion);
@@ -79,6 +89,9 @@ class ConnexionUtilisateur {
         return [];
     }
 
+    /** Retourne l'ensemble des roles de l'utilisateur connecté sur la proposition donnée
+     * parmis les roles suivants : "Responsable", "CoAuteur"
+     */
     public static function getRolesProposition($idProposition): array {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->getRolesProposition(Session::getInstance()->lire(static::$cleConnexion),$idProposition);
@@ -86,7 +99,7 @@ class ConnexionUtilisateur {
         return [];
     }
 
-    /** Retourne l'id de la proposition de l'utilisateur connecté dans une question donnée */
+    /** Retourne les id des propositions de l'utilisateur connecté pour lesquels il est responsable dans une question donnée */
     public static function getPropByLogin($idQuestion): array {
         if (self::estConnecte()) {
             return (new PropositionRepository())->selectPropById($idQuestion, Session::getInstance()->lire(static::$cleConnexion));
@@ -94,6 +107,7 @@ class ConnexionUtilisateur {
         return [];
     }
 
+    /** Retourne l'id de la proposition visible de l'utilisateur connecté pour laquelle il est responsable pour une question donnée */
     public static function getPropByLoginVisible($idQuestion): ?int {
         if (self::estConnecte()) {
             $idPropositions = self::getPropByLogin($idQuestion);

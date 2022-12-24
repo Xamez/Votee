@@ -459,8 +459,7 @@ class ControllerProposition extends AbstractController {
     }
 
     /**
-     * @param $idProposition
-     * @return bool true si la proposition est visible et si l'utilisateur est responsable ou coAuteur de la proposition
+        Retourne true si la proposition est visible et si l'utilisateur est responsable ou coAuteur de la proposition
      */
     public static function hasPermission($idProposition): bool {
         //TODO Voir si il faudrait pas rajouter une verification de la periode d'ecriture
