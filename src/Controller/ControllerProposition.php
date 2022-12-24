@@ -262,7 +262,7 @@ class ControllerProposition extends AbstractController {
                 "coAuteurs" => $coAuteurs,
                 "cheminVueBody" => "proposition/addCoauteur.php",
                 "title" => $question->getTitre(),
-                "subtitle" => "Ajouter un co-auteur à la proposition"
+                "subtitle" => "Ajouter un ou plusieurs co-auteurs à la proposition"
             ]);
     }
 
@@ -458,7 +458,12 @@ class ControllerProposition extends AbstractController {
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
 
+    /**
+     * @param $idProposition
+     * @return bool true si la proposition est visible et si l'utilisateur est responsable ou coAuteur de la proposition
+     */
     public static function hasPermission($idProposition): bool {
+        //TODO Voir si il faudrait pas rajouter une verification de la periode d'ecriture
         $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
         $proposition = (new PropositionRepository())->select($idProposition);
         return $proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0);
