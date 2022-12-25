@@ -1,5 +1,6 @@
 <?php require "propositionHeader.php"; ?>
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
+    <input type="text" placeholder="Titre de la proposition" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {

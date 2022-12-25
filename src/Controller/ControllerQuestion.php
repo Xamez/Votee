@@ -7,6 +7,7 @@ use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\VoteTypes;
+use App\Votee\Model\Repository\GroupeRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -141,7 +142,7 @@ class ControllerQuestion extends AbstractController {
     public static function addVotant() : void {
         $idQuestion = $_GET['idQuestion'];
         $utilisateurs = (new UtilisateurRepository())->selectAll();
-        $groupes = ["IUT","Polytech","Secretariat","Equipe technique","Q1","Q2"]; // STUB
+        $groupes = (new GroupeRepository())->selectAll();
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Ajouter un votant",

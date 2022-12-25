@@ -12,6 +12,7 @@ class PropositionRepository extends AbstractRepository {
         return array(
             'IDPROPOSITION',
             'IDQUESTION',
+            'TITREPROPOSITION',
             'VISIBILITEPROPOSITION',
             'IDPROPFUSIONPARENT',
         );
@@ -28,6 +29,7 @@ class PropositionRepository extends AbstractRepository {
         return new Proposition(
             $propositionFormatTableau['IDPROPOSITION'],
             $propositionFormatTableau['IDQUESTION'],
+            $propositionFormatTableau['TITREPROPOSITION'],
             $propositionFormatTableau['VISIBILITEPROPOSITION'],
             $propositionFormatTableau['IDPROPFUSIONPARENT']
         );
@@ -47,13 +49,14 @@ class PropositionRepository extends AbstractRepository {
         return $propositions;
     }
 
-    public function modifierProposition($idProposition, $visibilite, $idPropFusionParent): bool {
-        $sql = "CALL {$this->getProcedureUpdate()}(:idPropositionTag, :visibiliteTag, :idPropFusionParentTag)";
+    public function modifierProposition($idProposition, $visibilite, $idPropFusionParent, $titre): bool {
+        $sql = "CALL {$this->getProcedureUpdate()}(:idPropositionTag, :visibiliteTag, :idPropFusionParentTag, :titreProp)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
             "idPropositionTag" => $idProposition,
             "visibiliteTag" => $visibilite,
-            "idPropFusionParentTag" => $idPropFusionParent
+            "idPropFusionParentTag" => $idPropFusionParent,
+            "titreProp" => $titre
         );
         try {
             $pdoStatement->execute($values);
@@ -63,10 +66,10 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
-    public function ajouterProposition(string $visibite):int {
-        $sql = "CALL {$this->getProcedureInsert()}(:visibiliteTag)";
+    public function ajouterProposition($visibite, $titre):int {
+        $sql = "CALL {$this->getProcedureInsert()}(:visibiliteTag, :titreTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
-        $pdoStatement->execute(array("visibiliteTag" => $visibite));
+        $pdoStatement->execute(array("visibiliteTag" => $visibite, "titreTag" => $titre));
 
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT propositions_seq.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();

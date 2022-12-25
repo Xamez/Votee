@@ -4,8 +4,8 @@
         <?php
         foreach ($groupes as $key=>$groupe) {
             echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                    <input class="utilCheck" type="checkbox" name="groupes[]" id="groupe' . $key . '" value="' . $groupe . '"/>
-                    <label class="flex gap-1 items-center" for="groupe' . $key . '"><span class="material-symbols-outlined">group</span>' . $groupe . '</label>
+                    <input class="utilCheck" type="checkbox" name="groupes[]" id="groupe' . $key . '" value="' . $groupe->getNomGroupe() . '"/>
+                    <label class="flex gap-1 items-center" for="groupe' . $key . '"><span class="material-symbols-outlined">group</span>' . $groupe->getIdGroupe() . '</label>
                   </div>';
         }
         ?>

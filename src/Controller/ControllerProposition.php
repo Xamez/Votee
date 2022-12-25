@@ -151,7 +151,7 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
-        $idProposition = (new PropositionRepository())->ajouterProposition('visible');
+        $idProposition = (new PropositionRepository())->ajouterProposition('visible', $_POST['titreProposition']);
         $isOk = true;
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
@@ -189,6 +189,7 @@ class ControllerProposition extends AbstractController {
 
     public static function updateProposition(): void {
         $idProposition = $_GET['idProposition'];
+        $proposition = (new PropositionRepository())->select($idProposition);
         if (!self::hasPermission($idProposition)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
@@ -202,6 +203,7 @@ class ControllerProposition extends AbstractController {
             self::afficheVue('view.php',
                 [
                     "question" => $question,
+                    "proposition" => $proposition,
                     "idProposition" => $_GET['idProposition'],
                     "sections" => $sections,
                     "coAuteurs" => $coAuteurs,
@@ -224,6 +226,7 @@ class ControllerProposition extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $isOk = true;
+        $isOk &= (new PropositionRepository())->modifierProposition($idProposition, 'visible', null, $_POST['titreProposition']);
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $textsection, NULL);
@@ -324,7 +327,7 @@ class ControllerProposition extends AbstractController {
                     "pagetitle" => "Question",
                     "cheminVueBody" => "proposition/readProposition.php",
                     "title" => $question->getTitre(),
-                    "subtitle" => $question->getDescription()
+                    "subtitle" => $proposition->getTitreProposition()
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas");
@@ -421,6 +424,7 @@ class ControllerProposition extends AbstractController {
         $roles = ConnexionUtilisateur::getRolesProposition($idOldProp);
         $rolesQuest = ConnexionUtilisateur::getRolesQuestion($_POST['idQuestion']);
         $proposition = (new PropositionRepository())->select($idOldProp);
+        $oldProposition = (new PropositionRepository())->select($idOldPropMerge);
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
         if (!in_array('Responsable', $roles)
             && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($_POST['idQuestion']))) {
@@ -432,11 +436,11 @@ class ControllerProposition extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $isOk = true;
-        $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', null);
-        $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', null);
-        $idNewProp = (new PropositionRepository())->ajouterProposition('visible');
-        $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', $idNewProp);
-        $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', $idNewProp);
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', null, $proposition->getTitreProposition());
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', null, $oldProposition->getTitreProposition());
+        $idNewProp = (new PropositionRepository())->ajouterProposition('visible', $_POST['titreProposition']);
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldProp, 'invisible', $idNewProp, $proposition->getTitreProposition());
+        $isOk &= (new PropositionRepository())->modifierProposition($idOldPropMerge, 'invisible', $idNewProp, $oldProposition->getTitreProposition());
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idNewProp, $_POST['section' . $i], null);
             $isOk = (new TexteRepository())->sauvegarder($texte);
@@ -451,8 +455,8 @@ class ControllerProposition extends AbstractController {
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {
             (new PropositionRepository())->supprimer($idNewProp);
-            (new PropositionRepository())->modifierProposition($idOldProp, 'visible', null);
-            (new PropositionRepository())->modifierProposition($idOldPropMerge, 'visible', null);
+            (new PropositionRepository())->modifierProposition($idOldProp, 'visible', null, $proposition->getTitreProposition());
+            (new PropositionRepository())->modifierProposition($idOldPropMerge, 'visible', null, $oldProposition->getTitreProposition());
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
         }
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);
