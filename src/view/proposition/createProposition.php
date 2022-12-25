@@ -6,6 +6,7 @@
             <?php echo htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
         </div>
     </div>
+    <input type="text" placeholder="Titre de la proposition" name="titreProposition" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {

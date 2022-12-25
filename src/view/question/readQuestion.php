@@ -52,6 +52,7 @@ foreach ($propositions as $proposition) {
                         <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                             <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                         </div>
+                        <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                     </div>
                     <span class="material-symbols-outlined">arrow_forward_ios</span>
                 </div>
@@ -65,6 +66,7 @@ foreach ($propositions as $proposition) {
                             <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                                 <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                             </div>
+                            <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                         </div>
                         <div class="flex gap-2">';
             if (!$proposition->isVisible()) echo '<span class="material-symbols-outlined">visibility_off</span>';
