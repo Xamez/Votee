@@ -290,7 +290,7 @@ class ControllerProposition extends AbstractController {
 
         if ($isOk) (new Notification())->ajouter("success", "Les co-auteurs ont été ajouté avec succès.");
         else (new Notification())->ajouter("warning", "Certains co-auteurs n'ont pas pu être ajouté.");
-        self::redirection("?controller=proposition&action=readProposition&idProposition=" . $idProposition . "&idQuestion=" . $idQuestion);
+        self::redirection("?controller=proposition&action=readProposition&idProposition=$idProposition&idQuestion=$idQuestion");
     }
 
     public static function readProposition(): void {

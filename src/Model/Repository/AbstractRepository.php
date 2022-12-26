@@ -23,6 +23,7 @@ abstract class AbstractRepository {
         $sql = "CALL {$this->getProcedureUpdate()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        var_dump($sql);
         try {
             $pdoStatement->execute($values);
             return true;

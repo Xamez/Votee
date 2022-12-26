@@ -41,6 +41,11 @@
                     }
                     echo '</span></a>';
                 }
+                if (ConnexionUtilisateur::estAdministrateur()) {
+                    echo '<a href="./frontController.php?controller=groupe&action=readAllGroupe">
+                            <span class="link-underline link-underline-color">Groupes</span>
+                          </a>';
+                }
             ?>
 
         </div>
