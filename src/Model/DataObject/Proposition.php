@@ -6,6 +6,7 @@ class Proposition extends AbstractDataObject {
 
     private int $idProposition;
     private int $idQuestion;
+    private string $titreProposition;
     private string $visibilite;
     private ?string $idPropFusionParent;
 
@@ -13,11 +14,13 @@ class Proposition extends AbstractDataObject {
     public function __construct(
         int $idProposition,
         int $idQuestion,
+        string $titreProposition,
         string $visibilite,
         ?string $idPropFusionParent
     ) {
         $this->idProposition = $idProposition;
         $this->idQuestion = $idQuestion;
+        $this->titreProposition = $titreProposition;
         $this->visibilite = $visibilite;
         $this->idPropFusionParent = $idPropFusionParent;
     }
@@ -26,11 +29,15 @@ class Proposition extends AbstractDataObject {
         return array(
             "IDPROPOSITION" => $this->getIdProposition(),
             "IDQUESTION" => $this->getIdQuestion(),
+            "TITREPROPOSITION" => $this->getTitreProposition(),
             "VISIBILITEPROPOSITION" => $this->getVisibilite(),
             "IDPROPFUSIONPARENT" => $this->getIdPropFusionParent()
         );
     }
 
+    public function getTitreProposition(): string { return $this->titreProposition; }
+
+    public function setTitreProposition($titreProposition): void { $this->titreProposition = $titreProposition; }
     public function getIdPropFusionParent() : ?string { return $this->idPropFusionParent; }
 
     public function setIdPropFusionParent(?string $idPropFusionParent) : void { $this->idPropFusionParent = $idPropFusionParent; }

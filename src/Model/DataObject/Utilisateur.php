@@ -67,5 +67,4 @@ class Utilisateur extends AbstractDataObject {
     public function getPrenom(): string { return $this->prenom; }
 
     public function setPrenom(string $prenom): void { $this->prenom = $prenom; }
-
 }

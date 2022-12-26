@@ -8,7 +8,7 @@ use PDOException;
 abstract class AbstractRepository {
 
     public function sauvegarder(AbstractDataObject $object) : bool {
-        $sql = "CALL " . $this->getProcedureInsert(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $sql = "CALL {$this->getProcedureInsert()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -20,7 +20,7 @@ abstract class AbstractRepository {
     }
 
     public function modifier(AbstractDataObject $object) : bool {
-        $sql = "CALL " . $this->getProcedureUpdate(). "(:" . implode(', :', $this->getNomsColonnes()) . ")";
+        $sql = "CALL {$this->getProcedureUpdate()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
@@ -32,7 +32,7 @@ abstract class AbstractRepository {
     }
 
     public function supprimer($valeurClePrimaire) : bool {
-        $sql = "CALL " . $this->getProcedureDelete(). "(:valueTag)";
+        $sql = "CALL {$this->getProcedureDelete()} (:valueTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
         try {
@@ -95,19 +95,19 @@ abstract class AbstractRepository {
         return $result ? $this->construire($result) : null;
     }
 
-    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
-        $ligne = "";
-        foreach ($valeurAttributs as $key => $valeurAttribut) {
-            $ligne .= $key . "= :" . $key . ' AND ';
-        }
-        $ligne = substr_replace($ligne, "", -5);
-        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($valeurAttributs);
-        $object = $pdoStatement->fetch();
-
-        return $this->construire($object);
-    }
+//    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
+//        $ligne = "";
+//        foreach ($valeurAttributs as $key => $valeurAttribut) {
+//            $ligne .= $key . "= :" . $key . ' AND ';
+//        }
+//        $ligne = substr_replace($ligne, "", -5);
+//        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
+//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+//        $pdoStatement->execute($valeurAttributs);
+//        $object = $pdoStatement->fetch();
+//
+//        return $this->construire($object);
+//    }
 
     protected abstract function getNomTable(): string;
 

@@ -3,11 +3,10 @@
         <p class="text-main font-semibold">Responsable :</p>
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>
-            <?php echo htmlspecialchars($representant->getNom()) . ' ' . htmlspecialchars($representant->getPrenom()) ?>
+            <?php echo htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
         </div>
-        <label class="text-main font-semibold" for="coAuteur_id">CoAuteur :</label>
-        <input placeholder="Login" class="border-2" type="text" name="coAuteur" id="coAuteur_id">
     </div>
+    <input type="text" placeholder="Titre de la proposition" name="titreProposition" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {
@@ -18,10 +17,10 @@
         }
         ?>
     </div>
-    <input type="hidden" name="organisateur" value="<?= $representant->getLogin() ?>">
+    <input type="hidden" name="organisateur" value="<?= $responsable->getLogin() ?>">
     <input type="hidden" name="nbSections" value="<?= sizeof($sections) ?>">
     <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>">
     <div class="flex justify-center">
-        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
+        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Suivant" />
     </div>
 </form>
