@@ -16,6 +16,7 @@ if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()
 } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
     AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=question', 'title' => 'Faire une demande', "logo" => 'file_copy']);
 }
+echo '<div class="flex flex-col gap-3">';
 foreach ($questions as $question) {
     echo '<a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
             <div class="flex justify-between items-center bg-light p-2 rounded">'
@@ -29,3 +30,4 @@ foreach ($questions as $question) {
             </div>
          </a>';
 }
+echo '</div>';

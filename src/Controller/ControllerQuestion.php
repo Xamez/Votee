@@ -176,24 +176,24 @@ class ControllerQuestion extends AbstractController {
         }
         self::afficheVue('view.php',
             [
-                "question" => $question,
-                "pagetitle" => "Question",
-                "cheminVueBody" => "question/updateQuestion.php",
-                "title" => $question->getTitre(),
-                "subtitle" => $question->getDescription()
+                 "pagetitle" => "Modifier une question",
+                 "cheminVueBody" => "question/updateQuestion.php",
+                 "title" => "Modifier une question",
+                 "subtitle" => $question->getTitre(),
+                 "question" => $question
             ]);
     }
 
     public static function updatedQuestion() : void {
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $question = (new QuestionRepository())->select($_POST['idQuestion']);
         if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action= all");
         }
-        $isOk = (new QuestionRepository())->modifierQuestion($_GET['idQuestion'], $_GET['description'], 'visible');
+        $isOk = (new QuestionRepository())->modifierQuestion($_POST['idQuestion'], $_POST['description'], 'visible');
         if ($isOk) (new Notification())->ajouter("success", "La question a été modifiée.");
         else (new Notification())->ajouter("warning", "La modification de la question a échoué.");
-        self::redirection("?action=readQuestion&idQuestion=" . $_GET['idQuestion']);
+        self::redirection("?action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
 
 }
