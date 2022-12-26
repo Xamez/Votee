@@ -7,6 +7,7 @@ use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\VoteTypes;
+use App\Votee\Model\Repository\GroupeRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -34,13 +35,13 @@ class ControllerQuestion extends AbstractController {
                 "pagetitle" => "Nombre de sections",
                 "cheminVueBody" => "question/section.php",
                 "title" => "Créer une question",
-                "subtitle" => "Définissez un nombre de section pour votre vote."
+                "subtitle" => "Définissez un nombre de section pour votre question."
             ]);
     }
 
     public static function createQuestion(): void {
         if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&all");
         }
         $nbSections = $_POST['nbSections'];
@@ -57,12 +58,14 @@ class ControllerQuestion extends AbstractController {
 
     // Permet de voir toutes les questions du site
     public static function all() : void {
-        $questions = (new QuestionRepository())->selectAll();
+        $search = $_GET['search'] ?? null;
+        if (!$search) $questions = (new QuestionRepository())->selectBySearch($search);
+        else $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Liste des votes",
+                "pagetitle" => "Liste des questions",
                 "cheminVueBody" => "question/all.php",
-                "title" => "Liste des votes",
+                "title" => "Liste des questions",
                 "questions" => $questions
             ]);
     }
@@ -101,7 +104,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function createdQuestion() : void {
         if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&action=all");
         }
         $question = new Question(NULL,
@@ -121,18 +124,49 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-        foreach ($_POST['votant'] as $votant)
-            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $votant);
-        $idPersonne = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
-        (new QuestionRepository())->ajouterVotant($idQuestion, $idPersonne);
-        if ($isOk) (new Notification())->ajouter("success", "La question a été créée.");
-        else {
+//        foreach ($_POST['votant'] as $votant)
+//            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $votant);
+//        $idPersonne = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+//        (new QuestionRepository())->ajouterVotant($idQuestion, $idPersonne);
+        if ($isOk) {
+            (new Notification())->ajouter("success", "La question a été créée.");
+            self::redirection("?controller=question&action=addVotant&idQuestion=" . $idQuestion);
+        } else {
             (new QuestionRepository())->supprimer($idQuestion);
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-            self::redirection("?action=all");
+            self::redirection("?action=controller=question&action=createQuestion");
         }
-        self::redirection("?action=all");
     }
+
+    // TODO Ne pas afficher l'utilisateur responsable
+    public static function addVotant() : void {
+        $idQuestion = $_GET['idQuestion'];
+        $utilisateurs = (new UtilisateurRepository())->selectAll();
+        $groupes = (new GroupeRepository())->selectAll();
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Ajouter un votant",
+                "cheminVueBody" => "question/addVotant.php",
+                "title" => "Ajouter un votant",
+                "subtitle" => "Ajouter un ou plusieurs votants à la question",
+                "idQuestion" => $idQuestion,
+                "utilisateurs" => $utilisateurs,
+                "groupes" => $groupes
+            ]);
+    }
+
+    public static function addedVotant() : void {
+        $idQuestion = $_POST['idQuestion'];
+        foreach ($_POST['utilisateurs'] as $login) {
+            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+        }
+
+        if ($isOk) (new Notification())->ajouter("success", "Les votants ont été ajouté avec succès.");
+        else (new Notification())->ajouter("warning", "Certains votants n'ont pas pu être ajouté.");
+        self::redirection("?controller=question&action=readQuestion&&idQuestion=" . $idQuestion);
+    }
+
+
 
     public static function updateQuestion() : void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);

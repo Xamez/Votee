@@ -17,22 +17,11 @@ class UtilisateurRepository extends AbstractRepository {
         );
     }
 
-    function getNomTable(): string {
-        return "Utilisateurs";
-    }
+    function getNomTable(): string { return "Utilisateurs"; }
+    function getNomClePrimaire(): string { return "LOGIN"; }
 
-    function getNomClePrimaire(): string {
-        return "LOGIN";
-    }
-
-    function getProcedureInsert(): string {
-        return "AjouterUtilisateurs";
-    }
-
-    function getProcedureUpdate(): string {
-        return "";
-    }
-
+    function getProcedureInsert(): string { return "AjouterUtilisateur"; }
+    function getProcedureUpdate(): string { return ""; }
     function getProcedureDelete(): string { return ""; }
 
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
@@ -46,7 +35,7 @@ class UtilisateurRepository extends AbstractRepository {
     }
 
     public function inscrire(Utilisateur $utilisateur): bool {
-        $sql = "CALL AjouterUtilisateurs(:loginTag, :mdpTag, :nomTag, :prenomTag)";
+        $sql = "CALL {$this->getProcedureInsert()}(:loginTag, :mdpTag, :nomTag, :prenomTag)";
         $values = array(
             "loginTag" => $utilisateur->getLogin(),
             "mdpTag" => $utilisateur->getMotDePasse(),
@@ -62,7 +51,7 @@ class UtilisateurRepository extends AbstractRepository {
         }
     }
 
-
+    /** Retourne l'ensemble des roles pour une question et un utilisateur donné */
     public function getRolesQuestion($login, $idQuestion): array {
         $roles = [];
         $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant"];
@@ -70,15 +59,15 @@ class UtilisateurRepository extends AbstractRepository {
             $sql = "SELECT :procedureTag(:loginTag, :idQuestionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure, $sql);
             $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-            $values = array("loginTag" => $login, "idQuestionTag" => $idQuestion);
-            $pdoStatement->execute($values);
+            $pdoStatement->execute(array("loginTag" => $login, "idQuestionTag" => $idQuestion));
             $result = $pdoStatement->fetch();
-            if ($result === false) continue;
+            if ($result[0] == null) continue;
             $roles[] = $procedure;
         }
         return $roles;
     }
 
+    /** Retourne l'ensemble des roles pour une proposition et un utilisateur donné */
     public function getRolesProposition($login, $idProposition): array {
         $roles = [];
         $procedures = ["Responsable", "CoAuteur"];
@@ -86,10 +75,9 @@ class UtilisateurRepository extends AbstractRepository {
             $sql = "SELECT :procedureTag(:loginTag, :idPropositionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure . 'Prop', $sql);
             $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-            $values = array("loginTag" => $login, "idPropositionTag" => $idProposition);
-            $pdoStatement->execute($values);
+            $pdoStatement->execute(array("loginTag" => $login, "idPropositionTag" => $idProposition));
             $result = $pdoStatement->fetch();
-            if ($result === false) continue;
+            if ($result[0] === null) continue;
             $roles[] = $procedure;
         }
         return $roles;
@@ -102,10 +90,8 @@ class UtilisateurRepository extends AbstractRepository {
                 JOIN roles ro ON c.login = ro.login
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array("idProposition" => $idProposition);
-        $pdoStatement->execute($value);
-
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement->execute(array("idProposition" => $idProposition));
         foreach ($pdoStatement as $utilisateur) {
             $coAuteurs[] = $this->construire($utilisateur);
         }
@@ -119,18 +105,15 @@ class UtilisateurRepository extends AbstractRepository {
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array("idProposition" => $idProposition);
-
-        $pdoStatement->execute($value);
+        $pdoStatement->execute(array("idProposition" => $idProposition));
         $responsable = $pdoStatement->fetch();
         return $responsable ? $this->construire($responsable): null;
     }
 
     public function selectAdministrateur($login) {
         $sql = "SELECT * FROM Administrateurs WHERE login = :loginTag";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array("loginTag" => $login);
-        $pdoStatement->execute($value);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement->execute(array("loginTag" => $login));
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
     }

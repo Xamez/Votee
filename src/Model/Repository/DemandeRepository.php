@@ -8,10 +8,6 @@ use PDOException;
 
 class DemandeRepository extends AbstractRepository {
 
-    public function getNomTable(): string { return "Effectuer"; }
-
-    public function getNomClePrimaire(): string { return "IDDEMANDE"; }
-
     public function construire(array $objetFormatTableau) : AbstractDataObject {
         return new Demande(
             $objetFormatTableau['LOGINDESTINATAIRE'],
@@ -38,17 +34,19 @@ class DemandeRepository extends AbstractRepository {
         );
     }
 
-    function getProcedureInsert(): string { return ""; }
+    public function getNomTable(): string { return "Effectuer"; }
+    public function getNomClePrimaire(): string { return "IDDEMANDE"; }
 
-    function getProcedureUpdate(): string { return ""; }
-
+    function getProcedureInsert(): string { return "AjouterDemandes"; }
+    function getProcedureUpdate(): string { return "ModifierDemandes"; }
     function getProcedureDelete(): string { return ""; }
 
+
+    /** Retourne la liste des toutes les demandes dont l'utilisateur est le destinataire */
     public function getDemandeByDest($login): array {
-        $sql = "SELECT * FROM Effectuer WHERE LOGINDESTINATAIRE = :loginTag";
-        $value = array("loginTag" => $login);
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOGINDESTINATAIRE = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($value);
+        $pdoStatement->execute(array("loginTag" => $login));
         $demandes = [];
         foreach ($pdoStatement as $formatTableau) {
             $demandes[] = $this->construire($formatTableau);
@@ -56,11 +54,11 @@ class DemandeRepository extends AbstractRepository {
         return $demandes;
     }
 
+    /** Retourne la liste de toutes les demandes personnelle d'un utilisateur donné */
     public function getDemandeByUtil($login): array {
-        $sql = "SELECT * FROM Effectuer WHERE LOGIN = :loginTag";
-        $value = array("loginTag" => $login);
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOGIN = :loginTag";;
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($value);
+        $pdoStatement->execute(array("loginTag" => $login));
         $demandes = [];
         foreach ($pdoStatement as $formatTableau) {
             $demandes[] = $this->construire($formatTableau);
@@ -69,7 +67,7 @@ class DemandeRepository extends AbstractRepository {
     }
 
     public function ajouterDemande(Demande $demande): bool {
-        $sql = "CALL AjouterDemandes(:loginDTag, :loginTag, :titreTag, :txtTag, :idPropTag, :idQuestionTag)";
+        $sql = "CALL {$this->getProcedureInsert()}(:loginDTag, :loginTag, :titreTag, :txtTag, :idPropTag, :idQuestionTag)";
         $values = array(
             "loginDTag" => $demande->getLoginDestinataire(),
             "loginTag" => $demande->getLogin(),
@@ -88,7 +86,7 @@ class DemandeRepository extends AbstractRepository {
     }
 
     public function updateDemande($demande) : bool {
-        $sql = "CALL ModifierDemandes(:idDemandeTag, :etatTag, :idPropTag, :idQuestionTag)";
+        $sql = "CALL {$this->getProcedureUpdate()}(:idDemandeTag, :etatTag, :idPropTag, :idQuestionTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
             "idDemandeTag" => $demande->getIdDemande(),
@@ -104,11 +102,13 @@ class DemandeRepository extends AbstractRepository {
         }
     }
 
+    /**
+     * Retourne le nombre de demande en attente pour l'utilisateur donnée
+     */
     public function selectNbDemande($login): ?int {
-        $sql = "SELECT COUNT(*) FROM Effectuer WHERE LOGINDESTINATAIRE = :loginTag AND ETATDEMANDE = 'attente'";
-        $value = array("loginTag" => $login);
+        $sql = "SELECT COUNT(*) FROM {$this->getNomTable()} WHERE LOGINDESTINATAIRE = :loginTag AND ETATDEMANDE = 'attente'";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute($value);
+        $pdoStatement->execute(array("loginTag" => $login));
         $nbDemandes = $pdoStatement->fetch();
         return $nbDemandes ? $nbDemandes[0] : null;
     }

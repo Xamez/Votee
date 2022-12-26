@@ -21,25 +21,12 @@ class QuestionRepository extends AbstractRepository {
         );
     }
 
-    function getNomTable(): string {
-        return "Questions";
-    }
+    function getNomTable(): string { return "Questions"; }
+    function getNomClePrimaire(): string { return "IDQUESTION"; }
 
-    function getNomClePrimaire(): string {
-        return "IDQUESTION";
-    }
-
-    function getProcedureInsert(): string {
-        return "AjouterQuestions";
-    }
-
-    function getProcedureUpdate(): string {
-        return "ModifierQuestions";
-    }
-
-    function getProcedureDelete(): string {
-        return "SupprimerQuestions";
-    }
+    function getProcedureInsert(): string { return "AjouterQuestions"; }
+    function getProcedureUpdate(): string { return "ModifierQuestions"; }
+    function getProcedureDelete(): string { return "SupprimerQuestions"; }
 
     public function construire(array $questionFormatTableau) : Question {
         return new Question(
@@ -57,7 +44,7 @@ class QuestionRepository extends AbstractRepository {
     }
 
     public function modifierQuestion(int $idQuestion, string $description, string $visibilite) : bool {
-        $sql = "CALL ModifierQuestions(:idQuestionTag, :visibiliteTag, :descriptionTag)";
+        $sql = "CALL {$this->getProcedureUpdate()}(:idQuestionTag, :visibiliteTag, :descriptionTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idQuestionTag" => $idQuestion, "visibiliteTag" => $visibilite, "descriptionTag" => $description);
         try {
@@ -76,18 +63,6 @@ class QuestionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterOrganisateur(string $login):bool {
-        $sql = "CALL AjouterOrganisateurs(:loginTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array("loginTag"=>$login);
-        try {
-            $pdoStatement->execute($value);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
-
     public function ajouterVotant(int $idQuestion, string $votant) : bool {
         $sql = "CALL AjouterVotantAQuestion(:idQuestionTag, :votantTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -100,12 +75,14 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
+    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est organisateur */
     public function selectQuestionOrga($login): array {
-        $sql = "SELECT * FROM Questions WHERE LOGIN IN (SELECT LOGIN FROM Organisateurs WHERE login = :paramTag)";
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOGIN IN (SELECT LOGIN FROM Organisateurs WHERE login = :paramTag)";
         return self::selectAllCustom($sql, $login);
     }
 
-    public function selectQuestionRepre(string $login) {
+    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est responsable */
+    public function selectQuestionResp(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
             JOIN Propositions p ON r.idProposition = p.idProposition
@@ -114,6 +91,7 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
+    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est coAuteur */
     public function selectQuestionCoau(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -123,6 +101,7 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
+    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est votant */
     public function selectQuestionVota(string $login) {
         $sql = "SELECT DISTINCT q.* FROM QUESTIONS q
             JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -134,11 +113,8 @@ class QuestionRepository extends AbstractRepository {
 
     public function selectAllCustom($sql, $param): array {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $value = array("paramTag"=>$param);
-        $pdoStatement->execute($value);
-
+        $pdoStatement->execute(array("paramTag"=>$param));
         $questions = $pdoStatement->fetchAll();
-
         $questionsFormatObjet = array();
         foreach ($questions as $question) {
             $questionsFormatObjet[] = $this->construire($question);
@@ -146,14 +122,23 @@ class QuestionRepository extends AbstractRepository {
         return $questionsFormatObjet;
     }
 
+    /** Retourne le nombre de proposition (score) que l'utilisateur donné va pouvoir créer pour la question donnée */
     public function getPropRestant(int $idQuestion, string $login): ?int {
         $sql = "SELECT nbPropRestant FROM ScorePropositions WHERE IDQUESTION = :idQuestionTag AND LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("idQuestionTag"=>$idQuestion, "loginTag" => $login);
-
-        $pdoStatement->execute($values);
+        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion, "loginTag" => $login));
         $nbPropRestant = $pdoStatement->fetch();
         return $nbPropRestant ? $nbPropRestant[0] : null;
+    }
+
+    public function selectBySearch($search):array {
+        $questions = [];
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER(TITRE) LIKE '%:searchTag%'";
+        $sql = str_replace(":searchTag", strtolower($search), $sql);
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute();
+        foreach ($pdoStatement as $formatTableau) $questions[] = $this->construire($formatTableau);
+        return $questions;
     }
 
 }

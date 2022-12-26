@@ -2,11 +2,9 @@
     <div class="flex flex-col gap-7 border-2 p-8 rounded-3xl">
         <div>
             <div class="flex flex-col">
-                <label for="systeme_vote_id">Titre :</label>
-                <input type="text" placeholder="Question" name="titreQuestion" id="systeme_vote_id" required/>
+                <input type="text" placeholder="Titre de la question" name="titreQuestion" id="systeme_vote_id" required/>
             </div>
             <div class="flex flex-col">
-                <label for="vote_desc_id">Description :</label>
                 <textarea class="max-h-52" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
@@ -18,9 +16,9 @@
 
             for ($i = 1; $i <= $nbSections; $i++) {
                 echo '<div class="flex flex-col">
-                    <label for="systeme_vote_id' . $i . '">Section ' . $i . ' :</label>
-                    <input type="text" placeholder="Nom de la section" name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
-                </div>';
+                         <label for="systeme_vote_id' . $i . '">Section ' . $i . ' :</label>
+                         <input type="text" placeholder="Nom de la section" name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
+                      </div>';
             }
             ?>
         </div>
@@ -62,17 +60,11 @@
                 </select>
             </div>
         </div>
-        <!-- TODO: A FAIRE (utiliser un for en php car 1 ligne comme la 73 = 1 élément dans le tableau en post $_POST['votant'] -->
-        <h1 class="text-2xl font-bold text-center text-dark">Votant</h1>
-        <div>
-            <label for="login_id">Login du votant</label> :
-            <input type="text" placeholder="tjean" name="votant[]" id="login_id" required/>
-        </div>
     </div>
     <input type="text" hidden name="organisateur" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
     <input type="number" hidden value=<?=$nbSections?> name="nbSections" required/>
     <input type="text" hidden value="visible" placeholder="visible" name="visibilite" required/>
     <div class="flex justify-center">
-        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Créer le vote" />
+        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Suivant" />
     </div>
 </form>
