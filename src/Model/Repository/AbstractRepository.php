@@ -89,8 +89,7 @@ abstract class AbstractRepository {
     public function select($valeurClePrimaire) : ?AbstractDataObject {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("valueTag" => $valeurClePrimaire);
-        $pdoStatement->execute($values);
+        $pdoStatement->execute(array("valueTag" => $valeurClePrimaire));
         $result = $pdoStatement->fetch();
 
         return $result ? $this->construire($result) : null;
@@ -109,6 +108,15 @@ abstract class AbstractRepository {
 //
 //        return $this->construire($object);
 //    }
+
+    public function selectBySearch($search, $cle):array {
+        $objects = [];
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER({$cle}) LIKE :rechercheTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("rechercheTag" => "%" .strtolower($search)."%"));
+        foreach ($pdoStatement as $formatTableau) $objects[] = $this->construire($formatTableau);
+        return $objects;
+    }
 
     protected abstract function getNomTable(): string;
 
