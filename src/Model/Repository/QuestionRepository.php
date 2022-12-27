@@ -63,8 +63,20 @@ class QuestionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function ajouterVotant(int $idQuestion, string $votant) : bool {
+    public function ajouterVotant($idQuestion, $votant) : bool {
         $sql = "CALL AjouterVotantAQuestion(:idQuestionTag, :votantTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idQuestionTag" => $idQuestion, "votantTag" => $votant);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    public function supprimerVotant($idQuestion, $votant): bool {
+        $sql = "CALL SupprimerVotantDeQuestion(:idQuestionTag, :votantTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idQuestionTag" => $idQuestion, "votantTag" => $votant);
         try {
@@ -139,6 +151,17 @@ class QuestionRepository extends AbstractRepository {
         $pdoStatement->execute();
         foreach ($pdoStatement as $formatTableau) $questions[] = $this->construire($formatTableau);
         return $questions;
+    }
+
+    public function selectVotant($idQuestion): array {
+        $votants = [];
+        $sql = "SELECT * FROM Utilisateurs u JOIN Existe e ON u.login = e.login WHERE IDQUESTION = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion));
+        foreach ($pdoStatement as $formatTableau) {
+            $votants[] = (new UtilisateurRepository())->construire($formatTableau);
+        }
+        return $votants;
     }
 
 }

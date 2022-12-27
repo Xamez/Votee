@@ -84,6 +84,7 @@ class ControllerQuestion extends AbstractController {
                 $idProposition = $proposition->getIdProposition();
                 $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             }
+            $votants = (new QuestionRepository())->selectVotant($_GET['idQuestion']);
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             self::afficheVue('view.php',
                 [
@@ -92,6 +93,7 @@ class ControllerQuestion extends AbstractController {
                     "sections" => $sections,
                     "organisateur" => $organisateur,
                     "responsables" => $responsables,
+                    "votants" => $votants,
                     "pagetitle" => "Question",
                     "cheminVueBody" => "question/readQuestion.php",
                     "title" => $question->getTitre(),
@@ -124,10 +126,6 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-//        foreach ($_POST['votant'] as $votant)
-//            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $votant);
-//        $idPersonne = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
-//        (new QuestionRepository())->ajouterVotant($idQuestion, $idPersonne);
         if ($isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
             self::redirection("?controller=question&action=addVotant&idQuestion=" . $idQuestion);
@@ -142,6 +140,11 @@ class ControllerQuestion extends AbstractController {
     public static function addVotant() : void {
         $idQuestion = $_GET['idQuestion'];
         $utilisateurs = (new UtilisateurRepository())->selectAll();
+        $votants = (new QuestionRepository())->selectVotant($idQuestion);
+        $newUtilisateurs = array_udiff($utilisateurs, $votants, function ($a, $b) {
+            return strcmp($a->getLogin(), $b->getLogin());
+        });
+
         $groupes = (new GroupeRepository())->selectAll();
         self::afficheVue('view.php',
             [
@@ -150,15 +153,24 @@ class ControllerQuestion extends AbstractController {
                 "title" => "Ajouter un votant",
                 "subtitle" => "Ajouter un ou plusieurs votants à la question",
                 "idQuestion" => $idQuestion,
-                "utilisateurs" => $utilisateurs,
+                "newUtilisateurs" => $newUtilisateurs,
+                "votants" => $votants,
                 "groupes" => $groupes
             ]);
     }
 
     public static function addedVotant() : void {
         $idQuestion = $_POST['idQuestion'];
+        $oldVotants = (new QuestionRepository())->selectVotant($idQuestion);
+        $votants = [];
+        foreach ($oldVotants as $votant) $votants[] = $votant->getLogin();
+        if (array_key_exists('votants', $_POST)) $votants = array_diff($votants, $_POST['votants']);
+        $isOk = true;
         foreach ($_POST['utilisateurs'] as $login) {
             $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+        }
+        foreach ($votants as $login) {
+            $isOk = (new QuestionRepository())->supprimerVotant($idQuestion, $login);
         }
 
         if ($isOk) (new Notification())->ajouter("success", "Les votants ont été ajouté avec succès.");
@@ -191,9 +203,32 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action= all");
         }
         $isOk = (new QuestionRepository())->modifierQuestion($_POST['idQuestion'], $_POST['description'], 'visible');
-        if ($isOk) (new Notification())->ajouter("success", "La question a été modifiée.");
-        else (new Notification())->ajouter("warning", "La modification de la question a échoué.");
+        if ($isOk) {
+            (new Notification())->ajouter("success", "La question a été modifiée.");
+            self::redirection("?controller=question&action=addVotant&idQuestion=" . $_POST['idQuestion']);
+        } else {
+            (new Notification())->ajouter("warning", "La modification de la question a échoué.");
+            self::redirection("?controller=question&action=updateQuestion&idQuestion=" . $_POST['idQuestion']);
+        }
         self::redirection("?action=readQuestion&idQuestion=" . $_POST['idQuestion']);
+    }
+
+    public static function readVotant():void {
+        if (!ConnexionUtilisateur::estConnecte()) {
+            (new Notification())->ajouter("danger","Vous devez vous connecter !");
+            self::redirection("?controller=question&action=all");
+        }
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $votants = (new QuestionRepository())->selectVotant($_GET['idQuestion']);
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Liste des votants",
+                "cheminVueBody" => "question/readVotant.php",
+                "title" => "Liste des votants",
+                "subtitle" => $question->getTitre(),
+                "question" => $question,
+                "votants" => $votants
+            ]);
     }
 
 }

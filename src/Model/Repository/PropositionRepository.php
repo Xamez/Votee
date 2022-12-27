@@ -77,7 +77,7 @@ class PropositionRepository extends AbstractRepository {
         return intval($lastInserId[0]);
     }
 
-    public function AjouterResponsable($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {
+    public function ajouterResponsable($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {
         $sql = "CALL AjouterRepPropRedigerR(:login, :idProposition, :oldIdProposition, :idQuestion, :isFusion)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array(
