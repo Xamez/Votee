@@ -22,6 +22,6 @@
         </div>
     </form>
     <div class="flex gap-1">
-        <p>Vous n’avez pas de compte ? </p><a class="text-main" href="frontController.php?action=connexion">Connectez-vous.</a>
+        <p>Vous n’avez pas de compte ? </p><a class="text-main" href="frontController.php?controller=utilisateur&action=connexion">Connectez-vous.</a>
     </div>
 </div>
