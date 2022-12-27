@@ -53,69 +53,79 @@ class ControllerProposition extends AbstractController {
     public static function voterPropositions(): void {
         $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
-        foreach ($propositions as $proposition) {
-            $idProposition = $proposition->getIdProposition();
-            $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
-            $textess = (new TexteRepository())->selectAllByKey($idProposition);
-            $textes[$idProposition] = $textess;
-            $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) != 0;
-            foreach ($textess as $texte) {
-                $parsedown = new Parsedown();
-                $texte->setTexte($parsedown->text($texte->getTexte()));
+        if ($question->getPeriodeActuelle() != "Période de vote") {
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas voter pour cette question.");
+            self::redirection("?controller=question&action=all");
+        } else {
+            $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
+            foreach ($propositions as $proposition) {
+                $idProposition = $proposition->getIdProposition();
+                $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
+                $textess = (new TexteRepository())->selectAllByKey($idProposition);
+                $textes[$idProposition] = $textess;
+                $aVote[$idProposition] = (new VoteRepository())->getNote($idProposition, $idVotant) != 0;
+                foreach ($textess as $texte) {
+                    $parsedown = new Parsedown();
+                    $texte->setTexte($parsedown->text($texte->getTexte()));
+                }
             }
+            self::afficheVue('view.php',
+                [
+                    "pagetitle" => "Voter",
+                    "cheminVueBody" => "proposition/voterPropositions.php",
+                    "title" => "Voter",
+                    "subtitle" => "Voter pour les propositions de la question : " . $question->getTitre(),
+                    "propositions" => $propositions,
+                    "sections" => $sections,
+                    "textes" => $textes,
+                    "responsables" => $responsables,
+                    "aVote" => $aVote,
+                    "idQuestion" => $_GET['idQuestion'],
+                ]);
         }
-        self::afficheVue('view.php',
-            [
-                "pagetitle" => "Voter",
-                "cheminVueBody" => "proposition/voterPropositions.php",
-                "title" => "Voter",
-                "subtitle" => "Voter pour les propositions de la question : " . $question->getTitre(),
-                "propositions" => $propositions,
-                "sections" => $sections,
-                "textes" => $textes,
-                "responsables" => $responsables,
-                "aVote" => $aVote,
-                "idQuestion" => $_GET['idQuestion'],
-            ]);
     }
 
     public static function resultatPropositions(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $voteType = $question->getVoteType();
-        $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
-        $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
-        $voteUrl = 'proposition/vote/resultat/' . $voteType . '.php';
+        if ($question->getPeriodeActuelle() != "Période des résultats") {
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas accéder aux résultats de cette question.");
+            self::redirection("?controller=question&readAllQuestion");
+        } else {
+            $voteType = $question->getVoteType();
+            $voteType = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($voteType))));
+            $voteType = strtolower(substr($voteType, 0, 1)) . substr($voteType, 1);
+            $voteUrl = 'proposition/vote/resultat/' . $voteType . '.php';
 
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
-        $resultats = (new VoteRepository())->getResultats($question->getIdQuestion());
-        foreach ($propositions as $proposition) {
-            $idProposition = $proposition->getIdProposition();
-            $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
-            $textess = (new TexteRepository())->selectAllByKey($idProposition);
-            $textes[$idProposition] = $textess;
-            foreach ($textess as $texte) {
-                $parsedown = new Parsedown();
-                $texte->setTexte($parsedown->text($texte->getTexte()));
+            $question = (new QuestionRepository())->select($_GET['idQuestion']);
+            $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
+            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
+            $resultats = (new VoteRepository())->getResultats($question->getIdQuestion());
+            foreach ($propositions as $proposition) {
+                $idProposition = $proposition->getIdProposition();
+                $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
+                $textess = (new TexteRepository())->selectAllByKey($idProposition);
+                $textes[$idProposition] = $textess;
+                foreach ($textess as $texte) {
+                    $parsedown = new Parsedown();
+                    $texte->setTexte($parsedown->text($texte->getTexte()));
+                }
             }
+            self::afficheVue('view.php',
+                [
+                    "pagetitle" => "Résultats",
+                    "cheminVueBody" => "proposition/resultatPropositions.php",
+                    "title" => "Résultats",
+                    "subtitle" => "Résultats de la question : " . $question->getTitre(),
+                    "propositions" => $propositions,
+                    "sections" => $sections,
+                    "textes" => $textes,
+                    "responsables" => $responsables,
+                    "voteUrl" => $voteUrl,
+                    "resultats" => $resultats,
+                    "idQuestion" => $_GET['idQuestion'],
+                ]);
         }
-        self::afficheVue('view.php',
-            [
-                "pagetitle" => "Résultats",
-                "cheminVueBody" => "proposition/resultatPropositions.php",
-                "title" => "Résultats",
-                "subtitle" => "Résultats de la question : " . $question->getTitre(),
-                "propositions" => $propositions,
-                "sections" => $sections,
-                "textes" => $textes,
-                "responsables" => $responsables,
-                "voteUrl" => $voteUrl,
-                "resultats" => $resultats,
-                "idQuestion" => $_GET['idQuestion'],
-            ]);
     }
 
     public static function createProposition(): void {
