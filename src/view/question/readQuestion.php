@@ -96,8 +96,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
 
 if (sizeof($propositions) > 0) {
     if ($question->getPeriodeActuelle() == 'Période de vote') {
-        // TODO : GERER L ORDRE DES ROLES ET VIRER REPR
-        if (count(array_intersect(['Votant', 'Organisateur', 'Responsable'], $rolesQuestion)) > 0) {
+        if (count($rolesQuestion) > 0) { // TODO: a tester mais a priori c'est bon
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'voterPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voter pour tous', "logo" => 'how_to_vote']);
         }
     } else if ($question->getPeriodeActuelle() == 'Période des résultats') {
