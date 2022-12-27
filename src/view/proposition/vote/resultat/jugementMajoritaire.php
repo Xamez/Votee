@@ -17,18 +17,20 @@ foreach ($resultats as $idProposition => $resultat) {
     </div>
     ';
 
-    echo '<div class="flex w-full items-center cursor-pointer">';
+    $resultat = $resultat[1];
+
+    echo '<div class="flex w-full items-center cursor-pointer result-element">';
 
     echo '<div class="relative bg-black h-8" style="width: 2px; left: 50%;"></div>'; // affiche la médiane
 
     for ($i = 0; $i < sizeof($values); $i++) {
-        foreach ($resultat[$idProposition] as $note => $nombre) {
+        foreach ($resultat as $note => $nombre) {
             if ($values[$i] == $note) {
                 echo '
-            <div class="flex h-8 items-center justify-center" style="width: ' . $nombre . '%; background-color: #' . $colors[$i] . '">
-                <p class="text-center text-white">' . $nombre . '%</p>
-            </div>
-            ';
+                    <div class="flex h-8 items-center justify-center" style="width: ' . $nombre . '%; background-color: #' . $colors[$i] . '">
+                        <p class="text-center text-white">' . $nombre . '%</p>
+                    </div>
+                    ';
             }
         }
     }

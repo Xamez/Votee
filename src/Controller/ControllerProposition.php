@@ -33,7 +33,7 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function createdVote(): void {
-        $roles = ConnexionUtilisateur::getRolesProposition($_POST['idProposition']);
+        $roles = ConnexionUtilisateur::getRolesQuestion($_POST['idQuestion']);
         if (!(count(array_intersect(['Responsable', 'Organisateur', 'Votant'], $roles)) > 0)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
@@ -91,12 +91,12 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
+        $resultats = (new VoteRepository())->getResultats($question->getIdQuestion());
         foreach ($propositions as $proposition) {
             $idProposition = $proposition->getIdProposition();
             $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             $textess = (new TexteRepository())->selectAllByKey($idProposition);
             $textes[$idProposition] = $textess;
-            $resultats[$idProposition] = (new VoteRepository())->getGetResultats($question->getIdQuestion());
             foreach ($textess as $texte) {
                 $parsedown = new Parsedown();
                 $texte->setTexte($parsedown->text($texte->getTexte()));

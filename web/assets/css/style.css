@@ -149,4 +149,9 @@ input[type=checkbox] {
 	display: none;
 }
 
+/* Pour avoir toutes les barres qui font la même taille (le cas ou la somme fait pas 100% à cause des floats) */
+.result-element > div:last-child {
+	flex-grow: 1;
+}
+
 
