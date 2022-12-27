@@ -164,7 +164,7 @@ class ControllerProposition extends AbstractController {
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
-        $isOk &= (new PropositionRepository())->AjouterResponsable($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
+        $isOk &= (new PropositionRepository())->ajouterResponsable($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
         if ($isOk) {
             (new Notification())->ajouter("success", "La proposition a été créée.");
             self::redirection("?controller=proposition&action=addCoauteur&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $idProposition);
@@ -448,7 +448,7 @@ class ControllerProposition extends AbstractController {
         foreach ($_POST['coAuteurs'] as $coAuteur) {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idNewProp);
         }
-        $isOk &= (new PropositionRepository())->AjouterResponsable($respAMerge, $idNewProp, $idOldPropMerge, $_POST['idQuestion'], 1);
+        $isOk &= (new PropositionRepository())->ajouterResponsable($respAMerge, $idNewProp, $idOldPropMerge, $_POST['idQuestion'], 1);
         (new PropositionRepository())->ajouterCoAuteur($respAMerge, $idOldProp);
         (new PropositionRepository())->ajouterCoAuteur($respCourant, $idOldPropMerge);
 

@@ -2,7 +2,10 @@
 <form class="flex flex-col gap-10" method="post" action="frontController.php?controller=groupe&action=addedMembre">
     <div class="flex flex-wrap gap-2 justify-center">
         <?php
-        foreach ($membres as $key=>$membre) {
+
+        use App\Votee\Lib\ConnexionUtilisateur;
+
+        foreach ($membres as $key=> $membre) {
             echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
                 <input class="utilCheck" type="checkbox" name="membres[]" id="membre' . $key . '" value="' . $membre->getLogin() . '" checked/>
                 <label class="flex gap-1 items-center" for="membre' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $membre->getPrenom() . ' ' . $membre->getNom() . '</label>
@@ -10,10 +13,12 @@
         }
 
         foreach ($utilisateurs as $key=>$utilisateur) {
-            echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                <input class="utilCheck" type="checkbox" name="utilisateurs[]" id="util' . $key . '" value="' . $utilisateur->getLogin() . '"/>
-                <label class="flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $utilisateur->getPrenom() . ' ' . $utilisateur->getNom() . '</label>
-              </div>';
+            if (!ConnexionUtilisateur::estLoginAdministrateur($utilisateur->getLogin())) {
+                echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                        <input class="utilCheck" type="checkbox" name="utilisateurs[]" id="util' . $key . '" value="' . $utilisateur->getLogin() . '"/>
+                        <label class="flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $utilisateur->getPrenom() . ' ' . $utilisateur->getNom() . '</label>
+                      </div>';
+            }
         }
         ?>
     </div>

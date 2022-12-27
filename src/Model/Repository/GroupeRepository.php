@@ -28,7 +28,7 @@ class GroupeRepository extends AbstractRepository {
         );
     }
 
-    public function AjouterGroupe($nomGroupe) {
+    public function ajouterGroupe($nomGroupe) {
         $sql = "CALL {$this->getProcedureInsert()}(:nomGroupeTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
         try {
@@ -42,7 +42,7 @@ class GroupeRepository extends AbstractRepository {
         }
     }
 
-    public function AjouterAGroupe($idGroupe, $login) {
+    public function ajouterAGroupe($idGroupe, $login) {
         $sql = "CALL AjouterUtilisateurAGroupes(:idGroupeTag, :loginTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
         try {
@@ -53,7 +53,7 @@ class GroupeRepository extends AbstractRepository {
         }
     }
 
-    public function SupprimerDeGroupe($idGroupe, $login) {
+    public function supprimerDeGroupe($idGroupe, $login) {
         $sql = "CALL SupprimerUtilisateurDeGroupe(:idGroupeTag, :loginTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
         try {

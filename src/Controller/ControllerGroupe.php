@@ -62,7 +62,7 @@ class ControllerGroupe extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
 
-        $idGroupe = (new GroupeRepository())->AjouterGroupe($_POST['nomGroupe']);
+        $idGroupe = (new GroupeRepository())->ajouterGroupe($_POST['nomGroupe']);
         if ($idGroupe) {
             (new Notification())->ajouter("success", "Le groupe a bien été créé !");
             self::redirection("?controller=groupe&action=addMembre&idGroupe=$idGroupe");
@@ -106,10 +106,10 @@ class ControllerGroupe extends AbstractController {
         foreach ($oldMembres as $membre) $membres[] = $membre->getLogin();
         if (array_key_exists('membres', $_POST)) $membres = array_diff($membres, $_POST['membres']);
         foreach ($_POST['utilisateurs'] as $login) {
-            $isOk = (new GroupeRepository())->AjouterAGroupe($idGroupe, $login);
+            $isOk = (new GroupeRepository())->ajouterAGroupe($idGroupe, $login);
         }
         foreach ($membres as $login) {
-            $isOk = (new GroupeRepository())->SupprimerDeGroupe($idGroupe, $login);
+            $isOk = (new GroupeRepository())->supprimerDeGroupe($idGroupe, $login);
         }
         if ($isOk) (new Notification())->ajouter("success", "Les membres ont bien été ajouté !");
         else (new Notification())->ajouter("warning", "Certains membres n'ont pas été ajouté !");

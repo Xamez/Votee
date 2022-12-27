@@ -5,7 +5,7 @@ use App\Votee\Lib\ConnexionUtilisateur;
 
 $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
 $idQuestion = rawurldecode($question->getIdQuestion());
-
+echo '<div class="flex flex-col gap-10 mt-10">';
 echo '<div class="flex items-center gap-2">
         <p class="text-main font-semibold">Organisateur : 
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
@@ -40,6 +40,7 @@ echo '</div>
       <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
       ';
 
+if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 foreach ($propositions as $proposition) {
     $idProposition = $proposition->getIdProposition();
     $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
@@ -79,7 +80,19 @@ foreach ($propositions as $proposition) {
 
 }
 
-echo '<div class="flex gap-2 justify-between">';
+echo '<h1 class="title text-dark text-2xl font-semibold">Votants</h1>
+      <div class="flex flex-wrap gap-2 justify-center">';
+if (sizeof($votants) == 0) echo '<span class="text-center">Aucun votant</span>';
+for ($i = 0; $i < sizeof($votants) && $i < 10; $i++) {
+    echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+              <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($votants[$i]->getPrenom()) . ' ' . htmlspecialchars($votants[$i]->getNom()) . '
+          </div>';
+}
+if (sizeof($votants) >= 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
+                                    <span class="material-symbols-outlined">more_horiz</span>Voir plus
+                                  </a>';
+echo '</div>
+      <div class="flex gap-2 justify-between">';
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'all', 'title' => 'Retour', "logo" => 'reply']);
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (in_array("Organisateur", $rolesQuestion)) {
@@ -104,4 +117,5 @@ if (sizeof($propositions) > 0) {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'resultatPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voir les résultats', "logo" => 'list_alt']);
     }
 }
+echo '</div>';
 echo '</div>';
