@@ -143,16 +143,6 @@ class QuestionRepository extends AbstractRepository {
         return $nbPropRestant ? $nbPropRestant[0] : null;
     }
 
-    public function selectBySearch($search):array {
-        $questions = [];
-        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER(TITRE) LIKE '%:searchTag%'";
-        $sql = str_replace(":searchTag", strtolower($search), $sql);
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute();
-        foreach ($pdoStatement as $formatTableau) $questions[] = $this->construire($formatTableau);
-        return $questions;
-    }
-
     public function selectVotant($idQuestion): array {
         $votants = [];
         $sql = "SELECT * FROM Utilisateurs u JOIN Existe e ON u.login = e.login WHERE IDQUESTION = :idQuestionTag";

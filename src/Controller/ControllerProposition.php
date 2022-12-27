@@ -248,6 +248,7 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
+
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);

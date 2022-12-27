@@ -59,7 +59,7 @@ class ControllerQuestion extends AbstractController {
     // Permet de voir toutes les questions du site
     public static function all() : void {
         $search = $_GET['search'] ?? null;
-        if (!$search) $questions = (new QuestionRepository())->selectBySearch($search);
+        if ($search) $questions = (new QuestionRepository())->selectBySearch($search, 'TITRE');
         else $questions = (new QuestionRepository())->selectAll();
         self::afficheVue('view.php',
             [
