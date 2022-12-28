@@ -47,11 +47,16 @@ class ControllerQuestion extends AbstractController {
         }
         $nbSections = $_POST['nbSections'];
         $voteTypes = VoteTypes::toArray();
+        $users = (new UtilisateurRepository())->selectAll();
+        $users = array_filter($users, function ($user) {
+            return $user->getLogin() !== ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        });
         self::afficheVue('view.php',
             [
                 "nbSections" => $nbSections,
                 "voteTypes" => $voteTypes,
                 "pagetitle" => "Creation",
+                "users" => $users,
                 "cheminVueBody" => "question/createQuestion.php",
                 "title" => "Créer une question",
             ]);
@@ -116,7 +121,8 @@ class ControllerQuestion extends AbstractController {
             date_format(date_create($_POST['dateFinQuestion']), 'd/m/Y'),
             date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
             date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
-            $_POST['organisateur'],
+            $_POST['loginOrga'],
+            $_POST['loginSpe'],
             $_POST['voteType']
         );
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
