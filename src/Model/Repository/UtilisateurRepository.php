@@ -55,6 +55,7 @@ class UtilisateurRepository extends AbstractRepository {
     public function getRolesQuestion($login, $idQuestion): array {
         $roles = [];
         $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant"];
+        // $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant", "Specialiste]; TODO ACTIVER QD TABLE CREER
         foreach ($procedures as $procedure) {
             $sql = "SELECT :procedureTag(:loginTag, :idQuestionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure, $sql);

@@ -16,7 +16,7 @@ function debounce(callback, wait) {
 }
 
 function performRequest(url, data) {
-    return fetch('frontController.php?action=' + url, {
+    return fetch('frontController.php?controller=proposition&action=' + url, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -51,14 +51,12 @@ window.onload = () => {
     let moved = false;
 
     const createTooltip = (span, textCommentaire) => {
-        const tooltip = document.createElement('div');
+        const tooltip = document.createElement('p');
         tooltip.id = 'tooltip';
-        tooltip.classList.add('z-1', 'absolute', 'bg-main', 'text-white', 'rounded', 'p-2', 'text-sm', 'shadow-lg');
+        tooltip.classList.add('flex', 'z-1', 'absolute', 'bg-main', 'text-white', 'text-sm', 'p-2', 'rounded', 'shadow-lg');
         tooltip.style.top = event.pageY + 'px';
         tooltip.style.left = event.pageX + 'px';
-        const p = document.createElement('p');
-        p.innerText = textCommentaire;
-        tooltip.appendChild(p);
+        tooltip.innerText = textCommentaire;
         span.appendChild(tooltip);
     }
 
@@ -89,7 +87,7 @@ window.onload = () => {
         container.appendChild(closeButton);
 
         const deleteCommentary = document.createElement('button');
-        deleteCommentary.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white', 'rounded', 'p-1');
+        deleteCommentary.classList.add('bg-red-500', 'hover:bg-red-600', 'border-none', 'text-white', 'rounded', 'p-1');
         deleteCommentary.innerText = 'Supprimer';
         deleteCommentary.addEventListener('click', () => {
             const data = {'idCommentaire': span.id};
