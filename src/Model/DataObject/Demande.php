@@ -49,11 +49,11 @@ class Demande extends AbstractDataObject {
 
     public function getIdProposition(): ?string { return $this->idProposition; }
 
-    public function setIdProposition(?string $idProposition): void { $this->idProposition = $idProposition; }
+    public function setIdProposition(string $idProposition): void { $this->idProposition = $idProposition; }
 
     public function getIdQuestion(): ?string { return $this->idQuestion; }
 
-    public function setIdQuestion(?string $idQuestion): void { $this->idQuestion = $idQuestion; }
+    public function setIdQuestion(string $idQuestion): void { $this->idQuestion = $idQuestion; }
 
     public function getLoginDestinataire(): string { return $this->loginDestinataire; }
 
@@ -63,7 +63,7 @@ class Demande extends AbstractDataObject {
 
     public function setLogin(string $login): void { $this->login = $login; }
 
-    public function getIdDemande(): int { return $this->idDemande; }
+    public function getIdDemande(): ?int { return $this->idDemande; }
 
     public function setIdDemande(int $idDemande): void { $this->idDemande = $idDemande; }
 

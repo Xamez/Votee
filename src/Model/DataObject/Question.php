@@ -54,7 +54,7 @@ class Question extends AbstractDataObject {
             "DATEDEBUTVOTE" => $this->getDateDebutVote(),
             "DATEFINVOTE" => $this->getDateFinVote(),
             "LOGIN_ORGANISATEUR" => $this->getLogin(),
-            "LOGINSPE" => $this->getLoginSpecialiste(),
+            "LOGIN_SPECIALISTE" => $this->getLoginSpecialiste(),
             "TYPEVOTE" => $this->getVoteType(),
         );
     }
@@ -99,7 +99,7 @@ class Question extends AbstractDataObject {
 
     public function getLoginSpecialiste(): ?string { return $this->loginSpecialiste; }
 
-    public function setLoginSpecialiste(?string $loginSpecialiste): void { $this->loginSpecialiste = $loginSpecialiste; }
+    public function setLoginSpecialiste(string $loginSpecialiste): void { $this->loginSpecialiste = $loginSpecialiste; }
 
     public function getVoteType(): string {return $this->voteType;}
 

@@ -36,7 +36,7 @@ class ControllerUtilisateur extends AbstractController {
             self::redirection("?controller=utilisateur&action=inscription");
         }
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
-        (new UtilisateurRepository())->inscrire($utilisateur);
+        (new UtilisateurRepository())->sauvegarder($utilisateur);
         (new Notification())->ajouter("success","L'utilisateur a été créé");
         (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
         self::redirection("?action=home");

@@ -7,21 +7,13 @@ use PDOException;
 
 class UtilisateurRepository extends AbstractRepository {
 
-    protected function getNomsColonnes(): array {
-        return array(
-            'LOGIN',
-            'MOTDEPASSE',
-            'NOM',
-            'PRENOM',
-            'NBQUESTRESTANT',
-        );
-    }
 
+    function getNomSequence(): string { return ""; }
     function getNomTable(): string { return "Utilisateurs"; }
     function getNomClePrimaire(): string { return "LOGIN"; }
 
-    function getProcedureInsert(): string { return "AjouterUtilisateur"; }
-    function getProcedureUpdate(): string { return ""; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterUtilisateur', 'LOGIN', 'MOTDEPASSE', 'NOM', 'PRENOM'); }
+    function getProcedureUpdate(): array { return []; }
     function getProcedureDelete(): string { return ""; }
 
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
@@ -32,23 +24,6 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['PRENOM'],
             $utilisateurFormatTableau['NBQUESTRESTANT']
         );
-    }
-
-    public function inscrire(Utilisateur $utilisateur): bool {
-        $sql = "CALL {$this->getProcedureInsert()}(:loginTag, :mdpTag, :nomTag, :prenomTag)";
-        $values = array(
-            "loginTag" => $utilisateur->getLogin(),
-            "mdpTag" => $utilisateur->getMotDePasse(),
-            "nomTag" => $utilisateur->getNom(),
-            "prenomTag" => $utilisateur->getPrenom(),
-        );
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        try {
-            $pdoStatement->execute($values);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
     }
 
     /** Retourne l'ensemble des roles pour une question et un utilisateur donné */

@@ -4,6 +4,7 @@ namespace App\Votee\Controller;
 
 use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
+use App\Votee\Model\DataObject\Groupe;
 use App\Votee\Model\Repository\GroupeRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 
@@ -61,8 +62,8 @@ class ControllerGroupe extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-
-        $idGroupe = (new GroupeRepository())->ajouterGroupe($_POST['nomGroupe']);
+        $groupe = new Groupe(null, $_POST['nomGroupe']);
+        $idGroupe = (new GroupeRepository())->sauvegarderSequence($groupe);
         if ($idGroupe) {
             (new Notification())->ajouter("success", "Le groupe a bien été créé !");
             self::redirection("?controller=groupe&action=addMembre&idGroupe=$idGroupe");

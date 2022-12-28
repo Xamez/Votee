@@ -85,8 +85,9 @@ foreach ($propositions as $proposition) {
 }
 
 echo '</div>
-      <div class="flex flex-wrap gap-2 justify-center">
-      <h1 class="title text-dark text-2xl font-semibold">Votants</h1>';
+      <div class="flex flex-col gap-3">
+         <h1 class="title text-dark text-2xl font-semibold">Votants</h1>
+            <div class="flex flex-wrap gap-2 justify-center">';
 if (sizeof($votants) == 0) echo '<span class="text-center">Aucun votant</span>';
 for ($i = 0; $i < sizeof($votants) && $i < 10; $i++) {
     echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
@@ -122,5 +123,6 @@ if (sizeof($propositions) > 0) {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'resultatPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voir les résultats', "logo" => 'list_alt']);
     }
 }
-echo '</div>';
-echo '</div>';
+echo '</div>
+     </div>
+    </div>';

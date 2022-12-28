@@ -126,7 +126,7 @@ class ControllerQuestion extends AbstractController {
             $_POST['loginSpe'],
             $_POST['voteType']
         );
-        $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
+        $idQuestion = (new QuestionRepository())->sauvegarderSequence($question);
         $isOk = true;
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
@@ -208,7 +208,9 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
             self::redirection("?controller=question&action= all");
         }
-        $isOk = (new QuestionRepository())->modifierQuestion($_POST['idQuestion'], $_POST['description'], 'visible');
+        $question->setVisibilite('visible');
+        $question->setDescription($_POST['description']);
+        $isOk = (new QuestionRepository())->modifier($question);
         if ($isOk) {
             (new Notification())->ajouter("success", "La question a été modifiée.");
             self::redirection("?controller=question&action=addVotant&idQuestion=" . $_POST['idQuestion']);
@@ -216,7 +218,6 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("warning", "La modification de la question a échoué.");
             self::redirection("?controller=question&action=updateQuestion&idQuestion=" . $_POST['idQuestion']);
         }
-        self::redirection("?action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
 
     public static function readVotant():void {
