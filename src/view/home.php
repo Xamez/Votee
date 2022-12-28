@@ -25,7 +25,7 @@
                 <h3 class="text-white font-bold text-xl pt-2">Voter, c'est facile !</h3>
                 <p class="text-dark text-md pt-4">Votee, un système de vote dématérialisée à bulletin secret fiable, simple et sécurisée.<br/>Disponible partout et maintenant</p>
                 <div class="flex pt-3 justify-center lg:justify-start">
-                    <a class="p-2 pl-6 pr-6 text-white bg-main rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Vote</a>
+                    <a class="p-2 pl-6 pr-6 text-white bg-main rounded-md font-semibold shadow" href="./frontController.php?action=readAllQuestion">Vote</a>
                 </div>
             </div>
             <img class="lg:w-8/12 rounded-3xl shadow-md" src="assets/resources/voter.png" alt="Voter">
@@ -34,7 +34,7 @@
             <img class="w-10/12 lg:w-1/2 rounded-3xl shadow-md" src="assets/resources/creer_vote.png" alt="Créer un vote">
             <div class="w-96 text-center lg:text-left">
                 <i class="fa fa-pen-to-square text-white text-2xl px-3 py-2 bg-main rounded-lg"></i>
-                <h3 class="text-white font-bold text-xl pt-2">Créer un vote, c'est trivial !</h3>
+                <h3 class="text-white font-bold text-xl pt-2">Créer une question, c'est trivial !</h3>
                 <p class="text-dark text-md pt-4">Réaliser un vote avec Votee pour déterminer simplement et rapidement l’opinion du public.<br/>Personnaliser votre vote comme bon vous semble.</p>
                 <div class="flex flex-row gap-x-4 justify-center lg:justify-start pt-3">
                     <a class="p-2 pl-6 pr-6 text-white bg-main rounded-lg font-semibold shadow" href="./frontController.php?action=section">Créer un vote</a>
@@ -50,7 +50,7 @@
                     <h3 class="text-2xl md:text-4xl font-bold text-main">Étes vous prêt à vous lancer ?</h3>
                     <h4 class="text-xl md:text-3xl font-semibold text-white">Commencer maintenant !</h4>
                 </div>
-                <a class="p-2 pl-6 pr-6 text-white bg-dark rounded-md font-semibold shadow" href="./frontController.php?action=readAll">Voter</a>
+                <a class="p-2 pl-6 pr-6 text-white bg-dark rounded-md font-semibold shadow" href="./frontController.php?action=readAllQuestion">Voter</a>
             </div>
         </div>
     </div>
