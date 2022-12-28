@@ -243,11 +243,7 @@ class ControllerProposition extends AbstractController {
 
         if ($isOk) {
             (new Notification())->ajouter("success", "La proposition a été modifiée.");
-            if (self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
-                self::redirection("?controller=proposition&action=addCoauteur&idQuestion=$idQuestion&idProposition=$idProposition");
-            } else {
-                self::redirection("?controller=proposition&action=readProposition&idProposition=$idProposition&idQuestion=$idQuestion");
-            }
+            self::redirection("?controller=proposition&action=readProposition&idProposition=$idProposition&idQuestion=$idQuestion");
         } else {
             (new Notification())->ajouter("danger", "La proposition n'a pas pu être modifiée.");
             self::redirection("?controller=proposition&action=updateProposition&idQuestion=$idQuestion&idProposition=$idProposition");
@@ -351,7 +347,7 @@ class ControllerProposition extends AbstractController {
     public static function deleteProposition(): void {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -368,7 +364,7 @@ class ControllerProposition extends AbstractController {
     public static function deletedProposition(): void {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
