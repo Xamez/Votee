@@ -13,8 +13,7 @@ class Question extends AbstractDataObject {
     private string $dateDebutVote;
     private string $dateFinVote;
     private string $login;
-    private string $typeVote;
-
+    private string $voteType;
 
     public function __construct(
         ?int   $idQuestion,
@@ -26,7 +25,7 @@ class Question extends AbstractDataObject {
         string $dateDebutVote,
         string $dateFinVote,
         string $login,
-        string $typeVote)
+        string $voteType)
     {
         $this->idQuestion = $idQuestion;
         $this->visibilite = $visibilite;
@@ -37,14 +36,13 @@ class Question extends AbstractDataObject {
         $this->dateDebutVote = $dateDebutVote;
         $this->dateFinVote = $dateFinVote;
         $this->login = $login;
-        $this->typeVote = $typeVote;
+        $this->voteType = $voteType;
     }
 
 
     public function formatTableau(): array {
         return array(
             "IDQUESTION" => $this->getIdQuestion(),
-            "TYPEVOTE" => $this->getTypeVote(),
             "VISIBILITE" => $this->getVisibilite(),
             "TITRE" => $this->getTitre(),
             "DESCRIPTION" => $this->getDescription(),
@@ -52,7 +50,8 @@ class Question extends AbstractDataObject {
             "DATEFINQUESTION" => $this->getDateFinQuestion(),
             "DATEDEBUTVOTE" => $this->getDateDebutVote(),
             "DATEFINVOTE" => $this->getDateFinVote(),
-            "LOGIN" => $this->getLogin()
+            "LOGIN" => $this->getLogin(),
+            "TYPEVOTE" => $this->getVoteType(),
         );
     }
 
@@ -61,6 +60,8 @@ class Question extends AbstractDataObject {
     public function setIdQuestion(int $idQuestion): void { $this->idQuestion = $idQuestion; }
 
     public function getVisibilite(): string { return $this->visibilite; }
+
+    public function isVisible() : bool { return $this->visibilite == 'visible'; }
 
     public function setVisibilite(string $visibilite): void { $this->visibilite = $visibilite; }
 
@@ -92,19 +93,26 @@ class Question extends AbstractDataObject {
 
     public function setLogin(string $login): void { $this->login = $login; }
 
-    public function getTypeVote(): string { return $this->typeVote; }
+    public function getVoteType(): string {return $this->voteType;}
 
-    public function setTypeVote(string $typeVote): void { $this->typeVote = $typeVote; }
+    public function setvoteType(string $voteType): void{$this->voteType = $voteType;}
 
     public function getPeriodeActuelle() : string {
-        $date = date('d/m/y');
-        if ($date >= $this->getDateDebutQuestion() && $date <= $this->getDateFinQuestion()) {
+        $date = date('Y-m-d');
+        if ($date >= $this->changeDate($this->getDateDebutQuestion()) && $date <= $this->changeDate($this->getDateFinQuestion())) {
             return "Période d'écriture";
-        } else if ($date >= $this->getDateDebutVote() && $date <= $this->getDateFinVote()) {
+        } else if ($date >= $this->changeDate($this->getDateDebutVote()) && $date <= $this->changeDate($this->getDateFinVote())) {
             return "Période de vote";
         } else {
             return "Période des résultats";
         }
+    }
+
+    public function changeDate(string $date) {
+        $old_date = explode('/', $date);
+        $new_data = $old_date[2].'-'.$old_date[1].'-'.$old_date[0];
+        $date = date_format(date_create($new_data),'Y-m-d');
+        return $date;
     }
 
 }

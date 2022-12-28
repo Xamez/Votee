@@ -1,8 +1,6 @@
-<?php
-require "propositionHeader.php";
-?>
-<form method="get" class="flex flex-col gap-7" action="frontController.php?action=updatedProposition">
-    <input placeholder="Login" class="border-2" type="text" name="coAuteur" id="coAuteur_id">
+<?php require "propositionHeader.php"; ?>
+<form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
+    <input type="text" placeholder="Titre de la proposition" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index=>$section) {
@@ -20,6 +18,6 @@ require "propositionHeader.php";
     <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">
     <input type="hidden" name="action" value="updatedProposition">
     <div class="flex justify-center">
-        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
+        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Suivant" />
     </div>
 </form>

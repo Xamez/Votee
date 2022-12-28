@@ -11,12 +11,12 @@ class Conf {
                        (CONNECT_DATA = 
                             (SERVICE_NAME = IUT) 
                             (SID = ORCL)))',
-        'login' => 'cazauxl',
+        'utilisateur' => 'cazauxl',
         'password' => '081975268be'
     );
 
     static public function getLogin() : string {
-        return static::$databases['login'];
+        return static::$databases['utilisateur'];
     }
 
     static public function getDatabase() : string {

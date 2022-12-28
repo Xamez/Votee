@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script type="text/javascript" src="assets/js/nav-burger.js"></script>
-    <script type="text/javascript" src="assets/js/accordion.js"></script>
     <link rel="icon" type="image/x-icon" href="assets/resources/logo_votee.png">
 </head>
 <body>
@@ -22,30 +21,71 @@
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
-            <a href=""><span class="link-underline link-underline-color">Demande</span></a>
+            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
+            <?php
+                use App\Votee\Model\Repository\DemandeRepository;
+                use App\Votee\Lib\ConnexionUtilisateur;
+                use App\Votee\Lib\Notification;
+
+                if (ConnexionUtilisateur::estConnecte()) {
+                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
+                            <span class="link-underline link-underline-color">Demande';
+                    $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+                    if ($utilisateur != null) {
+                        $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
+                        if ($result != null) {
+                            if ($result > 0) {
+                                echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
+                            }
+                        }
+                    }
+                    echo '</span></a>';
+                }
+            ?>
+
         </div>
-        <a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
-        <div class="flex md:hidden gap-4 items-center">
-            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?action=connexion">Se connecter</a>
-            <div>
-                <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center text-dark"></i>
-                <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center text-dark"></i>
-            </div>
-            <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">
-                <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-                <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>
-                <a href=""><span class="link-underline link-underline-color">Demande</span></a>
-            </div>
+        <div class="flex gap-4 items-center">
+        <?php
+        if (ConnexionUtilisateur::estConnecte()) {
+            $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+            if ($utilisateur != null) {
+                echo '<a href="./frontController.php?controller=utilisateur&action=compte">' .
+                    htmlspecialchars($utilisateur->getPrenom()) . ' ' . htmlspecialchars($utilisateur->getNom()) . '
+                      </a>
+                      <a class="flex items-center" href="frontController.php?controller=utilisateur&action=deconnecter">
+                        <span class="material-symbols-outlined">logout</span>
+                      </a>';
+            } else {
+                echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
+                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
+            }
+        } else {
+            echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
+                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
+
+        }
+        ?>
+<!--        <div class="flex md:hidden gap-4 items-center">-->
+<!--            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" -->
+<!--               href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>-->
+<!--            <div>-->
+<!--                <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center text-dark"></i>-->
+<!--                <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center text-dark"></i>-->
+<!--            </div>-->
+<!--            <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">-->
+<!--                <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>-->
+<!--                <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>-->
+<!--                <a href=""><span class="link-underline link-underline-color">Demande</span></a>-->
+<!--            </div>-->
+<!--        </div>-->
         </div>
     </nav>
 </header>
 <?php
-    use App\Votee\Lib\Notification;
     foreach (['success', 'warning', 'danger'] as $type) {
         if (Notification::contientMessage($type)) {
             foreach (Notification::lireMessages($type) as $key => $message) {
-                echo '<div class="fixed shadow-lg bottom-14 right-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
+                echo '<div class="z-10 fixed shadow-lg bottom-14 right-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
                         <div class="flex justify-center shadow-lg items-center justify-items-center w-12 h-12 p-2.5 toast-icon toast-icon-'. $type .'">
                         <span class="material-symbols-outlined">';
                             if ($type == 'success')  echo 'check_circle';
@@ -89,7 +129,7 @@
         <div class="w-full pt-10">
             <div class="flex w-4/5 items-center justify-center mx-auto border-t border-main pb-12">
                 <div class="flex flex-row text-main text-md lg:text-xl font-semibold pt-6">
-                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevallier Julie</p>
+                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevalier Julie</p>
                 </div>
             </div>
         </div>

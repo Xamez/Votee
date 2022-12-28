@@ -1,5 +1,7 @@
 <?php require "propositionHeader.php"; ?>
-<form method="post" class="flex flex-col gap-7" action="frontController.php?action=createdFusion">
+<script type="text/javascript" src="assets/js/accordion.js"></script>
+<form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=createdFusion">
+    <input type="text" placeholder="Titre de la proposition" name="titreProposition" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <?php
         foreach ($sections as $index => $section) {
@@ -12,27 +14,29 @@
                                 <p class="font-bold text-dark">Section ' . $index + 1 . ' de : </p>
                                 <div class="bg-white items-center flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                                     <span class="material-symbols-outlined">account_circle</span>' .
-                    htmlspecialchars($responsables[$indexTexte]->getNom()) . ' ' . htmlspecialchars($responsables[$indexTexte]->getPrenom()) . '
+                                    htmlspecialchars($responsables[$indexTexte]->getNom()) . ' ' . htmlspecialchars($responsables[$indexTexte]->getPrenom()) . '
                                 </div>
                             </div>
                             <span class="accordion-arrow material-symbols-outlined">arrow_forward_ios</span>
                         </div>                        
                         <div class="p-4 overflow-hidden hidden panel">
-                            <p class="break-all text-justify">' . htmlspecialchars($texte[$index]->getTexte()) . '</p>
+                            <div class="proposition-markdown break-all text-justify">' . $texte[$index]->getTexte() . '</div>
                         </div>
                     </div>';
             }
             echo '<textarea class="border-2 max-h-96 h-52" maxlength="2000"  name="section' . $index . '" id="section' . $index . '" required></textarea>
-                  <input type="hidden" name="idSection' . $index . '" value="' . $section->getIdSection() . '">';
+                  <input type="hidden" name="idSection' . $index . '" value="' . $section-> getIdSection() . '">';
         }
         ?>
     </div>
     <div class="flex justify-center">
-        <input type="hidden" name="responsable" value="<?= $responsable->getLogin() ?>">
-        <input type="hidden" name="idProposition1" value="<?= $idPropositions[0] ?>">
-        <input type="hidden" name="idProposition2" value="<?= $idPropositions[1] ?>">
+        <input type="hidden" name="respCourant" value="<?= $responsables[0]->getLogin() ?>">
+        <input type="hidden" name="respAMerge" value="<?= $responsables[1]->getLogin() ?>">
+        <input type="hidden" name="idPropCourant" value="<?= $idPropositions[0] ?>">
+        <input type="hidden" name="idPropAMerge" value="<?= $idPropositions[1] ?>">
         <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion() ?>">
         <input type="hidden" name="nbSections" value="<?= sizeof($sections); ?>">
+        <input type="hidden" name="isFusion" value="1">
         <?php foreach ($coAuteurs as $coAuteur) echo '<input type="hidden" name="coAuteurs[]" value="' . $coAuteur->getLogin() . '">' ?>
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider"/>
     </div>
