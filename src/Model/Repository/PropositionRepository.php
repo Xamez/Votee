@@ -86,9 +86,6 @@ class PropositionRepository extends AbstractRepository {
             "oldIdProposition" => $oldIdProposition,
             "idQuestion" => $idQuestion,
             "isFusion" => $isFusion);
-        foreach ($values as $key => $value) {
-            echo 'key: ' . $key . ' value: ' . $value . '<br>';
-        }
         try {
             $pdoStatement->execute($values);
             return true;

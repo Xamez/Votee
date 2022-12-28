@@ -1,6 +1,7 @@
 <?php
 
 use App\Votee\Controller\AbstractController;
+use App\Votee\Lib\ConnexionUtilisateur;
 
 $rawIdGroupe = rawurlencode($groupe->getIdGroupe());
 
@@ -16,9 +17,11 @@ if (sizeof($membres) > 0) {
 } else {
     echo '<span>Aucun membre</span>';
 }
-echo '</div>
-      <div class="flex gap-2 justify-between">';
+echo '</div>';
+if (ConnexionUtilisateur::estAdministrateur()) {
+    echo '<div class="flex gap-2 justify-between">';
     AbstractController::afficheVue('button.php', ['controller' => 'groupe', 'action' => 'readAllGroupe', 'title' => 'Retour', "logo" => 'reply']);
     AbstractController::afficheVue('button.php', ['controller' => 'groupe', 'action' => 'updateGroupe', 'params' => 'idGroupe=' . $rawIdGroupe, 'title' => 'Editer', "logo" => 'edit']);
     AbstractController::afficheVue('button.php', ['controller' => 'groupe', 'action' => 'deleteGroupe', 'params' => 'idGroupe=' . $rawIdGroupe, 'title' => 'Supprimer', "logo" => 'delete']);
-echo '</div>';
+    echo '</div>';
+}

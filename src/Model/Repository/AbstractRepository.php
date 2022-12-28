@@ -23,7 +23,6 @@ abstract class AbstractRepository {
         $sql = "CALL {$this->getProcedureUpdate()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
         $values = $object->formatTableau();
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        var_dump($sql);
         try {
             $pdoStatement->execute($values);
             return true;
@@ -91,7 +90,6 @@ abstract class AbstractRepository {
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("valueTag" => $valeurClePrimaire));
         $result = $pdoStatement->fetch();
-
         return $result ? $this->construire($result) : null;
     }
 
