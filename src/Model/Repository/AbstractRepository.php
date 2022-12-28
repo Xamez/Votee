@@ -7,26 +7,38 @@ use PDOException;
 
 abstract class AbstractRepository {
 
+    public function sauvegarderSequence(AbstractDataObject $dataObject) {
+        $this->sauvegarder($dataObject);
+        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT {$this->getNomSequence()}.CURRVAL AS lastInsertId FROM DUAL");
+        $pdoLastInsert->execute();
+        $lastInserId = $pdoLastInsert->fetch();
+        return intval($lastInserId[0]);
+    }
+
     public function sauvegarder(AbstractDataObject $object) : bool {
-        $sql = "CALL {$this->getProcedureInsert()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
-        $values = $object->formatTableau();
+        $sql = "CALL {$this->getProcedureInsert()['procedure']}(:" . implode(', :', array_slice($this->getProcedureInsert(), 1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        foreach ($this->getProcedureInsert() as $value) $values[$value] = $value;
+        var_dump($sql);
+        var_dump(array_intersect_key($object->formatTableau(), $values));
         try {
-            $pdoStatement->execute($values);
+            $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
 
     public function modifier(AbstractDataObject $object) : bool {
-        $sql = "CALL {$this->getProcedureUpdate()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
-        $values = $object->formatTableau();
+        $sql = "CALL {$this->getProcedureUpdate()['procedure']} (:" . implode(', :', array_slice($this->getProcedureUpdate(),1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        foreach ($this->getProcedureUpdate() as $value) $values[$value] = $value;
         try {
-            $pdoStatement->execute($values);
+            $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
@@ -120,13 +132,13 @@ abstract class AbstractRepository {
 
     protected abstract function getNomClePrimaire(): string;
 
+    protected abstract function getNomSequence(): string;
+
     protected abstract function construire(array $objetFormatTableau) : AbstractDataObject;
 
-    protected abstract function getNomsColonnes(): array;
+    protected abstract function getProcedureInsert(): array;
 
-    protected abstract function getProcedureInsert(): string;
-
-    protected abstract function getProcedureUpdate(): string;
+    protected abstract function getProcedureUpdate(): array;
 
     protected abstract function getProcedureDelete(): string;
 }

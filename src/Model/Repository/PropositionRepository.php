@@ -8,21 +8,12 @@ use PDOException;
 
 class PropositionRepository extends AbstractRepository {
 
-    protected function getNomsColonnes(): array {
-        return array(
-            'IDPROPOSITION',
-            'IDQUESTION',
-            'TITREPROPOSITION',
-            'VISIBILITEPROPOSITION',
-            'IDPROPFUSIONPARENT',
-        );
-
-    }
+    function getNomSequence(): string { return "propositions_seq"; }
     function getNomTable(): string { return "overviewProposition"; }
     function getNomClePrimaire(): string { return "IDPROPOSITION"; }
 
-    function getProcedureInsert(): string { return "AjouterPropositions"; }
-    function getProcedureUpdate(): string { return "ModifierPropositions"; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterPropositions', 'VISIBILITEPROPOSITION', 'TITREPROPOSITION'); }
+    function getProcedureUpdate(): array { return array('procedure' => 'ModifierPropositions', 'IDPROPOSITION', 'VISIBILITEPROPOSITION', 'IDPROPFUSIONPARENT', 'TITREPROPOSITION'); }
     function getProcedureDelete(): string { return "SupprimerPropositions"; }
 
     public function construire(array $propositionFormatTableau) : Proposition {
@@ -47,34 +38,6 @@ class PropositionRepository extends AbstractRepository {
         $propositions = [];
         foreach ($pdoStatement as $proposition) $propositions[] = $proposition[0];
         return $propositions;
-    }
-
-    public function modifierProposition($idProposition, $visibilite, $idPropFusionParent, $titre): bool {
-        $sql = "CALL {$this->getProcedureUpdate()}(:idPropositionTag, :visibiliteTag, :idPropFusionParentTag, :titreProp)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array(
-            "idPropositionTag" => $idProposition,
-            "visibiliteTag" => $visibilite,
-            "idPropFusionParentTag" => $idPropFusionParent,
-            "titreProp" => $titre
-        );
-        try {
-            $pdoStatement->execute($values);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
-
-    public function ajouterProposition($visibite, $titre):int {
-        $sql = "CALL {$this->getProcedureInsert()}(:visibiliteTag, :titreTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
-        $pdoStatement->execute(array("visibiliteTag" => $visibite, "titreTag" => $titre));
-
-        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT propositions_seq.CURRVAL AS lastInsertId FROM DUAL");
-        $pdoLastInsert->execute();
-        $lastInserId = $pdoLastInsert->fetch();
-        return intval($lastInserId[0]);
     }
 
     public function ajouterResponsable($login, $idProposition, $oldIdProposition, $idQuestion, $isFusion):bool {

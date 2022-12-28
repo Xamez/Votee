@@ -7,18 +7,12 @@ use PDOException;
 
 class GroupeRepository extends AbstractRepository {
 
-    protected function getNomsColonnes(): array {
-        return array(
-            'IDGROUPE',
-            'NOMGROUPE',
-        );
-
-    }
+    function getNomSequence(): string { return "groupes_seq"; }
     function getNomTable(): string { return "Groupes"; }
     function getNomClePrimaire(): string { return "IDGROUPE"; }
 
-    function getProcedureInsert(): string { return "AjouterGroupes"; }
-    function getProcedureUpdate(): string { return "ModifierGroupes"; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterGroupes', 'NOMGROUPE'); }
+    function getProcedureUpdate(): array { return array('procedure' => 'ModifierGroupes', 'IDGROUPE', 'NOMGROUPE'); }
     function getProcedureDelete(): string { return "SupprimerGroupes"; }
 
     public function construire(array $propositionFormatTableau) : Groupe {
@@ -26,20 +20,6 @@ class GroupeRepository extends AbstractRepository {
             $propositionFormatTableau['IDGROUPE'],
             $propositionFormatTableau['NOMGROUPE'],
         );
-    }
-
-    public function ajouterGroupe($nomGroupe) {
-        $sql = "CALL {$this->getProcedureInsert()}(:nomGroupeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
-        try {
-            $pdoStatement->execute(array("nomGroupeTag" => $nomGroupe));
-            $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT groupes_seq.CURRVAL AS lastInsertId FROM DUAL");
-            $pdoLastInsert->execute();
-            $lastInserId = $pdoLastInsert->fetch();
-            return intval($lastInserId[0]);
-        } catch (PDOException) {
-            return null;
-        }
     }
 
     public function ajouterAGroupe($idGroupe, $login) {

@@ -21,24 +21,12 @@ class DemandeRepository extends AbstractRepository {
         );
     }
 
-    protected function getNomsColonnes(): array {
-        return array(
-            'LOGINDESTINATAIRE',
-            'LOGIN',
-            'IDDEMANDE',
-            'ETATDEMANDE',
-            'TITREDEMANDE',
-            'TEXTEDEMANDE',
-            'IDPROPOSITION',
-            'IDQUESTION',
-        );
-    }
-
+    function getNomSequence(): string { return ""; }
     public function getNomTable(): string { return "Effectuer"; }
     public function getNomClePrimaire(): string { return "IDDEMANDE"; }
 
-    function getProcedureInsert(): string { return "AjouterDemandes"; }
-    function getProcedureUpdate(): string { return "ModifierDemandes"; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterDemandes', 'LOGINDESTINATAIRE', 'LOGIN', 'TITREDEMANDE', 'TEXTEDEMANDE', 'IDPROPOSITION', 'IDQUESTION'); }
+    function getProcedureUpdate(): array { return array('procedure' => 'ModifierDemandes', 'IDDEMANDE', 'ETATDEMANDE', 'IDPROPOSITION', 'IDQUESTION'); }
     function getProcedureDelete(): string { return ""; }
 
 
@@ -64,42 +52,6 @@ class DemandeRepository extends AbstractRepository {
             $demandes[] = $this->construire($formatTableau);
         }
         return $demandes;
-    }
-
-    public function ajouterDemande(Demande $demande): bool {
-        $sql = "CALL {$this->getProcedureInsert()}(:loginDTag, :loginTag, :titreTag, :txtTag, :idPropTag, :idQuestionTag)";
-        $values = array(
-            "loginDTag" => $demande->getLoginDestinataire(),
-            "loginTag" => $demande->getLogin(),
-            "titreTag" => $demande->getTitreDemande(),
-            "txtTag" => $demande->getTexteDemande(),
-            "idPropTag" => $demande->getIdProposition(),
-            "idQuestionTag" => $demande->getIdQuestion()
-        );
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        try {
-            $pdoStatement->execute($values);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
-
-    public function updateDemande($demande) : bool {
-        $sql = "CALL {$this->getProcedureUpdate()}(:idDemandeTag, :etatTag, :idPropTag, :idQuestionTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array(
-            "idDemandeTag" => $demande->getIdDemande(),
-            "etatTag" => $demande->getEtatDemande(),
-            "idPropTag" => $demande->getIdProposition(),
-            "idQuestionTag" => $demande->getIdQuestion(),
-        );
-        try {
-            $pdoStatement->execute($values);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
     }
 
     /**
