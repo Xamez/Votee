@@ -19,9 +19,9 @@ if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()
 echo '<div class="flex flex-col gap-3">';
 foreach ($questions as $question) {
     echo '<a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
-            <div class="flex justify-between items-center bg-light p-2 rounded">'
+            <div class="flex flex-col justify-between items-center bg-light p-2 rounded md:flex-row">'
                 . htmlspecialchars($question->getTitre()) . '
-                <div class="flex items-center gap-2">
+                <div class="flex flex-col items-center gap-2 md:flex-row">
                     <div class="bg-white flex text-main shadow-md rounded-2xl w-fit p-1.5">'
                         . $question->getPeriodeActuelle() . '
                     </div>

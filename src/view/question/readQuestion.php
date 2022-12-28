@@ -6,7 +6,8 @@ use App\Votee\Lib\ConnexionUtilisateur;
 $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
 $idQuestion = rawurldecode($question->getIdQuestion());
 echo '<div class="flex flex-col gap-10 mt-10">';
-echo '<div class="flex items-center gap-2">
+echo '<div class="flex flex-col gap-3">
+      <div class="flex items-center gap-2">
         <p class="text-main font-semibold">Organisateur : 
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>'
@@ -18,8 +19,9 @@ echo '<div class="flex items-center gap-2">
         <span class="text-main font-semibold">Période actuelle : </span>' .
             $question->getPeriodeActuelle() . '
       </p>
-      <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
-      <div>';
+      </div>
+      <div class="flex flex-col gap-3">
+      <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>';
 
 foreach ($sections as  $key=>$section) {
     echo '<p class="text-xl text-main font-bold">' . $key + 1  . ' - '
@@ -28,17 +30,19 @@ foreach ($sections as  $key=>$section) {
 }
 
 echo '</div>
-      <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-      <p>
-        <span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> 
-        Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'
-      </p>
-      <p>
-        <span class="text-xl text-main font-bold text-lg">Période de vote : </span> 
-        Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'
-      </p>
-      <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
-      ';
+      <div class="flex flex-col gap-3">
+          <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+          <p>
+            <span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> 
+            Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'
+          </p>
+          <p>
+            <span class="text-xl text-main font-bold text-lg">Période de vote : </span> 
+            Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'
+          </p>
+      </div>
+      <div class="flex flex-col gap-3">
+      <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>';
 
 if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 foreach ($propositions as $proposition) {
@@ -47,9 +51,9 @@ foreach ($propositions as $proposition) {
 
     if ($proposition->isVisible()) {
         echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition='. rawurlencode($idProposition).'">
-                <div class="flex bg-light justify-between p-2 items-center rounded">
-                    <div class="flex items-center gap-2">
-                        <p class="font-bold text-dark">Proposition de : </p>
+                <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
+                        <div class="flex flex-col items-center gap-2 md:flex-row">
+                        <p class="font-bold text-dark hidden md:block">Proposition de : </p>
                         <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                             <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                         </div>
@@ -80,15 +84,16 @@ foreach ($propositions as $proposition) {
 
 }
 
-echo '<h1 class="title text-dark text-2xl font-semibold">Votants</h1>
-      <div class="flex flex-wrap gap-2 justify-center">';
+echo '</div>
+      <div class="flex flex-wrap gap-2 justify-center">
+      <h1 class="title text-dark text-2xl font-semibold">Votants</h1>';
 if (sizeof($votants) == 0) echo '<span class="text-center">Aucun votant</span>';
 for ($i = 0; $i < sizeof($votants) && $i < 10; $i++) {
     echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
               <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($votants[$i]->getPrenom()) . ' ' . htmlspecialchars($votants[$i]->getNom()) . '
           </div>';
 }
-if (sizeof($votants) >= 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-lg" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
+if (sizeof($votants) > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
                                     <span class="material-symbols-outlined">more_horiz</span>Voir plus
                                   </a>';
 echo '</div>

@@ -26,8 +26,8 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function readGroupe():void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+        if (!ConnexionUtilisateur::estConnecte()) {
+            (new Notification())->ajouter("danger", "Vous n'etes pas connecté !");
             self::redirection("?controller=question&action=all");
         }
 

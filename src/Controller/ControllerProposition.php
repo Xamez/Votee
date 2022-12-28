@@ -164,11 +164,13 @@ class ControllerProposition extends AbstractController {
             );
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
+
         $isOk &= (new PropositionRepository())->ajouterResponsable($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
         if ($isOk) {
             (new Notification())->ajouter("success", "La proposition a été créée.");
             self::redirection("?controller=proposition&action=addCoauteur&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $idProposition);
         } else {
+            (new PropositionRepository())->supprimer($idProposition);
             (new Notification())->ajouter("warning", "L'ajout de la proposition a échoué.");
             self::redirection("?controller=proposition&action=createProposition&idQuestion=" . $_POST['idQuestion']);
         }
@@ -189,12 +191,13 @@ class ControllerProposition extends AbstractController {
 
     public static function updateProposition(): void {
         $idProposition = $_GET['idProposition'];
+        $idQuestion = $_GET['idQuestion'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if (!self::hasPermission($idProposition)) {
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $question = (new QuestionRepository())->select($idQuestion);
         $textes = (new TexteRepository())->selectAllByKey($idProposition);
         if ($question && $textes) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -221,7 +224,8 @@ class ControllerProposition extends AbstractController {
 
     public static function updatedProposition(): void {
         $idProposition = $_POST['idProposition'];
-        if (!self::hasPermission($idProposition)) {
+        $idQuestion = $_POST['idQuestion'];
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -229,27 +233,32 @@ class ControllerProposition extends AbstractController {
         $isOk &= (new PropositionRepository())->modifierProposition($idProposition, 'visible', null, $_POST['titreProposition']);
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
-            $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $textsection, NULL);
+            $texte = new Texte($idQuestion, $_POST['idSection' . $i], $idProposition, $textsection, NULL);
             $isOk = (new TexteRepository())->modifier($texte);
         }
 
         if ($isOk) {
             (new Notification())->ajouter("success", "La proposition a été modifiée.");
-            self::redirection("?controller=proposition&action=addCoauteur&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $idProposition);
+            if (self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
+                self::redirection("?controller=proposition&action=addCoauteur&idQuestion=$idQuestion&idProposition=$idProposition");
+            } else {
+                self::redirection("?controller=proposition&action=readProposition&idProposition=$idProposition&idQuestion=$idQuestion");
+            }
         } else {
             (new Notification())->ajouter("danger", "La proposition n'a pas pu être modifiée.");
-            self::redirection("?controller=proposition&action=updateProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $idProposition);
+            self::redirection("?controller=proposition&action=updateProposition&idQuestion=$idQuestion&idProposition=$idProposition");
         }
     }
 
     public static function addCoauteur():void {
         $idProposition = $_GET['idProposition'];
-        if (!self::hasPermission($idProposition)) {
+        $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, $idProposition,['Responsable'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
 
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $question = (new QuestionRepository())->select($idQuestion);
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
         $utilsProp = $coAuteurs;
@@ -261,7 +270,7 @@ class ControllerProposition extends AbstractController {
             [
                 "pagetitle" => "Ajouter un co-auteur",
                 "idProposition" => $idProposition,
-                "idQuestion" => $_GET['idQuestion'],
+                "idQuestion" => $idQuestion,
                 "utilisateurs" => $utilisateur,
                 "coAuteurs" => $coAuteurs,
                 "cheminVueBody" => "proposition/addCoauteur.php",
@@ -273,7 +282,7 @@ class ControllerProposition extends AbstractController {
     public static function addedCoauteur():void {
         $idProposition = $_POST['idProposition'];
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idProposition)) {
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -337,11 +346,11 @@ class ControllerProposition extends AbstractController {
 
     public static function deleteProposition(): void {
         $idProposition = $_GET['idProposition'];
-        if (!self::hasPermission($idProposition)) {
+        $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-        $idQuestion = $_GET['idQuestion'];
         self::afficheVue('view.php',
             [
                 "idQuestion" => $idQuestion,
@@ -354,7 +363,8 @@ class ControllerProposition extends AbstractController {
 
     public static function deletedProposition(): void {
         $idProposition = $_GET['idProposition'];
-        if (!self::hasPermission($idProposition)) {
+        $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -463,14 +473,12 @@ class ControllerProposition extends AbstractController {
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);
     }
 
-    /**
-        Retourne true si la proposition est visible et si l'utilisateur est responsable ou coAuteur de la proposition
-     */
-    public static function hasPermission($idProposition): bool {
-        //TODO Voir si il faudrait pas rajouter une verification de la periode d'ecriture
+    /** Retourne true si la proposition est visible, si la question est en phase d'ecriture et si l'utilisateur a les roles requis */
+    public static function hasPermission($idQuestion, $idProposition, $rolesArray): bool {
+        $question = (new QuestionRepository())->select($idQuestion);
         $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
         $proposition = (new PropositionRepository())->select($idProposition);
-        return $proposition->isVisible() || !(count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0);
+        return $question->getPeriodeActuelle() == 'Période d\'écriture' && $proposition->isVisible() && (count(array_intersect($rolesArray, $roles)) > 0);
     }
 
 }
