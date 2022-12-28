@@ -1,43 +1,46 @@
 <?php
 
-echo "A faire... Eh oui j'ai pas eu le temps je suis désolé :(";
+$values = ['-1', '1', '0'];
+$textes = ['de Non', 'de Oui', 'd\'Abstention'];
+$colors = ['f87171', '22c55e', 'facc15'];
 
+echo '<div class="flex flex-col gap-4 result-element">';
 
-$values = ['-1', '0', '1'];
-$colors = ['f87171', 'facc15', '22d3ee'];
+$i = 0;
 
-foreach ($propositions as $proposition) {
+foreach ($resultats as $idProposition => $resultat) {
 
-    echo '<div class="flex flex-row justify-end">';
+    echo '<div class="flex flex-col gap-1 lg:flex-row justify-center">';
 
-    $idProposition = $proposition->getIdProposition();
-    $resultats = $resultats[$idProposition];
     $responsable = $responsables[$idProposition];
 
-
     echo '
-    <div class="flex pr-3">
-        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2 items-center">
-            <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
+    <div class="flex" style="width: 25%">
+        <div class="flex gap-1 ' . ($i == 0 ? "bg-green-400 text-white" : "bg-white text-main"). ' shadow-md rounded-2xl w-fit p-2 items-center">
+            <span class="material-symbols-outlined pr-1">' . ($i == 0 ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
         </div>
     </div>
     ';
 
-    echo '<div class="proposition flex flex-row flex-grow items-center cursor-pointer">';
+    $resultat = $resultat[1];
 
-    // TODO afficher résultat avec le bon design
+    echo '<div class="flex w-full gap-4 items-center cursor-pointer">';
 
     for ($i = 0; $i < sizeof($values); $i++) {
-        foreach ($resultats[$idProposition] as $key => $val) {
-            if ($values[$i] == $key) {
+        foreach ($resultat as $note => $nombre) {
+            if ($values[$i] == $note) {
                 echo '
-                <div class="flex h-8 items-center justify-center" style="width: ' . $val . '%; background-color: #' . $colors[$i] . '">
-                    <p class="text-center text-white">' . $val . '%</p>
-                </div>
-                ';
+                    <div class="flex h-1/2 p-4 items-center justify-center rounded-md" style="width: 33%; background-color: #' . $colors[$i] . '">
+                        <p class="text-center text-white">' . $nombre . '% ' . $textes[$i] . '</p>
+                    </div>
+                    ';
             }
         }
     }
     echo '</div>';
     echo '</div>';
+
+    $i++;
 }
+
+echo '</div>';
