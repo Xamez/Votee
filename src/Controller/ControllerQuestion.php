@@ -90,6 +90,12 @@ class ControllerQuestion extends AbstractController {
                 $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             }
             $votants = (new QuestionRepository())->selectVotant($_GET['idQuestion']);
+            $groupesVotants = $groupes = (new GroupeRepository())->selectGroupeQuestion($_GET['idQuestion']);
+            if (sizeof($groupes) < 10) {
+                for ($i = 0; $i <  sizeof($votants) && $i < 10 - sizeof($groupes); $i++) {
+                    $groupesVotants['votant' . $i] = $votants[$i];
+                }
+            }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             self::afficheVue('view.php',
                 [
@@ -98,7 +104,8 @@ class ControllerQuestion extends AbstractController {
                     "sections" => $sections,
                     "organisateur" => $organisateur,
                     "responsables" => $responsables,
-                    "votants" => $votants,
+                    "groupesVotants" => $groupesVotants,
+                    "size" => sizeof($votants) + sizeof($groupes),
                     "pagetitle" => "Question",
                     "cheminVueBody" => "question/readQuestion.php",
                     "title" => $question->getTitre(),
@@ -145,13 +152,21 @@ class ControllerQuestion extends AbstractController {
     // TODO Ne pas afficher l'utilisateur responsable
     public static function addVotant() : void {
         $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&all");
+        }
+
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $votants = (new QuestionRepository())->selectVotant($idQuestion);
         $newUtilisateurs = array_udiff($utilisateurs, $votants, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
-
+        $groupesExistants = (new GroupeRepository())->selectGroupeQuestion($idQuestion);
         $groupes = (new GroupeRepository())->selectAll();
+        $newGroupes = array_udiff($groupes, $groupesExistants, function ($a, $b) {
+            return strcmp($a->getIdGroupe(), $b->getIdGroupe());
+        });
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Ajouter un votant",
@@ -161,12 +176,19 @@ class ControllerQuestion extends AbstractController {
                 "idQuestion" => $idQuestion,
                 "newUtilisateurs" => $newUtilisateurs,
                 "votants" => $votants,
-                "groupes" => $groupes
+                "groupes" => $groupesExistants,
+                "newGroupes" => $newGroupes
             ]);
     }
 
     public static function addedVotant() : void {
         $idQuestion = $_POST['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&all");
+        }
+
+        /* Gestion des ajouts et suppression des votants */
         $oldVotants = (new QuestionRepository())->selectVotant($idQuestion);
         $votants = [];
         foreach ($oldVotants as $votant) $votants[] = $votant->getLogin();
@@ -179,6 +201,18 @@ class ControllerQuestion extends AbstractController {
             $isOk = (new QuestionRepository())->supprimerVotant($idQuestion, $login);
         }
 
+        /* Gestion des ajouts et suppression des groupes */
+        $oldGroupes = (new GroupeRepository())->selectGroupeQuestion($idQuestion);
+        $groupes = [];
+        foreach ($oldGroupes as $groupe) $groupes[] = $groupe->getIdGroupe();
+        if (array_key_exists('groupesExist', $_POST)) $groupes = array_diff($groupes, $_POST['groupesExist']);
+        foreach ($_POST['groupes'] as $idGroupe) {
+            $isOk = (new GroupeRepository())->ajouterGroupeAQuestion($idQuestion, $idGroupe);
+        }
+        foreach ($groupes as $idGroupe) {
+            $isOk = (new GroupeRepository())->supprimerGroupeDeQuestion($idQuestion, $idGroupe);
+        }
+
         if ($isOk) (new Notification())->ajouter("success", "Les votants ont été ajouté avec succès.");
         else (new Notification())->ajouter("warning", "Certains votants n'ont pas pu être ajouté.");
         self::redirection("?controller=question&action=readQuestion&&idQuestion=" . $idQuestion);
@@ -187,11 +221,12 @@ class ControllerQuestion extends AbstractController {
 
 
     public static function updateQuestion() : void {
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
-            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
+        $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&all");
         }
+        $question = (new QuestionRepository())->select($idQuestion);
         self::afficheVue('view.php',
             [
                  "pagetitle" => "Modifier une question",
@@ -203,20 +238,21 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function updatedQuestion() : void {
-        $question = (new QuestionRepository())->select($_POST['idQuestion']);
-        if (!ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion()) == 'organisateur') {
-            (new Notification())->ajouter("danger","Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action= all");
+        $idQuestion = $_POST['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&all");
         }
+        $question = (new QuestionRepository())->select($idQuestion);
         $question->setVisibilite('visible');
         $question->setDescription($_POST['description']);
         $isOk = (new QuestionRepository())->modifier($question);
         if ($isOk) {
             (new Notification())->ajouter("success", "La question a été modifiée.");
-            self::redirection("?controller=question&action=addVotant&idQuestion=" . $_POST['idQuestion']);
+            self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         } else {
             (new Notification())->ajouter("warning", "La modification de la question a échoué.");
-            self::redirection("?controller=question&action=updateQuestion&idQuestion=" . $_POST['idQuestion']);
+            self::redirection("?controller=question&action=updateQuestion&idQuestion=$idQuestion");
         }
     }
 
@@ -225,8 +261,10 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
             self::redirection("?controller=question&action=all");
         }
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $votants = (new QuestionRepository())->selectVotant($_GET['idQuestion']);
+        $idQuestion = $_GET['idQuestion'];
+        $question = (new QuestionRepository())->select($idQuestion);
+        $groupes = (new GroupeRepository())->selectGroupeQuestion($idQuestion);
+        $votants = (new QuestionRepository())->selectVotant($idQuestion);
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Liste des votants",
@@ -234,8 +272,16 @@ class ControllerQuestion extends AbstractController {
                 "title" => "Liste des votants",
                 "subtitle" => $question->getTitre(),
                 "question" => $question,
+                "groupes" => $groupes,
                 "votants" => $votants
             ]);
+    }
+
+    /** Retourne true si la question est en phase d'ecriture et si l'utilisateur a les roles requis */
+    public static function hasPermission($idQuestion, $rolesArray): bool {
+        $question = (new QuestionRepository())->select($idQuestion);
+        $roles = ConnexionUtilisateur::getRolesQuestion($idQuestion);
+        return $question->getPeriodeActuelle() == 'Période d\'écriture' && (count(array_intersect($rolesArray, $roles)) > 0);
     }
 
 }

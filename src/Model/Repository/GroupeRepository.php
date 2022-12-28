@@ -60,4 +60,42 @@ class GroupeRepository extends AbstractRepository {
         }
     }
 
+    public function ajouterGroupeAQuestion($idQuestion, $idGroupe) {
+        $sql = "CALL AjouterGroupeAQuestion(:idQuestionTag, :idGroupeTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        try {
+            $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "idGroupeTag" => $idGroupe));
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    public function supprimerGroupeDeQuestion($idQuestion, $idGroupe) {
+        $sql = "CALL SupprimerGroupeDeQuestion(:idQuestionTag, :idGroupeTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        try {
+            $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "idGroupeTag" => $idGroupe));
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    public function selectGroupeQuestion($idQuestion): array {
+        $sql = "SELECT * FROM Groupes g JOIN ExisterGroupe a ON g.IDGROUPE = a.IDGROUPE WHERE IDQUESTION = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+            $groupes = $pdoStatement->fetchAll();
+            $groupesFormatObjet = array();
+            foreach ($groupes as $groupe) {
+                $groupesFormatObjet[] = $this->construire($groupe);
+            }
+            return $groupesFormatObjet;
+        } catch (PDOException) {
+            return [];
+        }
+    }
+
 }

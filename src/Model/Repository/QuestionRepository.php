@@ -45,7 +45,7 @@ class QuestionRepository extends AbstractRepository {
 
     /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est organisateur */
     public function selectQuestionOrga($login): array {
-        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOGIN IN (SELECT LOGIN FROM Organisateurs WHERE login = :paramTag)";
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_organisateur IN (SELECT login_organisateur FROM Organisateurs WHERE login_organisateur = :paramTag)";
         return self::selectAllCustom($sql, $login);
     }
 

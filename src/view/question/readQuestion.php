@@ -83,26 +83,32 @@ foreach ($propositions as $proposition) {
     }
 
 }
-
 echo '</div>
       <div class="flex flex-col gap-3">
          <h1 class="title text-dark text-2xl font-semibold">Votants</h1>
             <div class="flex flex-wrap gap-2 justify-center">';
-if (sizeof($votants) == 0) echo '<span class="text-center">Aucun votant</span>';
-for ($i = 0; $i < sizeof($votants) && $i < 10; $i++) {
-    echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-              <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($votants[$i]->getPrenom()) . ' ' . htmlspecialchars($votants[$i]->getNom()) . '
-          </div>';
+if (sizeof($groupesVotants) == 0) echo '<span class="text-center">Aucun votant</span>';
+foreach ($groupesVotants as $key=>$groupeVotant) {
+    if (trim($key, " 0..9") == 'votant') {
+        echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($groupeVotant->getPrenom()) . ' ' . htmlspecialchars($groupeVotant->getNom()) . '
+              </div>';
+    } else {
+        echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                <span class="material-symbols-outlined">group</span>' . htmlspecialchars($groupeVotant->getNomGroupe()). '
+              </div>';
+    }
 }
-if (sizeof($votants) > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
-                                    <span class="material-symbols-outlined">more_horiz</span>Voir plus
-                                  </a>';
+if ($size > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
+                        <span class="material-symbols-outlined">more_horiz</span>Voir plus
+                      </a>';
 echo '</div>
       <div class="flex gap-2 justify-between">';
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'all', 'title' => 'Retour', "logo" => 'reply']);
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
     if (in_array("Organisateur", $rolesQuestion)) {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Editer', "logo" => 'edit']);
+        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'addVotant', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Votants', "logo" => 'manage_accounts']);
     }
     if (!ConnexionUtilisateur::questionValide($question->getIdQuestion())) {
         if (ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
