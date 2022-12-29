@@ -16,7 +16,8 @@ class QuestionRepository extends AbstractRepository {
             'DATEFINQUESTION',
             'DATEDEBUTVOTE',
             'DATEFINVOTE',
-            'LOGIN',
+            'LOGIN_ORGANISATEUR',
+            'LOGIN_SPECIALISTE',
             'TYPEVOTE'
         );
     }
@@ -38,7 +39,8 @@ class QuestionRepository extends AbstractRepository {
             $questionFormatTableau['DATEFINQUESTION'],
             $questionFormatTableau['DATEDEBUTVOTE'],
             $questionFormatTableau['DATEFINVOTE'],
-            $questionFormatTableau['LOGIN'],
+            $questionFormatTableau['LOGIN_ORGANISATEUR'],
+            $questionFormatTableau['LOGIN_SPECIALISTE'],
             $questionFormatTableau['TYPEVOTE']
         );
     }
