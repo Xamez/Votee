@@ -26,7 +26,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function section() : void {
-        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
+        if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
             self::redirection("?controller=question&all");
         }
@@ -40,11 +40,11 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createQuestion(): void {
-        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
+        if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&all");
         }
-        $nbSections = $_POST['nbSections'];
+        $nbSections = $_REQUEST['nbSections'];
         $voteTypes = VoteTypes::toArray();
         $users = (new UtilisateurRepository())->selectAll();
         $users = array_filter($users, function ($user) {
@@ -117,7 +117,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function createdQuestion() : void {
-        if (!ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
+        if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&action=all");
         }
@@ -139,17 +139,20 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-        if ($isOk) {
+        if ($idQuestion && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
             self::redirection("?controller=question&action=addVotant&idQuestion=" . $idQuestion);
-        } else {
+        } else if (!$isOk) {
             (new QuestionRepository())->supprimer($idQuestion);
+            ConnexionUtilisateur::ajouterScoreQuestion();
+            (new Notification())->ajouter("warning", "Une erreur est survenu.");
+            self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
+        } else {
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-            self::redirection("?action=controller=question&action=createQuestion");
+            self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
     }
 
-    // TODO Ne pas afficher l'utilisateur responsable
     public static function addVotant() : void {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'])) {

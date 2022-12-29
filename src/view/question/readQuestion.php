@@ -49,6 +49,7 @@ foreach ($propositions as $proposition) {
     $idProposition = $proposition->getIdProposition();
     $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
 
+
     if ($proposition->isVisible()) {
         echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition='. rawurlencode($idProposition).'">
                 <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
@@ -115,7 +116,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'addVotant', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Votants', "logo" => 'manage_accounts']);
     }
     if (!ConnexionUtilisateur::questionValide($question->getIdQuestion())) {
-        if (ConnexionUtilisateur::creerProposition($question->getIdQuestion())) {
+        if (ConnexionUtilisateur::creerProposition($question->getIdQuestion()) || in_array("Organisateur", $rolesQuestion)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
         } else {
             AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $idQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);

@@ -11,9 +11,9 @@
 use App\Votee\Controller\AbstractController;
 use App\Votee\Lib\ConnexionUtilisateur;
 
-if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
+if (!ConnexionUtilisateur::estAdministrateur() && ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
     AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'section', 'title' => 'Créer une question', "logo" => 'add_circle']);
-} else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
+} else if (!ConnexionUtilisateur::estAdministrateur() && ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
     AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=question', 'title' => 'Faire une demande', "logo" => 'file_copy']);
 }
 echo '<div class="flex flex-col gap-3">';
