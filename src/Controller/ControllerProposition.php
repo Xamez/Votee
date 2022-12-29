@@ -5,6 +5,7 @@ namespace App\Votee\Controller;
 use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Texte;
+use App\Votee\Model\Repository\CommentaireRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -242,9 +243,10 @@ class ControllerProposition extends AbstractController {
         $isOk = true;
         $isOk &= (new PropositionRepository())->modifierProposition($idProposition, 'visible', null, $_POST['titreProposition']);
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
+            $textsection = htmlspecialchars($_POST['section' . $i]);
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $textsection, NULL);
             $isOk = (new TexteRepository())->modifier($texte);
+            $isOk &= (new CommentaireRepository)->supprimerCommentaireSiSectionModifier($_POST['idProposition'], $i);
         }
 
         if ($isOk) {
@@ -328,11 +330,13 @@ class ControllerProposition extends AbstractController {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
+            $commentaires = (new CommentaireRepository())->getCommentaireByIdProposition($_GET['idProposition']);
             self::afficheVue('view.php',
                 [
                     "visibilite" => $proposition->isVisible(),
                     "question" => $question,
                     "fils" => $fils,
+                    "commentaires" => $commentaires,
                     "idProposition" => $_GET['idProposition'],
                     "sections" => $sections,
                     "coAuteurs" => $coAuteurs,
@@ -375,6 +379,40 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("success", "La proposition a été supprimée.");
         } else (new Notification())->ajouter("warning", "La proposition n'a pas pu être supprimée.");
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_GET['idQuestion']);
+    }
+
+    public static function createdCommentaire(): void {
+        $commentaire = (array) json_decode($_POST['commentaire']);
+        if ((new CommentaireRepository())->ajouterCommentaireEtStocker($commentaire['idQuestion'], $commentaire['idProposition'],
+            $commentaire['numeroParagraphe'], $commentaire['indexCharDebut'],
+            $commentaire['indexCharFin'], $commentaire['texteCommentaire'])) {
+            (new Notification())->ajouter("success", "Le commentaire a été créer.");
+        } else {
+            (new Notification())->ajouter("warning", "Le commentaire n'a pas pu être créer.");
+        }
+    }
+
+    public static function updatedCommentaire(): void {
+        $commentaire = (array) json_decode($_POST['commentaire']);
+        $previousCommentaire = (new CommentaireRepository())->getCommentaireById($commentaire['idCommentaire']);
+        if ($previousCommentaire != null) {
+            if ($previousCommentaire->getTexteCommentaire() != $commentaire['texteCommentaire']) {
+                $previousCommentaire->setTexteCommentaire($commentaire['texteCommentaire']);
+                (new CommentaireRepository())->modifier($previousCommentaire);
+                (new Notification())->ajouter("success", "Le commentaire a été modifié.");
+            }
+        } else {
+            (new Notification())->ajouter("warning", "Le commentaire n'a pas pu être modifié.");
+        }
+    }
+
+    public static function deletedCommentaire(): void {
+        $commentaire = (array) json_decode($_POST['commentaire']);
+        if((new CommentaireRepository())->supprimer($commentaire['idCommentaire'])) {
+            (new Notification())->ajouter("success", "Le commentaire a été supprimé.");
+        } else {
+            (new Notification())->ajouter("warning", "Le commentaire n'a pas pu être supprimé.");
+        }
     }
 
     public static function createFusion(): void {
