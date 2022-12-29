@@ -1,6 +1,7 @@
 .proposition-markdown * {
 	all: revert;
 	font-family: inherit;
+	margin: 0;
 }
 
 
@@ -22,6 +23,7 @@ main { flex: 1; }
 
 /* Quelques classes pour des couleurs utile */ 
 .text-dark { color: #2E3436; }
+.text-light { color: rgba(174, 164, 255, 0.5); }
 .nav-button:hover { color: #ddd; }
 .text-main { color: #8080D7; }
 .border-main { border-color: #8080D7; }
@@ -110,8 +112,6 @@ label { font-weight: 600; }
 .toast-icon-success { background-color: #39b259; }
 .toast-icon-warning { background-color: #ee9500; }
 .toast-icon-danger { background-color: #eb4e2c; }
-
-
 
 .title {
 	display: flex;
