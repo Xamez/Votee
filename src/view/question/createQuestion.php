@@ -47,7 +47,7 @@
                 </div>
             </div>
         </div>
-        <h1 class="title text-dark text-2xl font-semibold"> Type de Vote<h1/>
+        <h1 class="title text-dark text-2xl font-semibold">Type de Vote<h1/>
         <div>
             <div class="flex gap-10 items-end">
                 <p class="w-36 font-semibold">Type de Vote :</p>
@@ -60,8 +60,21 @@
                 </select>
             </div>
         </div>
+        <h1 class="title text-dark text-2xl font-semibold">Spécialiste<h1/>
+            <div>
+                <div class="flex gap-10 items-end">
+                    <p class="w-36 font-semibold">Ajouter un spécialiste</p>
+                    <select name="loginSpe" class="p-2 rounded-md">
+                        <?php
+                        foreach ($users as $user) {
+                            echo '<option value="' . $user->getLogin() . '">' . $user->getNom() . ' ' . $user->getPrenom() . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
     </div>
-    <input type="text" hidden name="organisateur" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
+    <input type="text" hidden name="loginOrga" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
     <input type="number" hidden value=<?=$nbSections?> name="nbSections" required/>
     <input type="text" hidden value="visible" placeholder="visible" name="visibilite" required/>
     <div class="flex justify-center">

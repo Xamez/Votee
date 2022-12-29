@@ -12,7 +12,8 @@ class Question extends AbstractDataObject {
     private string $dateFinQuestion;
     private string $dateDebutVote;
     private string $dateFinVote;
-    private string $login;
+    private string $loginOrganisateur;
+    private ?string $loginSpecialiste;
     private string $voteType;
 
     public function __construct(
@@ -24,7 +25,8 @@ class Question extends AbstractDataObject {
         string $dateFinQuestion,
         string $dateDebutVote,
         string $dateFinVote,
-        string $login,
+        string $loginOrganisateur,
+        ?string $loginSpecialiste,
         string $voteType)
     {
         $this->idQuestion = $idQuestion;
@@ -35,7 +37,8 @@ class Question extends AbstractDataObject {
         $this->dateFinQuestion = $dateFinQuestion;
         $this->dateDebutVote = $dateDebutVote;
         $this->dateFinVote = $dateFinVote;
-        $this->login = $login;
+        $this->loginOrganisateur = $loginOrganisateur;
+        $this->loginSpecialiste = $loginSpecialiste;
         $this->voteType = $voteType;
     }
 
@@ -50,7 +53,8 @@ class Question extends AbstractDataObject {
             "DATEFINQUESTION" => $this->getDateFinQuestion(),
             "DATEDEBUTVOTE" => $this->getDateDebutVote(),
             "DATEFINVOTE" => $this->getDateFinVote(),
-            "LOGIN" => $this->getLogin(),
+            "LOGIN_ORGANISATEUR" => $this->getLogin(),
+            "LOGINSPE" => $this->getLoginSpecialiste(),
             "TYPEVOTE" => $this->getVoteType(),
         );
     }
@@ -89,9 +93,13 @@ class Question extends AbstractDataObject {
 
     public function setDateFinVote(string $dateFinVote): void { $this->dateFinVote = $dateFinVote; }
 
-    public function getLogin(): string { return $this->login; }
+    public function getLogin(): string { return $this->loginOrganisateur; }
 
-    public function setLogin(string $login): void { $this->login = $login; }
+    public function setLogin(string $loginOrganisateur): void { $this->loginOrganisateur = $loginOrganisateur; }
+
+    public function getLoginSpecialiste(): ?string { return $this->loginSpecialiste; }
+
+    public function setLoginSpecialiste(?string $loginSpecialiste): void { $this->loginSpecialiste = $loginSpecialiste; }
 
     public function getVoteType(): string {return $this->voteType;}
 
