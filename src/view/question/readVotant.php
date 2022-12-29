@@ -5,9 +5,11 @@
 use App\Votee\Controller\AbstractController;
 
 foreach ($groupes as $key=> $groupe) {
-    echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
+    echo '<a href="./frontController.php?controller=groupe&action=readGroupe&idGroupe=' . rawurlencode($groupe->getIdGroupe()). '">
+            <div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
                 <div class="flex gap-1 items-center" for="groupe' . $key . '"><span class="material-symbols-outlined">group</span>' . $groupe->getNomGroupe() . '</div>
-              </div>';
+            </div>
+          </a>';
 }
 ?>
 </div>
@@ -15,9 +17,11 @@ foreach ($groupes as $key=> $groupe) {
 <div class="flex flex-wrap gap-2 justify-center">
 <?php
 foreach ($votants as $key=> $votant) {
-        echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                <div class="flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $votant->getPrenom() . ' ' . $votant->getNom() . '</div>
-              </div>';
+        echo '<a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($votant->getLogin()). '">
+                <div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <div class="flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $votant->getPrenom() . ' ' . $votant->getNom() . '</div>
+                </div>
+              </a>';
 }
 ?>
 </div>
