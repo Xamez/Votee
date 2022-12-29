@@ -78,9 +78,11 @@ class ControllerGroupe extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
+        $exception = (new UtilisateurRepository())->selectAllAdministrateur();
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $membres = (new GroupeRepository())->selectMembres($_GET['idGroupe']);
-        $utilisateur = array_udiff($utilisateurs, $membres, function ($a, $b) {
+        if ($membres) $exception = array_merge($exception, $membres);
+        $utilisateur = array_udiff($utilisateurs, $exception, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
         self::afficheVue('view.php',

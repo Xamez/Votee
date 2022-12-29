@@ -156,10 +156,22 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
+        $question = (new QuestionRepository())->select($idQuestion);
+
+        /* Recupère les administrateurs, l'organisateur, les representant et les coAuteurs de la question */
+        $exception = (new UtilisateurRepository())->selectAllAdministrateur();
+        $actors = (new UtilisateurRepository())->selectAllActorQuestion($idQuestion);
+        $exception = array_merge($actors, $exception);
 
         $utilisateurs = (new UtilisateurRepository())->selectAll();
+
         $votants = (new QuestionRepository())->selectVotant($idQuestion);
-        $newUtilisateurs = array_udiff($utilisateurs, $votants, function ($a, $b) {
+        $votants = array_udiff($votants, array((new UtilisateurRepository())->select($question->getLogin())), function ($a, $b) {
+            return $a->getLogin() <=> $b->getLogin();
+        });
+        if ($votants) $exception = array_merge($exception,$votants);
+
+        $newUtilisateurs = array_udiff($utilisateurs, $exception, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
         $groupesExistants = (new GroupeRepository())->selectGroupeQuestion($idQuestion);
@@ -173,6 +185,7 @@ class ControllerQuestion extends AbstractController {
                 "cheminVueBody" => "question/addVotant.php",
                 "title" => "Ajouter un votant",
                 "subtitle" => "Ajouter un ou plusieurs votants à la question",
+                "actors" => $actors,
                 "idQuestion" => $idQuestion,
                 "newUtilisateurs" => $newUtilisateurs,
                 "votants" => $votants,

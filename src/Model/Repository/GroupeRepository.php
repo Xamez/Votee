@@ -98,4 +98,20 @@ class GroupeRepository extends AbstractRepository {
         }
     }
 
+    public function selectGroupeByLogin($login): array {
+        $sql = "SELECT * FROM Groupes g JOIN Appartenir a ON g.IDGROUPE = a.IDGROUPE WHERE LOGIN = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute(array("loginTag" => $login));
+            $groupes = $pdoStatement->fetchAll();
+            $groupesFormatObjet = array();
+            foreach ($groupes as $groupe) {
+                $groupesFormatObjet[] = $this->construire($groupe);
+            }
+            return $groupesFormatObjet;
+        } catch (PDOException) {
+            return [];
+        }
+    }
+
 }

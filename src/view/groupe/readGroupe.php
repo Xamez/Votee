@@ -1,12 +1,11 @@
+<h1 class="title text-dark text-2xl font-semibold mt-10">Membres</h1>
+<div class="flex flex-wrap gap-2 justify-center gap-2 border-2 p-8 rounded-3xl">
 <?php
 
 use App\Votee\Controller\AbstractController;
 use App\Votee\Lib\ConnexionUtilisateur;
 
 $rawIdGroupe = rawurlencode($groupe->getIdGroupe());
-
-echo '<h1 class="title text-dark text-2xl font-semibold mt-10">Membres</h1>
-      <div class="flex flex-wrap gap-2 justify-center gap-2 border-2 p-8 rounded-3xl">';
 if (sizeof($membres) > 0) {
     foreach ($membres as $membre) {
         echo '<a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($membre->getLogin()). '">

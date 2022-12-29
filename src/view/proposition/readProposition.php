@@ -26,7 +26,7 @@ foreach ($sections as $index=>$section) {
           <div class="proposition-markdown break-all text-justify">' . $textes[$index]->getTexte() . '</div>';
 }
 echo '</div>
-      <div class="flex gap-2 justify-between">';
+      <div class="flex flex-col sm:flex-row justify-center gap-2 justify-between">';
             AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
 
 if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {

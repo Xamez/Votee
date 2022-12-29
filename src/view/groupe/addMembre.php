@@ -3,16 +3,16 @@
     <div class="flex flex-wrap gap-2 justify-center">
         <?php
         foreach ($membres as $key=> $membre) {
-            echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                <input class="utilCheck" type="checkbox" name="membres[]" id="membre' . $key . '" value="' . $membre->getLogin() . '" checked/>
-                <label class="flex gap-1 items-center" for="membre' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $membre->getPrenom() . ' ' . $membre->getNom() . '</label>
-              </div>';
+            echo '<div class="border-2 border-transparent items-center util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <input class="utilCheck" type="checkbox" name="membres[]" id="membre' . $key . '" value="' . $membre->getLogin() . '" checked/>
+                    <label class="cursor-pointer flex gap-1 items-center" for="membre' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $membre->getPrenom() . ' ' . $membre->getNom() . '</label>
+                </div>';
         }
 
         foreach ($utilisateurs as $key=>$utilisateur) {
-            echo '<div class="border-2 border-transparent util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
+            echo '<div class="border-2 border-transparent items-center util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
                     <input class="utilCheck" type="checkbox" name="utilisateurs[]" id="util' . $key . '" value="' . $utilisateur->getLogin() . '"/>
-                    <label class="flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $utilisateur->getPrenom() . ' ' . $utilisateur->getNom() . '</label>
+                    <label class="cursor-pointer flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $utilisateur->getPrenom() . ' ' . $utilisateur->getNom() . '</label>
                   </div>';
         }
         ?>

@@ -1,16 +1,16 @@
+<form action="./frontController.php?controller=question&action=all" method="GET">
+    <div class="flex px-3 w-80 rounded-3xl border-solid border-zinc-800 border-2">
+        <input class="w-12 bg-transparent rounded-none material-symbols-outlined" id="submit" type="submit" value="search">
+        <input class="search-field w-full" id="search" name="search" maxlength="100" type="text" placeholder="Titre de question" value="<?= ($_GET['search'] ?? "") ?>">
+    </div>
+    <input type="hidden" name="action" value="all">
+    <input type="hidden" name="controller" value="question">
+</form>
 <?php
 
 use App\Votee\Controller\AbstractController;
 use App\Votee\Lib\ConnexionUtilisateur;
 
-echo '<form action="./frontController.php?controller=question&action=all" method="GET">
-        <div class="flex px-3 w-80 rounded-3xl border-solid border-zinc-800 border-2">
-            <input class="w-12 bg-transparent rounded-none material-symbols-outlined" id="submit" type="submit" value="search">
-            <input class="search-field w-full" id="search" name="search" maxlength="100" type="text" placeholder="Titre de question" value="'. ($_GET['search'] ?? "") . '">
-        </div>       
-        <input type="hidden" name="action" value="all">
-        <input type="hidden" name="controller" value="question">
-      </form>';
 if (ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
     AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'section', 'title' => 'Créer une question', "logo" => 'add_circle']);
 } else if (ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
