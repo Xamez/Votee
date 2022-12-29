@@ -108,6 +108,7 @@ class UtilisateurRepository extends AbstractRepository {
         return (bool)$isAdmin;
     }
 
+
     public function selectAllAdministrateur() : array {
         $admin = [];
         $sql = "SELECT u.* FROM Administrateurs a JOIN Utilisateurs u ON u.login = a.login";
@@ -117,6 +118,13 @@ class UtilisateurRepository extends AbstractRepository {
             $admin[] = $this->construire($utilisateur);
         }
         return $admin;
+    }
+
+    /** Rajoute 1 point au score si il y a eu une erreur dans l'insertion d'une question */
+    public function ajouterScoreQuestion($login): void {
+        $sql = "UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT + 1 WHERE login = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("loginTag" => $login));
     }
 
 }

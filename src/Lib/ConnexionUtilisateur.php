@@ -121,4 +121,11 @@ class ConnexionUtilisateur {
         }
         return null;
     }
+
+    public static function ajouterScoreQuestion():void {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            (new UtilisateurRepository())->ajouterScoreQuestion($utilisateur->getLogin());
+        }
+    }
 }

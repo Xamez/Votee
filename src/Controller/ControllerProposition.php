@@ -121,9 +121,11 @@ class ControllerProposition extends AbstractController {
 
     public static function createProposition(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($_GET['idQuestion']);
         if (!ConnexionUtilisateur::estConnecte()
-            || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())
-            || ConnexionUtilisateur::questionValide($question->getIdQuestion())) {
+            || ConnexionUtilisateur::questionValide($question->getIdQuestion())
+            || (ConnexionUtilisateur::creerProposition($question->getIdQuestion()
+                || in_array("Organisateur", $rolesQuestion)))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
@@ -145,10 +147,13 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function createdProposition(): void {
-        $question = (new QuestionRepository())->select($_POST['idQuestion']);
+        $idQuestion = $_POST['idQuestion'];
+        $question = (new QuestionRepository())->select($idQuestion);
+        $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!ConnexionUtilisateur::estConnecte()
-            || !ConnexionUtilisateur::creerProposition($question->getIdQuestion())
-            || ConnexionUtilisateur::questionValide($question->getIdQuestion())) {
+            || ConnexionUtilisateur::questionValide($question->getIdQuestion())
+            || (ConnexionUtilisateur::creerProposition($question->getIdQuestion()
+                || in_array("Organisateur", $rolesQuestion)))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
@@ -158,7 +163,7 @@ class ControllerProposition extends AbstractController {
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
             $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
             $texte = new Texte(
-                $_POST['idQuestion'],
+                $idQuestion,
                 $_POST['idSection' . $i],
                 $idProposition,
                 $textsection,
@@ -167,14 +172,14 @@ class ControllerProposition extends AbstractController {
             $isOk = (new TexteRepository())->sauvegarder($texte);
         }
 
-        $isOk &= (new PropositionRepository())->ajouterResponsable($_POST['organisateur'], $idProposition, NULL, $_POST['idQuestion'], 0);
+        $isOk &= (new PropositionRepository())->ajouterResponsable($_POST['organisateur'], $idProposition, NULL, $idQuestion, 0);
         if ($isOk) {
             (new Notification())->ajouter("success", "La proposition a été créée.");
-            self::redirection("?controller=proposition&action=addCoauteur&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $idProposition);
+            self::redirection("?controller=proposition&action=addCoauteur&idQuestion=$idQuestion&idProposition=" . $idProposition);
         } else {
             (new PropositionRepository())->supprimer($idProposition);
             (new Notification())->ajouter("warning", "L'ajout de la proposition a échoué.");
-            self::redirection("?controller=proposition&action=createProposition&idQuestion=" . $_POST['idQuestion']);
+            self::redirection("?controller=proposition&action=createProposition&idQuestion=$idQuestion");
         }
     }
 
