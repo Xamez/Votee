@@ -1,3 +1,5 @@
+<script type="text/javascript" src="assets/js/proposition.js"></script>
+
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=createdProposition">
     <div class="flex gap-2 items-center">
         <p class="text-main font-semibold">Responsable :</p>
@@ -12,7 +14,7 @@
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
             echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-                  <textarea class="border-2 max-h-96 h-52 whitespace-pre-wrap" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required></textarea>
+                  <textarea class="section border-2 max-h-96 h-52 whitespace-pre-wrap" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required></textarea>
                   <input type="hidden" name="idSection' . $index . '" value="'. $section->getIdSection(). '">';
         }
         ?>
