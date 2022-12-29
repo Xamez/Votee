@@ -25,12 +25,14 @@ function performRequest(url, data) {
     });
 }
 
-function getElementId(element) {
+function getElement(element) {
     let myElement = element;
     while (myElement.id === "")
         myElement = myElement.parentElement;
-    return myElement.id;
+    return myElement;
 }
+
+let popup;
 
 window.onload = () => {
 
@@ -44,16 +46,14 @@ window.onload = () => {
     const commentaryText = document.getElementById('text-commentary');
     const commentaries = document.getElementsByClassName('commentary');
     
-    const popup = document.getElementById('popup');
-
-    let selectedText = "";
+    popup = document.getElementById('popup');
 
     let moved = false;
 
     const createTooltip = (span, textCommentaire) => {
         const tooltip = document.createElement('p');
         tooltip.id = 'tooltip';
-        tooltip.classList.add('flex', 'z-1', 'absolute', 'bg-main', 'text-white', 'text-sm', 'p-2', 'rounded', 'shadow-lg');
+        tooltip.classList.add('flex', 'z-1', 'absolute', 'bg-main', 'text-white', 'text-sm', 'font-normal', 'p-2', 'rounded', 'shadow-lg');
         tooltip.style.top = event.pageY + 'px';
         tooltip.style.left = event.pageX + 'px';
         tooltip.innerText = textCommentaire;
@@ -70,20 +70,19 @@ window.onload = () => {
         const container = document.createElement('div');
         container.classList.add('flex', 'flex-row', 'justify-between', 'align-top');
 
-        const p = document.createElement('p');
-        p.contentEditable = 'true';
-        p.addEventListener('keyup', debounce( () => {
-            const data = {'idCommentaire': span.id, 'texteCommentaire': p.innerText};
+        const input = document.createElement('input');
+        input.addEventListener('keyup', debounce( () => {
+            const data = {'idCommentaire': span.id, 'texteCommentaire': input.value};
             performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(data))
                 .then(() => window.location.reload());
         }, 1000));
-        p.innerText = textCommentaire;
+        input.value = textCommentaire;
 
         const closeButton = document.createElement('span');
         closeButton.classList.add('cursor-pointer', 'material-symbols-outlined', 'text-red-500', 'hover:text-red-600', 'ml-4');
         closeButton.innerText = 'close';
         closeButton.addEventListener('click', () => tooltip.remove());
-        container.appendChild(p);
+        container.appendChild(input);
         container.appendChild(closeButton);
 
         const deleteCommentary = document.createElement('button');
@@ -142,7 +141,7 @@ window.onload = () => {
     document.addEventListener('mousemove', (e) => { performHidePopup(e); moved = true; });
 
     document.addEventListener('mouseup', (e) => {
-        // TODO: revoir ça
+
         const selection = window.getSelection ? window.getSelection() : document.selection.createRange();
         let selectedHtml = "";
         if (selection.rangeCount) {
@@ -153,28 +152,38 @@ window.onload = () => {
             }
             selectedHtml = container.innerHTML;
         }
-        // FIN TODO
         const selectedText = window.getSelection();
+
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
         if (pCommentaryButton.classList.contains('line-through')) return;
         const selectedParagraph = selection.anchorNode.parentElement;
         if (selectedParagraph !== selection.focusNode.parentElement) return;
-        let idElement = getElementId(selectedParagraph);
-        if (idElement === "") return;
+        let element = getElement(selectedParagraph);
+        if (element === "") return;
+
         performHidePopup(e);
-        let numParagraph = parseInt(idElement);
-        commentary.numeroParagraphe = numParagraph;
-        if (selectedParagraph.parentElement.id === "") return;
-        performHidePopup(e);
-        commentary.numeroParagraphe = numParagraph;
-        // TODO: Problème en raison des balises compté dans outerHTML (pour avoir le bon index et selectedText qui prends pas en compte)
-        commentary.indexCharDebut = selectedParagraph.outerHTML.indexOf(selectedHtml);
+
+        commentary.numeroParagraphe = parseInt(element.id);
+
+        // On fait ça car le texte sélectionné considère que c'est des "<br>" mais dans le source code c'est des "<br />
+        selectedHtml = selectedHtml.replaceAll("<br>", "<br />");
+
+        // PROBLEME 'd&#039;hui<br /> Super !' ENCODAGE DES APOSTROPHES
+        // PROBLEME LISTE A PUCE
+
+        console.log(selectedHtml);
+
+        commentary.indexCharDebut = element.getAttribute('data-id').indexOf(selectedHtml);
         commentary.indexCharFin = commentary.indexCharDebut + selectedText.toString().length;
-        // FIN TODO
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
     });
 
+}
+
+window.onresize = () => {
+    if (popup.style.display === 'none') return;
+    popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
 }

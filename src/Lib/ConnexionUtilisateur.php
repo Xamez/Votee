@@ -79,6 +79,10 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    public static function estLoginAdministrateur($login) : bool {
+        return (new UtilisateurRepository())->selectAdministrateur($login);
+    }
+
     /** Retourne l'ensemble des roles de l'utilisateur connecté sur la question donnée
      * parmis les roles suivants : "Organisateur", "Responsable", "CoAuteur", "Votant"
      */

@@ -1,6 +1,7 @@
 .proposition-markdown * {
 	all: revert;
 	font-family: inherit;
+	margin: 0;
 }
 
 
