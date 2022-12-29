@@ -132,4 +132,16 @@ class ControllerUtilisateur extends AbstractController {
             ]);
     }
 
+    public static function readUtilisateur(): void {
+        $login = $_GET['login'];
+        $utilisateur = (new UtilisateurRepository())->select($login);
+        self::afficheVue('view.php',
+            [
+                "utilisateurC" => $utilisateur,
+                "pagetitle" => "Utilisateur",
+                "cheminVueBody" => "utilisateur/readUtilisateur.php",
+                "title" => "Utilisateur",
+            ]);
+    }
+
 }

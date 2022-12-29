@@ -90,13 +90,17 @@ echo '</div>
 if (sizeof($groupesVotants) == 0) echo '<span class="text-center">Aucun votant</span>';
 foreach ($groupesVotants as $key=>$groupeVotant) {
     if (trim($key, " 0..9") == 'votant') {
-        echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-                <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($groupeVotant->getPrenom()) . ' ' . htmlspecialchars($groupeVotant->getNom()) . '
-              </div>';
+        echo '<a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($groupeVotant->getLogin()). '">
+                <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($groupeVotant->getPrenom()) . ' ' . htmlspecialchars($groupeVotant->getNom()) . '
+                </div>
+              </a>';
     } else {
-        echo '<div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-                <span class="material-symbols-outlined">group</span>' . htmlspecialchars($groupeVotant->getNomGroupe()). '
-              </div>';
+        echo '<a href="./frontController.php?controller=groupe&action=readGroupe&idGroupe=' . rawurlencode($groupeVotant->getIdGroupe()). '">
+                <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">group</span>' . htmlspecialchars($groupeVotant->getNomGroupe()). '
+                </div>
+               </a>';
     }
 }
 if ($size > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
