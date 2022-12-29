@@ -34,10 +34,11 @@ class ControllerProposition extends AbstractController {
 
     public static function createdVote(): void {
         $roles = ConnexionUtilisateur::getRolesQuestion($_POST['idQuestion']);
+        $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if (!(count(array_intersect(['Responsable', 'Organisateur', 'Votant'], $roles)) > 0)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
-        } else {
+        } else if ($question->getPeriodeActuelle() == "Période de vote") {
             $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
             if ($vote)
                 (new Notification())->ajouter("success", "Le vote a bien été effectué.");
@@ -47,6 +48,9 @@ class ControllerProposition extends AbstractController {
                 self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
             else
                 self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
+        } else {
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas voter en dehors de la période de vote.");
+            self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . '&idProposition=' . $_POST['idProposition']);
         }
     }
 
