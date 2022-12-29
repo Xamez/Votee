@@ -30,30 +30,25 @@ if ($fils) {
 
 echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 
-//foreach ($sections as $index=>$section) {
-//    echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . htmlspecialchars($section->getTitreSection()) . '</h1>
-//          <div class="proposition-markdown break-all text-justify">' . $textes[$index]->getTexte() . '</div>';
-//}
-
 foreach ($sections as $numParagraphe => $section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
     $sectionDescHTML = $textes[$numParagraphe]->getTexte();
 
     $paragraph = "";
-    $paragraphRaw = "";
+    $paragraphRaw = ""; // version sans les span des commentaires
 
     $sectionDescHTMLChars = str_split($sectionDescHTML);
 
     foreach ($sectionDescHTMLChars as $key => $char) {
-
         foreach ($commentaires as $commentaire) {
             if ($commentaire->getNumeroParagraphe() == $numParagraphe) {
-                if ($commentaire->getIndexCharDebut() === $key)
+                if ($commentaire->getIndexCharDebut() === $key) {
                     $paragraph .= '<span id="' . $commentaire->getIdCommentaire() . '" class="commentary cursor-pointer bg-light" data-id="' . htmlspecialchars($commentaire->getTexteCommentaire()) . '">';
-                else if ($commentaire->getIndexCharFin() == $key)
+                } else if ($commentaire->getIndexCharFin() == $key)
                     $paragraph .= '</span>';
             }
         }
+
         $paragraphRaw .= $char;
         $paragraph .= $char;
     }

@@ -229,10 +229,10 @@ class ControllerProposition extends AbstractController {
         $isOk = true;
         $isOk &= (new PropositionRepository())->modifierProposition($idProposition, 'visible', null, $_POST['titreProposition']);
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $textsection = nl2br(htmlspecialchars($_POST['section' . $i]));
+            $textsection = htmlspecialchars($_POST['section' . $i]);
             $texte = new Texte($_POST['idQuestion'], $_POST['idSection' . $i], $idProposition, $textsection, NULL);
             $isOk = (new TexteRepository())->modifier($texte);
-            $isOk &= (new CommentaireRepository)->supprimerCommentaireSiSectionModifier($_GET['idProposition'], $i);
+            $isOk &= (new CommentaireRepository)->supprimerCommentaireSiSectionModifier($_POST['idProposition'], $i);
         }
 
         if ($isOk) {

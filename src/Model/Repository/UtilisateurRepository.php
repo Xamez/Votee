@@ -85,7 +85,7 @@ class UtilisateurRepository extends AbstractRepository {
 
     public static function getAdmins() : array {
         $sql = "SELECT * FROM Administrateurs";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute();
         $admins = [];
         $result = $pdoStatement->fetchAll();
