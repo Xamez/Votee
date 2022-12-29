@@ -44,8 +44,8 @@ window.onload = () => {
     const commentaryButton = document.getElementById('commentary-button');
     const pCommentaryButton = commentaryButton.children[1];
     const commentaryText = document.getElementById('text-commentary');
-    const commentaries = document.getElementsByClassName('commentary');
-    
+    const commentaries = [...document.getElementsByClassName('commentary')];
+
     popup = document.getElementById('popup');
 
     let moved = false;
@@ -99,8 +99,7 @@ window.onload = () => {
         span.appendChild(tooltip);
     }
 
-    for (let i = 0; i < commentaries.length; i++) {
-        let commentary = commentaries[i];
+    commentaries.forEach(commentary => {
         commentary.addEventListener("mouseover", e => {
             const id = e.target.getAttribute("data-id");
             if (id && pCommentaryButton.classList.contains('line-through')) createTooltip(e.target, id);
@@ -115,7 +114,7 @@ window.onload = () => {
             const id = e.target.getAttribute("data-id");
             if (id && !pCommentaryButton.classList.contains('line-through')) createEditableCommentary(e.target, id);
         });
-    }
+    });
 
     createCommentaryButton.addEventListener('click', () => {
         commentary.texteCommentaire = commentaryText.value;
@@ -152,7 +151,6 @@ window.onload = () => {
             }
             selectedHtml = container.innerHTML;
         }
-        const selectedText = window.getSelection();
 
         if (selection.type !== 'Range') return;
         if (popup.style.display !== 'none') return;
@@ -169,13 +167,27 @@ window.onload = () => {
         // On fait ça car le texte sélectionné considère que c'est des "<br>" mais dans le source code c'est des "<br />
         selectedHtml = selectedHtml.replaceAll("<br>", "<br />");
 
-        // PROBLEME 'd&#039;hui<br /> Super !' ENCODAGE DES APOSTROPHES
-        // PROBLEME LISTE A PUCE
+        const rawText = element.getAttribute('data-id');
 
-        console.log(selectedHtml);
+        // ne devrait jamais arrivé mais au cas où un de ces caractères est dans le texte, on arrête tout pour éviter les bugs
+        if (selectedHtml.includes("&amp;") || selectedHtml.includes("&lt;") || selectedHtml.includes("&gt;")) return;
 
-        commentary.indexCharDebut = element.getAttribute('data-id').indexOf(selectedHtml);
-        commentary.indexCharFin = commentary.indexCharDebut + selectedText.toString().length;
+        const selectedHtmlEntityReference = selectedHtml
+            .replaceAll("\"", "&quot;")
+            .replaceAll("'", "&#039;")
+
+        commentary.indexCharDebut = rawText.indexOf(selectedHtml);
+        if (commentary.indexCharDebut === -1) return;
+
+        let nbSpecialChars = 0;
+        for (let i = 0; i < commentary.indexCharDebut; i++) {
+            if (rawText[i] === '\"') nbSpecialChars++;
+            else if (rawText[i] === '\'') nbSpecialChars++;
+        }
+
+        commentary.indexCharDebut += nbSpecialChars * 5;
+        commentary.indexCharFin = commentary.indexCharDebut + selectedHtmlEntityReference.toString().length;
+
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;

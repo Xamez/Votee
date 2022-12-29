@@ -4,7 +4,6 @@ namespace App\Votee\Controller;
 
 use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
-use App\Votee\Model\DataObject\Commentaire;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\VoteTypes;
@@ -50,7 +49,6 @@ class ControllerQuestion extends AbstractController {
         $users = (new UtilisateurRepository())->selectAll();
         $admins = UtilisateurRepository::getAdmins();
         $users = array_filter($users, function ($user) use ($admins) {
-            // on garde que ceux qui ne sont pas admins et lui même
             return $user->getLogin() !== ConnexionUtilisateur::getUtilisateurConnecte()->getLogin() && !in_array($user->getLogin(), $admins);
         });
         self::afficheVue('view.php',
