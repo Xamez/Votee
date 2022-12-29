@@ -48,8 +48,10 @@ class ControllerQuestion extends AbstractController {
         $nbSections = $_POST['nbSections'];
         $voteTypes = VoteTypes::toArray();
         $users = (new UtilisateurRepository())->selectAll();
-        $users = array_filter($users, function ($user) {
-            return $user->getLogin() !== ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        $admins = UtilisateurRepository::getAdmins();
+        $users = array_filter($users, function ($user) use ($admins) {
+            // on garde que ceux qui ne sont pas admins et lui même
+            return $user->getLogin() !== ConnexionUtilisateur::getUtilisateurConnecte()->getLogin() && !in_array($user->getLogin(), $admins);
         });
         self::afficheVue('view.php',
             [
@@ -131,10 +133,7 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-//        foreach ($_POST['votant'] as $votant)
-//            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $votant);
-//        $idPersonne = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
-//        (new QuestionRepository())->ajouterVotant($idQuestion, $idPersonne);
+        $isOk &= (new QuestionRepository())->ajouterSpecialiste($_POST['loginSpe']);
         if ($isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
             self::redirection("?controller=question&action=addVotant&idQuestion=" . $idQuestion);
