@@ -7,6 +7,7 @@ use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Utilisateur;
 use App\Votee\Model\Repository\DemandeRepository;
+use App\Votee\Model\Repository\GroupeRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 
@@ -135,9 +136,11 @@ class ControllerUtilisateur extends AbstractController {
     public static function readUtilisateur(): void {
         $login = $_GET['login'];
         $utilisateur = (new UtilisateurRepository())->select($login);
+        $groupes = (new GroupeRepository())->selectGroupeByLogin($login);
         self::afficheVue('view.php',
             [
                 "utilisateurC" => $utilisateur,
+                "groupes" => $groupes,
                 "pagetitle" => "Utilisateur",
                 "cheminVueBody" => "utilisateur/readUtilisateur.php",
                 "title" => "Utilisateur",

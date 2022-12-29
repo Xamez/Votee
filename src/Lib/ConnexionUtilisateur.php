@@ -72,6 +72,9 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    /**
+     * Retourne si l'utilisateur connecté est un administrateur
+     */
     public static function estAdministrateur() : bool {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->selectAdministrateur(Session::getInstance()->lire(static::$cleConnexion));

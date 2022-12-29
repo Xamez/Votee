@@ -257,13 +257,15 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-
         $question = (new QuestionRepository())->select($idQuestion);
+
+        $exception = (new UtilisateurRepository())->selectAllAdministrateur();
+        $exception[] = (new UtilisateurRepository())->selectResp($idProposition);
+
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
-        $utilsProp = $coAuteurs;
-        $utilsProp[] = (new UtilisateurRepository())->selectResp($idProposition);
-        $utilisateur = array_udiff($utilisateurs, $utilsProp, function ($a, $b) {
+        if ($coAuteurs) $exception = array_merge($exception, $coAuteurs);
+        $utilisateur = array_udiff($utilisateurs, $exception, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
         self::afficheVue('view.php',
@@ -488,6 +490,22 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
         }
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);
+    }
+
+    public static function readCoauteur(): void {
+        $idProposition = $_GET['idProposition'];
+        $idQuestion = $_GET['idQuestion'];
+        $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Liste des co-auteurs",
+                "coAuteurs" => $coAuteurs,
+                "idProposition" => $idProposition,
+                "idQuestion" => $idQuestion,
+                "cheminVueBody" => "proposition/readCoauteur.php",
+                "title" => "Co-auteurs",
+                "subtitle" => "Liste des co-auteurs"
+            ]);
     }
 
     /** Retourne true si la proposition est visible, si la question est en phase d'ecriture et si l'utilisateur a les roles requis */

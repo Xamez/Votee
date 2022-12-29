@@ -58,6 +58,21 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
+    // TODO La remplacer a terme par une verification de la table existe
+    public function selectAllActorQuestion($idQuestion): array {
+        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$idQuestion));
+        $utilisateurs = [];
+        foreach ($propositions as $proposition) {
+            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($proposition->getIdProposition());
+            if ($coAuteurs) $utilisateurs = array_merge($utilisateurs, $coAuteurs);
+            $utilisateurs[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
+        }
+        $question = (new QuestionRepository())->select($idQuestion);
+        $utilisateurs[] = (new UtilisateurRepository())->select($question->getLogin());
+        $utilisateurs = array_unique($utilisateurs, SORT_REGULAR);
+        return $utilisateurs;
+    }
+
     public function selectCoAuteur($idProposition): array {
         $coAuteurs = [];
         $sql = "SELECT u.* FROM RedigerCA r
@@ -92,4 +107,16 @@ class UtilisateurRepository extends AbstractRepository {
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
     }
+
+    public function selectAllAdministrateur() : array {
+        $admin = [];
+        $sql = "SELECT u.* FROM Administrateurs a JOIN Utilisateurs u ON u.login = a.login";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute();
+        foreach ($pdoStatement as $utilisateur) {
+            $admin[] = $this->construire($utilisateur);
+        }
+        return $admin;
+    }
+
 }

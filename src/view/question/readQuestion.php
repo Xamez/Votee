@@ -1,49 +1,49 @@
-<?php
-
-use App\Votee\Controller\AbstractController;
-use App\Votee\Lib\ConnexionUtilisateur;
-
-$rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
-$idQuestion = rawurldecode($question->getIdQuestion());
-echo '<div class="flex flex-col gap-10 mt-10">';
-echo '<div class="flex flex-col gap-3">
-      <div class="flex items-center gap-2">
-        <p class="text-main font-semibold">Organisateur : 
-        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-            <span class="material-symbols-outlined">account_circle</span>'
-                . htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) .
-        '</div>
+<div class="flex flex-col gap-10 mt-10">
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+            <p class="text-main font-semibold">Organisateur :
+            <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                <span class="material-symbols-outlined">account_circle</span>
+                <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
+            </div>
+            </p>
+        </div>
+        <p>
+            <span class="text-main font-semibold">Période actuelle : </span>
+            <?= $question->getPeriodeActuelle() ?>
         </p>
-      </div>
-      <p>
-        <span class="text-main font-semibold">Période actuelle : </span>' .
-            $question->getPeriodeActuelle() . '
-      </p>
-      </div>
-      <div class="flex flex-col gap-3">
-      <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>';
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
+        <?php
 
-foreach ($sections as  $key=>$section) {
-    echo '<p class="text-xl text-main font-bold">' . $key + 1  . ' - '
-            . htmlspecialchars($section->getTitreSection()) . '
+        use App\Votee\Controller\AbstractController;
+        use App\Votee\Lib\ConnexionUtilisateur;
+
+        $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
+        $idQuestion = rawurldecode($question->getIdQuestion());
+
+        foreach ($sections as  $key=>$section) {
+            echo '<p class="text-xl text-main font-bold">' . $key + 1  . ' - '
+                . htmlspecialchars($section->getTitreSection()) . '
           </p>';
-}
-
-echo '</div>
-      <div class="flex flex-col gap-3">
-          <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-          <p>
-            <span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span> 
-            Du '. $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() .'
-          </p>
-          <p>
-            <span class="text-xl text-main font-bold text-lg">Période de vote : </span> 
-            Du '. $question->getDateDebutVote().' au ' . $question->getDateFinVote() .'
-          </p>
-      </div>
-      <div class="flex flex-col gap-3">
-      <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>';
-
+        }
+        ?>
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+        <p>
+            <span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span>
+            Du <?= $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() ?>
+        </p>
+        <p>
+            <span class="text-xl text-main font-bold text-lg">Période de vote : </span>
+            Du <?= $question->getDateDebutVote().' au ' . $question->getDateFinVote() ?>
+        </p>
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
+<?php
 if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 foreach ($propositions as $proposition) {
     $idProposition = $proposition->getIdProposition();
@@ -106,7 +106,7 @@ foreach ($groupesVotants as $key=>$groupeVotant) {
 if ($size > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
                         <span class="material-symbols-outlined">more_horiz</span>Voir plus
                       </a>';
-echo '</div>
+echo '</div></div>
       <div class="flex gap-2 justify-between">';
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'all', 'title' => 'Retour', "logo" => 'reply']);
 if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
@@ -134,5 +134,4 @@ if (sizeof($propositions) > 0) {
     }
 }
 echo '</div>
-     </div>
     </div>';
