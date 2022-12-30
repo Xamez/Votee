@@ -3,13 +3,13 @@
 use App\Votee\Controller\AbstractController;
 use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
+
 require "propositionHeader.php";
 
 $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
 $rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
 $rawIdProposition = rawurlencode($idProposition);
 $rawIdQuestion = rawurlencode($question->getIdQuestion());
-
 
 echo '
 <div id="ids">
@@ -62,15 +62,14 @@ foreach ($sections as $numParagraphe => $section) {
 }
 
 echo '</div>
-      <div class="flex gap-2 justify-between">';
+      <div class="flex flex-col sm:flex-row justify-center gap-2 justify-between">';
             AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
 
 if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
 
-    //if ($visibilite && (count(array_intersect(['Specialiste'], $rolesQuest)) > 0)) { TODO REMETTRE QD SPECIALISTE IMPLEMENTE
-    if ($visibilite ) {
+    echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
 
-        echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
+    if (count(array_intersect(['Specialiste'], $rolesQuest)) > 0) {
 
         echo '
             <div id="popup" class="hidden fixed z-1 bg-main text-white rounded-xl p-4">
@@ -95,11 +94,13 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
 
     if ((count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'updateProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Editer', "logo" => 'edit']);
-        AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'deleteProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Supprimer', "logo" => 'delete']);
-
+        if (in_array('Responsable', $roles)) {
+            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'addCoauteur', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'CoAuteurs', "logo" => 'manage_accounts']);
+            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'deleteProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Supprimer', "logo" => 'delete']);
+        }
     }
     if (!in_array('Responsable', $roles)
-        && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($question->getIdQuestion()))) {
+        && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion()))) {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createFusion', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Créer une fusion', "logo" => 'upload']);
         } else {

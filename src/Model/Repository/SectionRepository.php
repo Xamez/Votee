@@ -6,19 +6,14 @@ use App\Votee\Model\DataObject\Section;
 
 class SectionRepository extends AbstractRepository {
 
-    protected function getNomsColonnes(): array {
-        return array(
-            'IDSECTION',
-            'TITRESECTION',
-            'IDQUESTION',
-            );
-    }
+
+    function getNomSequence(): string { return ""; }
     function getNomTable(): string { return "Sections"; }
     function getNomClePrimaire(): string { return "IDQUESTION"; }
 
-    function getProcedureInsert(): string { return "AjouterSections"; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterSections', 'TITRESECTION', 'IDQUESTION'); }
     function getProcedureDelete(): string { return ""; }
-    function getProcedureUpdate(): string { return ""; }
+    function getProcedureUpdate(): array { return []; }
 
     public function construire(array $sectionFormatTableau) : Section {
         return new Section(

@@ -63,7 +63,7 @@ class ConnexionUtilisateur {
     /**
      * Retourne si l'utilisateur connecté possède une proposition visible pour la question donnée
      */
-    public static function questionValide($idQuestion): bool {
+    public static function hasPropositionVisible($idQuestion): bool {
         if (self::estConnecte()) {
             $idProposition = ConnexionUtilisateur::getPropByLoginVisible($idQuestion);
             if ($idProposition) return true;
@@ -72,6 +72,9 @@ class ConnexionUtilisateur {
         return false;
     }
 
+    /**
+     * Retourne si l'utilisateur connecté est un administrateur
+     */
     public static function estAdministrateur() : bool {
         if (self::estConnecte()) {
             return (new UtilisateurRepository())->selectAdministrateur(Session::getInstance()->lire(static::$cleConnexion));
@@ -121,5 +124,12 @@ class ConnexionUtilisateur {
             }
         }
         return null;
+    }
+
+    public static function ajouterScoreQuestion():void {
+        if (self::estConnecte()) {
+            $utilisateur = self::getUtilisateurConnecte();
+            (new UtilisateurRepository())->ajouterScoreQuestion($utilisateur->getLogin());
+        }
     }
 }
