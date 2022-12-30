@@ -29,20 +29,25 @@
             use App\Votee\Lib\ConnexionUtilisateur;
             use App\Votee\Lib\Notification;
 
-            if (ConnexionUtilisateur::estConnecte()) {
-                echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                      <span class="link-underline link-underline-color">Demande';
-                $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-                if ($utilisateur != null) {
-                    $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
-                    if ($result != null) {
-                        if ($result > 0) {
-                            echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
+                if (ConnexionUtilisateur::estConnecte()) {
+                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
+                            <span class="link-underline link-underline-color">Demande';
+                    $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+                    if ($utilisateur != null) {
+                        $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
+                        if ($result != null) {
+                            if ($result > 0) {
+                                echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
+                            }
                         }
                     }
+                    echo '</span></a>';
                 }
-                echo '</span></a>';
-            }
+                if (ConnexionUtilisateur::estAdministrateur()) {
+                    echo '<a href="./frontController.php?controller=groupe&action=readAllGroupe">
+                            <span class="link-underline link-underline-color">Groupes</span>
+                          </a>';
+                }
             ?>
         </div>
         <div class="flex items-center gap-4">

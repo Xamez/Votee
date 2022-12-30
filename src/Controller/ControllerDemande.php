@@ -70,7 +70,7 @@ class ControllerDemande extends AbstractController {
         }
 
         $demande->setEtatDemande($_GET['statut']);
-        $isOk = (new DemandeRepository())->updateDemande($demande);
+        $isOk = (new DemandeRepository())->modifier($demande);
         if ($isOk) (new Notification())->ajouter("success","La demande a été mise à jour !");
         else (new Notification())->ajouter("warning","La demande n'a pas été mise à jour !");
         self::redirection("?controller=demande&action=readAllDemande");
@@ -106,8 +106,8 @@ class ControllerDemande extends AbstractController {
             (new Notification())->ajouter("danger", "Vous devez vous connecter !");
             self::redirection("?controller=question&action=all");
         }
-        $idProposition = array_key_exists('idProposition', $_POST) ? $_POST['idProposition'] : null;
-        $idQuestion = array_key_exists('idQuestion', $_POST) ? $_POST['idQuestion'] : null;
+        $idProposition = $_POST['idProposition'] != "" ? $_POST['idProposition'] : null;
+        $idQuestion = $_POST['idQuestion'] != "" ? $_POST['idQuestion'] : null;
         $destinataire = '';
         if ($_POST['titreDemande'] == 'question') $destinataire = 'admin';
         else if ($_POST['titreDemande'] == 'proposition') $destinataire = (new QuestionRepository())->select($idQuestion)->getLogin();
@@ -122,7 +122,7 @@ class ControllerDemande extends AbstractController {
             $idProposition,
             $idQuestion
         );
-        $isOk = (new DemandeRepository())->ajouterDemande($demande);
+        $isOk = (new DemandeRepository())->sauvegarder($demande);
         if ($isOk) (new Notification())->ajouter("success", "La demande a été envoyée !");
         else (new Notification())->ajouter("warning", "La demande n'a pas été envoyée !");
         self::redirection("?controller=utilisateur&action=historiqueDemande");

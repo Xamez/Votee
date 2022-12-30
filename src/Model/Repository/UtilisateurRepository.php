@@ -7,21 +7,13 @@ use PDOException;
 
 class UtilisateurRepository extends AbstractRepository {
 
-    protected function getNomsColonnes(): array {
-        return array(
-            'LOGIN',
-            'MOTDEPASSE',
-            'NOM',
-            'PRENOM',
-            'NBQUESTRESTANT',
-        );
-    }
 
+    function getNomSequence(): string { return ""; }
     function getNomTable(): string { return "Utilisateurs"; }
     function getNomClePrimaire(): string { return "LOGIN"; }
 
-    function getProcedureInsert(): string { return "AjouterUtilisateur"; }
-    function getProcedureUpdate(): string { return ""; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterUtilisateur', 'LOGIN', 'MOTDEPASSE', 'NOM', 'PRENOM'); }
+    function getProcedureUpdate(): array { return []; }
     function getProcedureDelete(): string { return ""; }
 
     public function construire(array $utilisateurFormatTableau) : Utilisateur {
@@ -32,23 +24,6 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['PRENOM'],
             $utilisateurFormatTableau['NBQUESTRESTANT']
         );
-    }
-
-    public function inscrire(Utilisateur $utilisateur): bool {
-        $sql = "CALL {$this->getProcedureInsert()}(:loginTag, :mdpTag, :nomTag, :prenomTag)";
-        $values = array(
-            "loginTag" => $utilisateur->getLogin(),
-            "mdpTag" => $utilisateur->getMotDePasse(),
-            "nomTag" => $utilisateur->getNom(),
-            "prenomTag" => $utilisateur->getPrenom(),
-        );
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        try {
-            $pdoStatement->execute($values);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
     }
 
     /** Retourne l'ensemble des roles pour une question et un utilisateur donné */
@@ -83,6 +58,41 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
+    /** Rajoute 1 point au score s'il y a eu une erreur dans l'insertion d'une question */
+    public function ajouterScoreQuestion($login): void {
+        $sql = "UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT + 1 WHERE login = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("loginTag" => $login));
+    }
+
+    // TODO La remplacer a terme par une verification de la table existe
+    public function selectAllActorQuestion($idQuestion): array {
+        $sql = "SELECT U.* FROM (
+    SELECT DISTINCT LOGIN_ORGANISATEUR FROM (
+        SELECT Q.LOGIN_ORGANISATEUR, Q.IDQUESTION FROM EXISTE E
+        JOIN QUESTIONS Q on E.LOGIN = Q.LOGIN_ORGANISATEUR
+
+        UNION
+
+        SELECT LOGIN, IDQUESTION FROM (
+            SELECT RC.LOGIN, R.IDQUESTION FROM REDIGERCA RC
+            JOIN RECEVOIR R ON RC.IDPROPOSITION = R.IDPROPOSITION
+
+            UNION
+
+            SELECT RR.LOGIN, R.IDQUESTION FROM REDIGERR RR
+            JOIN RECEVOIR R ON RR.IDPROPOSITION = R.IDPROPOSITION
+        )
+    ) WHERE IDQUESTION =:idQuestionTag
+) JOIN UTILISATEURS U ON LOGIN_ORGANISATEUR = U.LOGIN";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+        foreach ($pdoStatement as $utilisateur) {
+            $utilisateurs[] = $this->construire($utilisateur);
+        }
+        return $utilisateurs;
+    }
+
     public static function getAdmins() : array {
         $sql = "SELECT * FROM Administrateurs";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -93,6 +103,16 @@ class UtilisateurRepository extends AbstractRepository {
             $admins[] = $admin['LOGIN'];
         }
         return $admins;
+    }
+
+    public function selectAllAdmins() : array {
+        $sql = "SELECT * FROM UTILISATEURS WHERE LOGIN IN (SELECT LOGIN FROM ADMINISTRATEURS)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute();
+        foreach ($pdoStatement as $utilisateur) {
+            $utilisateurs[] = $this->construire($utilisateur);
+        }
+        return $utilisateurs;
     }
 
     public function selectCoAuteur($idProposition): array {
@@ -129,5 +149,4 @@ class UtilisateurRepository extends AbstractRepository {
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
     }
-
 }

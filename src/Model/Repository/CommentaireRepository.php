@@ -17,17 +17,15 @@ class CommentaireRepository extends AbstractRepository {
         );
 
     }
-    function getNomTable(): string {
-        return "Commentaires";
-    }
+    function getNomTable(): string { return "Commentaires"; }
 
-    function getNomClePrimaire(): string {
-        return "IDCOMMENTAIRE";
-    }
+    protected function getNomSequence(): string { return ""; }
 
-    function getProcedureInsert(): string { return ""; }
+    function getNomClePrimaire(): string { return "IDCOMMENTAIRE"; }
 
-    function getProcedureUpdate(): string { return "ModifierCommentaires"; }
+    function getProcedureInsert(): array { return []; }
+
+    function getProcedureUpdate(): array { return array("procedure" =>"ModifierCommentaires"); }
 
     function getProcedureDelete(): string { return "SupprimerCommentaires"; }
 
@@ -113,27 +111,3 @@ class CommentaireRepository extends AbstractRepository {
     }
 
 }
-
-
-
-
-/*
-
-text = "
-# titre
-blabla "
-
--> ParseDown
-
-
-"
-<h1>titre</h1><br>blabla
-"
-titre
-blabla
-
-
-
-
-
-*/
