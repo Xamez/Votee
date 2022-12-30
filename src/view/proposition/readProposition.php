@@ -3,6 +3,7 @@
 use App\Votee\Controller\AbstractController;
 use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
+
 require "propositionHeader.php";
 
 $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
@@ -67,10 +68,9 @@ echo '</div>
 
 if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
 
-    //if ($visibilite && (count(array_intersect(['Specialiste'], $rolesQuest)) > 0)) { TODO REMETTRE QD SPECIALISTE IMPLEMENTE
-    if ($visibilite ) {
+    echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
 
-        echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
+    if (count(array_intersect(['Specialiste'], $rolesQuest)) > 0) {
 
         echo '
             <div id="popup" class="hidden fixed z-1 bg-main text-white rounded-xl p-4">
