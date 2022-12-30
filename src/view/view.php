@@ -57,11 +57,9 @@
                 ?>
             </div>
             <div class="flex md:hidden gap-4 items-center">
-                <div class="flex items-center text-dark cursor-pointer">
-                    <span id="open-icon" class="material-symbols-outlined text-xl" style="font-size: 2rem;">menu</span>
-                    <span id="close-icon" class="hidden material-symbols-outlined" style="font-size: 2rem;">close</span>
-                </div>
-                <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main w-auto z-10 rounded-lg text-white text-xl p-2 pl-2" style="right: 0.5px;">
+                <span id="open-icon" class="material-symbols-outlined text-xl cursor-pointer text-dark" style="font-size: 2rem;">menu</span>
+                <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main w-40 z-10 rounded-lg text-white text-xl p-2 pl-2">
+                    <span id="close-icon" class="material-symbols-outlined cursor-pointer cursor-pointer text-red-500 text-right pb-0" style="font-size: 1.5rem;">close</span>
                     <?php
                     if (ConnexionUtilisateur::estConnecte()) {
                         echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
@@ -76,9 +74,6 @@
                             }
                         }
                         echo '</span></a>';
-                    } else {
-                        echo '<a class="flex text-white font-semibold rounded-lg" 
-                                 href="./frontController.php?controller=utilisateur&action=connexion"><span class="link-underline link-underline-color">Se connecter</span></a>';
                     }
                     ?>
                     <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
