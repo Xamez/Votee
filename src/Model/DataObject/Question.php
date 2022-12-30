@@ -109,10 +109,14 @@ class Question extends AbstractDataObject {
         $date = date('Y-m-d');
         if ($date >= $this->changeDate($this->getDateDebutQuestion()) && $date <= $this->changeDate($this->getDateFinQuestion())) {
             return "Période d'écriture";
+        } elseif ($date > $this->changeDate($this->getDateFinQuestion()) && $date < $this->changeDate($this->getDateDebutVote())) {
+            return "Période de transition";
         } else if ($date >= $this->changeDate($this->getDateDebutVote()) && $date <= $this->changeDate($this->getDateFinVote())) {
             return "Période de vote";
+        } else if ($date < $this->changeDate($this->getDateDebutQuestion())) {
+            return "Période de préparation";
         } else {
-            return "Période des résultats";
+            return "Période de résultat";
         }
     }
 

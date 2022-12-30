@@ -22,8 +22,7 @@ if ($demande->getTitreDemande() == 'proposition') {
             . rawurlencode($demande->getIdQuestion()) .'&idProposition=' . rawurlencode($demande->getIdProposition()) .'">Voir la proposition</a>';
 }
 
-echo '<span>' .htmlspecialchars($demande->getTexteDemande()) . '
-        </span>
+echo '<span>' .htmlspecialchars($demande->getTexteDemande()) . '</span>
      </div>';
 
 $rolesPropo = ConnexionUtilisateur::getRolesProposition($demande->getIdProposition());

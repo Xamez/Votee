@@ -6,7 +6,7 @@ use App\Votee\Model\DataObject\Vote;
 use App\Votee\Model\DataObject\VoteTypes;
 use PDOException;
 
-class VoteRepository {
+class VoteRepository extends AbstractRepository {
 
 
     public function construire(array $voteFormatTableau) : Vote {
@@ -16,26 +16,19 @@ class VoteRepository {
         return new Vote($voteFormatTableau["idProposition"], $voteFormatTableau["loginVotant"], $voteFormatTableau["noteProposition"], VoteTypes::getFromKey($voteType));
     }
 
-    protected function getNomsColonnes() : array {
-        return array(
-            'IDPROPOSITION',
-            'LOGIN',
-            'NOTE',
-        );
-    }
-
+    protected function getNomSequence(): string { return ""; }
     function getNomTable(): string { return "Voter"; }
     function getNomClePrimaire(): string { return "IDPROPOSITION"; }
 
-    function getProcedureInsert(): string { return "AjouterVotes"; }
-    function getProcedureUpdate(): string { return "ModifierVotes"; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterVotes'); }
+    function getProcedureUpdate(): array { return array('procedure' => "ModifierVotes"); }
     function getProcedureDelete(): string { return ""; }
 
     function ajouterVote(string $idProposition, string $login, int $note) : bool {
         if ($this->getNote($idProposition, $login) == 0) {
-            $sql = "CALL {$this->getProcedureInsert()}(:loginTag, :idPropositionTag, :noteTag)";
+            $sql = "CALL {$this->getProcedureInsert()['procedure']}(:loginTag, :idPropositionTag, :noteTag)";
         } else {
-            $sql = "CALL {$this->getProcedureUpdate()}(:loginTag, :idPropositionTag, :noteTag)";
+            $sql = "CALL {$this->getProcedureUpdate()['procedure']}(:loginTag, :idPropositionTag, :noteTag)";
         }
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("idPropositionTag" => $idProposition, "loginTag" => $login, "noteTag" => $note);

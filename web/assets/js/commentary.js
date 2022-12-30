@@ -42,7 +42,7 @@ window.onload = () => {
 
     const createCommentaryButton = document.getElementById('create-commentary');
     const commentaryButton = document.getElementById('commentary-button');
-    const pCommentaryButton = commentaryButton.children[1];
+    const pCommentaryButton = commentaryButton?.children[1];
     const commentaryText = document.getElementById('text-commentary');
     const commentaries = [...document.getElementsByClassName('commentary')];
 
@@ -99,10 +99,11 @@ window.onload = () => {
         span.appendChild(tooltip);
     }
 
+    console.log("caled");
     commentaries.forEach(commentary => {
         commentary.addEventListener("mouseover", e => {
             const id = e.target.getAttribute("data-id");
-            if (id && pCommentaryButton.classList.contains('line-through')) createTooltip(e.target, id);
+            if (id && (pCommentaryButton === undefined || pCommentaryButton.classList.contains('line-through'))) createTooltip(e.target, id);
         });
 
         commentary.addEventListener("mouseout", e => {
