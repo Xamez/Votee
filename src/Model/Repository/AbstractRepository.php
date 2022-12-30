@@ -12,15 +12,13 @@ abstract class AbstractRepository {
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT {$this->getNomSequence()}.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();
         $lastInserId = $pdoLastInsert->fetch();
-        return intval($lastInserId[0]);
+        return $lastInserId ? intval($lastInserId[0]) : null;
     }
 
     public function sauvegarder(AbstractDataObject $object) : bool {
         $sql = "CALL {$this->getProcedureInsert()['procedure']}(:" . implode(', :', array_slice($this->getProcedureInsert(), 1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         foreach ($this->getProcedureInsert() as $value) $values[$value] = $value;
-        var_dump($sql);
-        var_dump(array_intersect_key($object->formatTableau(), $values));
         try {
             $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
@@ -38,7 +36,6 @@ abstract class AbstractRepository {
             $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }

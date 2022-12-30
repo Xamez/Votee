@@ -175,7 +175,7 @@ class ControllerProposition extends AbstractController {
         $isOk &= (new PropositionRepository())->ajouterResponsable($_POST['organisateur'], $idProposition, NULL, $idQuestion, 0);
         if ($isOk) {
             (new Notification())->ajouter("success", "La proposition a été créée.");
-            self::redirection("?controller=proposition&action=addCoauteur&idQuestion=$idQuestion&idProposition=" . $idProposition);
+            self::redirection("?controller=proposition&action=addCoauteur&idQuestion=$idQuestion&idProposition=$idProposition");
         } else {
             (new PropositionRepository())->supprimer($idProposition);
             (new Notification())->ajouter("warning", "L'ajout de la proposition a échoué.");

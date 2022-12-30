@@ -175,7 +175,7 @@ class ControllerGroupe extends AbstractController {
         $isOk = (new GroupeRepository())->modifier($groupe);
         if ($isOk) {
             (new Notification())->ajouter("success", "Le groupe a bien été modifié !");
-            self::redirection("?controller=groupe&action=addMembre&idGroupe=$idGroupe");
+            self::redirection("?controller=groupe&action=readGroupe&idGroupe=$idGroupe");
         } else {
             (new Notification())->ajouter("danger", "Le groupe n'a pas été modifié !");
             self::redirection("?controller=groupe&action=updateGroupe&idGroupe=$idGroupe");
