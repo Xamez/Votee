@@ -23,13 +23,19 @@ else {
               </a>';
     }
 }
-if (sizeof($coAuteurs) > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" 
-                                        href="./frontController.php?controller=proposition&action=readCoauteur&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. $_GET['idProposition'] . '">
-                                    <span class="material-symbols-outlined">more_horiz</span>Voir plus
-                                   </a>';
-echo '</div></div>';
+if (sizeof($coAuteurs) > 10) echo '
+                <a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" 
+                   href="./frontController.php?controller=proposition&action=readCoauteur&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. $_GET['idProposition'] . '">
+                    <span class="material-symbols-outlined">more_horiz</span>Voir plus
+                </a>';
+echo '    </div>
+      </div>';
 if (isset($visibilite) && !$visibilite) {
     echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Etat : </p><span class="text-main">Archivée</span></div>';
 }
 
+if (isset($titreProposition)) {
+    echo '<span class="text-main text-center w-28 font-semibold w-28 md:text-left">Titre :</span>
+          <span>' . $titreProposition . '</span>';
+}
 echo '</div>';

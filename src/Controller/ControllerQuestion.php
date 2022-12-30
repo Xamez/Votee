@@ -133,7 +133,7 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $question = new Question(NULL,
-            $_POST['visibilite'],
+            ($_POST['dateDebutQuestion'] > date('Y-m-d') ? 'invisible' : 'visible'),
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
             date_format(date_create($_POST['dateDebutQuestion']), 'd/m/Y'),
