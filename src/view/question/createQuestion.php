@@ -2,10 +2,10 @@
     <div class="flex flex-col gap-7 border-2 p-8 rounded-3xl">
         <div>
             <div class="flex flex-col pb-2">
-                <input type="text" placeholder="Titre de la question" max=150 name="titreQuestion" id="systeme_vote_id" required/>
+                <input type="text" placeholder="Titre de la question" minlength="10" maxlength="150" name="titreQuestion" id="systeme_vote_id" required/>
             </div>
             <div class="flex flex-col">
-                <textarea class="max-h-52" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
+                <textarea class="max-h-52" minlength="10" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
         <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
@@ -17,7 +17,7 @@
             for ($i = 1; $i <= $nbSections; $i++) {
                 echo '<div class="flex flex-col">
                          <label for="systeme_vote_id' . $i . '">Section ' . $i . ' :</label>
-                         <input type="text" placeholder="Nom de la section" max=150 name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
+                         <input type="text" placeholder="Nom de la section" minlength="10" maxlength="150" name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
                       </div>';
             }
             ?>
@@ -27,7 +27,7 @@
             <div class="flex gap-10 items-center">
                 <p class="w-36 font-semibold">Période d'écriture :</p>
                 <div class="flex flex-col">
-                    <label for="date_debut_question_id<_id">Débute le </label>
+                    <label for="date_debut_question_id">Débute le </label>
                     <input type="date" min="<?=date('Y-m-d')?>" value="<?= date('Y-m-d') ?>" name="dateDebutQuestion" id="date_debut_question_id" required/>
                 </div>
                 <div class="flex flex-col">
@@ -76,8 +76,7 @@
             </div>
     </div>
     <input type="text" hidden name="loginOrga" value="<?= (ConnexionUtilisateur::getUtilisateurConnecte())->getLogin() ?>" required/>
-    <input type="number" hidden value=<?=$nbSections?> name="nbSections" required/>
-    <input type="text" hidden value="visible" placeholder="visible" name="visibilite" required/>
+    <input type="number" hidden value="<?=$nbSections?>" name="nbSections" required/>
     <div class="flex justify-center">
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Suivant" />
     </div>

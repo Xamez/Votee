@@ -1,17 +1,20 @@
 <div class="flex flex-col gap-10 mt-10">
     <div class="flex flex-col gap-3">
         <div class="flex items-center gap-2">
-            <p class="text-main font-semibold">Organisateur :
-            <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                <span class="material-symbols-outlined">account_circle</span>
-                <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
+            <div class="flex gap-3 items-center">
+                <span class="text-main font-semibold">Organisateur :</span>
+                <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=<?= rawurlencode($organisateur->getLogin()) ?>">
+                    <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
+                    </div>
+                </a>
             </div>
-            </p>
         </div>
-        <p>
+        <div>
             <span class="text-main font-semibold">Période actuelle : </span>
-            <?= $question->getPeriodeActuelle() ?>
-        </p>
+            <span><?= $question->getPeriodeActuelle() ?></span>
+        </div>
     </div>
     <div class="flex flex-col gap-3">
         <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
@@ -32,14 +35,14 @@
     </div>
     <div class="flex flex-col gap-3">
         <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-        <p>
+        <div>
             <span class="text-xl text-main font-bold text-lg">Période d'écriture : </span>
-            Du <?= $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() ?>
-        </p>
-        <p>
+            <span>Du <?= $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() ?></span>
+        </div>
+        <div>
             <span class="text-xl text-main font-bold text-lg">Période de vote : </span>
-            Du <?= $question->getDateDebutVote().' au ' . $question->getDateFinVote() ?>
-        </p>
+            <span>Du <?= $question->getDateDebutVote().' au ' . $question->getDateFinVote() ?></span>
+        </div>
     </div>
     <div class="flex flex-col gap-3">
         <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
