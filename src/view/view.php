@@ -23,61 +23,68 @@
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
             <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
             <?php
-                use App\Votee\Model\Repository\DemandeRepository;
-                use App\Votee\Lib\ConnexionUtilisateur;
-                use App\Votee\Lib\Notification;
 
-                if (ConnexionUtilisateur::estConnecte()) {
-                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                            <span class="link-underline link-underline-color">Demande';
-                    $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-                    if ($utilisateur != null) {
-                        $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
-                        if ($result != null) {
-                            if ($result > 0) {
-                                echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
-                            }
+            use App\Votee\Controller\AbstractController;
+            use App\Votee\Model\Repository\DemandeRepository;
+            use App\Votee\Lib\ConnexionUtilisateur;
+            use App\Votee\Lib\Notification;
+
+            if (ConnexionUtilisateur::estConnecte()) {
+                echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
+                      <span class="link-underline link-underline-color">Demande';
+                $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+                if ($utilisateur != null) {
+                    $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
+                    if ($result != null) {
+                        if ($result > 0) {
+                            echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
                         }
                     }
-                    echo '</span></a>';
                 }
-            ?>
-
-        </div>
-        <div class="flex gap-4 items-center">
-        <?php
-        if (ConnexionUtilisateur::estConnecte()) {
-            $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-            if ($utilisateur != null) {
-                echo '<a href="./frontController.php?controller=utilisateur&action=compte">' .
-                    htmlspecialchars($utilisateur->getPrenom()) . ' ' . htmlspecialchars($utilisateur->getNom()) . '
-                      </a>
-                      <a class="flex items-center" href="frontController.php?controller=utilisateur&action=deconnecter">
-                        <span class="material-symbols-outlined">logout</span>
-                      </a>';
-            } else {
-                echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
-                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
+                echo '</span></a>';
             }
-        } else {
-            echo '<a class="hidden md:flex p-2 text-white bg-main font-semibold rounded-lg" 
-                    href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>';
-
-        }
-        ?>
-<!--        <div class="flex md:hidden gap-4 items-center">-->
-<!--            <a class="flex md:hidden p-2 text-white bg-main font-semibold rounded-lg" -->
-<!--               href="./frontController.php?controller=utilisateur&action=connexion">Se connecter</a>-->
-<!--            <div>-->
-<!--                <i id="open-icon" class="fa fa-bars fa-2x w-7 text-center text-dark"></i>-->
-<!--                <i id="close-icon" class="hidden fa fa-xmark fa-2x w-7 text-center text-dark"></i>-->
-<!--            </div>-->
-<!--            <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main z-10 translate-y-10 rounded-lg text-white w-72 text-2xl p-2 pl-4">-->
-<!--                <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>-->
-<!--                <a href="./frontController.php?action=readAllQuestion"><span class="link-underline link-underline-color">Vote</span></a>-->
-<!--                <a href=""><span class="link-underline link-underline-color">Demande</span></a>-->
-<!--            </div>-->
-<!--        </div>-->
+            ?>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex gap-4 items-center">
+                <?php
+                AbstractController::afficheVue('userLogin.php', ['small' => false]);
+                ?>
+            </div>
+            <div class="flex sm:hidden gap-4 items-center">
+                <?php
+                AbstractController::afficheVue('userLogin.php', ['small' => true]);
+                ?>
+            </div>
+            <div class="flex md:hidden gap-4 items-center">
+                <div class="flex items-center text-dark cursor-pointer">
+                    <span id="open-icon" class="material-symbols-outlined text-xl" style="font-size: 2rem;">menu</span>
+                    <span id="close-icon" class="hidden material-symbols-outlined" style="font-size: 2rem;">close</span>
+                </div>
+                <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main w-auto z-10 rounded-lg text-white text-xl p-2 pl-2" style="right: 0.5px;">
+                    <?php
+                    if (ConnexionUtilisateur::estConnecte()) {
+                        echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
+                              <span class="link-underline link-underline-color">Demande';
+                        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+                        if ($utilisateur != null) {
+                            $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
+                            if ($result != null) {
+                                if ($result > 0) {
+                                    echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
+                                }
+                            }
+                        }
+                        echo '</span></a>';
+                    } else {
+                        echo '<a class="flex text-white font-semibold rounded-lg" 
+                                 href="./frontController.php?controller=utilisateur&action=connexion"><span class="link-underline link-underline-color">Se connecter</span></a>';
+                    }
+                    ?>
+                    <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
+                    <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
+                </div>
+            </div>
         </div>
     </nav>
 </header>
