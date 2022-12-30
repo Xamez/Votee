@@ -125,7 +125,7 @@ class ControllerProposition extends AbstractController {
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($_GET['idQuestion']);
         if (!ConnexionUtilisateur::estConnecte()
             || ConnexionUtilisateur::questionValide($question->getIdQuestion())
-            || (ConnexionUtilisateur::creerProposition($question->getIdQuestion()
+            || !(ConnexionUtilisateur::creerProposition($question->getIdQuestion()
                 || in_array("Organisateur", $rolesQuestion)))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
@@ -153,7 +153,7 @@ class ControllerProposition extends AbstractController {
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!ConnexionUtilisateur::estConnecte()
             || ConnexionUtilisateur::questionValide($question->getIdQuestion())
-            || (ConnexionUtilisateur::creerProposition($question->getIdQuestion()
+            || !(ConnexionUtilisateur::creerProposition($question->getIdQuestion()
                 || in_array("Organisateur", $rolesQuestion)))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");

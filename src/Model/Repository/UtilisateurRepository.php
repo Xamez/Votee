@@ -60,16 +60,29 @@ class UtilisateurRepository extends AbstractRepository {
 
     // TODO La remplacer a terme par une verification de la table existe
     public function selectAllActorQuestion($idQuestion): array {
-        $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$idQuestion));
-        $utilisateurs = [];
-        foreach ($propositions as $proposition) {
-            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($proposition->getIdProposition());
-            if ($coAuteurs) $utilisateurs = array_merge($utilisateurs, $coAuteurs);
-            $utilisateurs[] = (new UtilisateurRepository())->selectResp($proposition->getIdProposition());
+        $sql = "SELECT U.* FROM (
+    SELECT DISTINCT LOGIN_ORGANISATEUR FROM (
+        SELECT Q.LOGIN_ORGANISATEUR, Q.IDQUESTION FROM EXISTE E
+        JOIN QUESTIONS Q on E.LOGIN = Q.LOGIN_ORGANISATEUR
+
+        UNION
+
+        SELECT LOGIN, IDQUESTION FROM (
+            SELECT RC.LOGIN, R.IDQUESTION FROM REDIGERCA RC
+            JOIN RECEVOIR R ON RC.IDPROPOSITION = R.IDPROPOSITION
+
+            UNION
+
+            SELECT RR.LOGIN, R.IDQUESTION FROM REDIGERR RR
+            JOIN RECEVOIR R ON RR.IDPROPOSITION = R.IDPROPOSITION
+        )
+    ) WHERE IDQUESTION =:idQuestionTag
+) JOIN UTILISATEURS U ON LOGIN_ORGANISATEUR = U.LOGIN";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+        foreach ($pdoStatement as $utilisateur) {
+            $utilisateurs[] = $this->construire($utilisateur);
         }
-        $question = (new QuestionRepository())->select($idQuestion);
-        $utilisateurs[] = (new UtilisateurRepository())->select($question->getLogin());
-        $utilisateurs = array_unique($utilisateurs, SORT_REGULAR);
         return $utilisateurs;
     }
 
@@ -83,6 +96,16 @@ class UtilisateurRepository extends AbstractRepository {
             $admins[] = $admin['LOGIN'];
         }
         return $admins;
+    }
+
+    public function selectAllAdmins() : array {
+        $sql = "SELECT * FROM UTILISATEURS WHERE LOGIN IN (SELECT LOGIN FROM ADMINISTRATEURS)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute();
+        foreach ($pdoStatement as $utilisateur) {
+            $utilisateurs[] = $this->construire($utilisateur);
+        }
+        return $utilisateurs;
     }
 
     public function selectCoAuteur($idProposition): array {
@@ -119,23 +142,4 @@ class UtilisateurRepository extends AbstractRepository {
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
     }
-
-    public function selectAllAdministrateur() : array {
-        $admin = [];
-        $sql = "SELECT u.* FROM Administrateurs a JOIN Utilisateurs u ON u.login = a.login";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute();
-        foreach ($pdoStatement as $utilisateur) {
-            $admin[] = $this->construire($utilisateur);
-        }
-        return $admin;
-    }
-
-    /** Rajoute 1 point au score si il y a eu une erreur dans l'insertion d'une question */
-    public function ajouterScoreQuestion($login): void {
-        $sql = "UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT + 1 WHERE login = :loginTag";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute(array("loginTag" => $login));
-    }
-
 }
