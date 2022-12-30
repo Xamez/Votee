@@ -7,24 +7,33 @@ use PDOException;
 
 abstract class AbstractRepository {
 
+    public function sauvegarderSequence(AbstractDataObject $dataObject) {
+        $this->sauvegarder($dataObject);
+        $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT {$this->getNomSequence()}.CURRVAL AS lastInsertId FROM DUAL");
+        $pdoLastInsert->execute();
+        $lastInserId = $pdoLastInsert->fetch();
+        return $lastInserId ? intval($lastInserId[0]) : null;
+    }
+
     public function sauvegarder(AbstractDataObject $object) : bool {
-        $sql = "CALL {$this->getProcedureInsert()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
-        $values = $object->formatTableau();
+        $sql = "CALL {$this->getProcedureInsert()['procedure']}(:" . implode(', :', array_slice($this->getProcedureInsert(), 1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        foreach ($this->getProcedureInsert() as $value) $values[$value] = $value;
         try {
-            $pdoStatement->execute($values);
+            $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
 
     public function modifier(AbstractDataObject $object) : bool {
-        $sql = "CALL {$this->getProcedureUpdate()} (:" . implode(', :', $this->getNomsColonnes()) . ")";
-        $values = $object->formatTableau();
+        $sql = "CALL {$this->getProcedureUpdate()['procedure']} (:" . implode(', :', array_slice($this->getProcedureUpdate(),1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        foreach ($this->getProcedureUpdate() as $value) $values[$value] = $value;
         try {
-            $pdoStatement->execute($values);
+            $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
             return false;
@@ -88,10 +97,8 @@ abstract class AbstractRepository {
     public function select($valeurClePrimaire) : ?AbstractDataObject {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("valueTag" => $valeurClePrimaire);
-        $pdoStatement->execute($values);
+        $pdoStatement->execute(array("valueTag" => $valeurClePrimaire));
         $result = $pdoStatement->fetch();
-
         return $result ? $this->construire($result) : null;
     }
 
@@ -109,17 +116,26 @@ abstract class AbstractRepository {
 //        return $this->construire($object);
 //    }
 
+    public function selectBySearch($search, $cle):array {
+        $objects = [];
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER({$cle}) LIKE :rechercheTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("rechercheTag" => "%" .strtolower($search)."%"));
+        foreach ($pdoStatement as $formatTableau) $objects[] = $this->construire($formatTableau);
+        return $objects;
+    }
+
     protected abstract function getNomTable(): string;
 
     protected abstract function getNomClePrimaire(): string;
 
+    protected abstract function getNomSequence(): string;
+
     protected abstract function construire(array $objetFormatTableau) : AbstractDataObject;
 
-    protected abstract function getNomsColonnes(): array;
+    protected abstract function getProcedureInsert(): array;
 
-    protected abstract function getProcedureInsert(): string;
-
-    protected abstract function getProcedureUpdate(): string;
+    protected abstract function getProcedureUpdate(): array;
 
     protected abstract function getProcedureDelete(): string;
 }

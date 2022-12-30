@@ -7,6 +7,7 @@ use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Utilisateur;
 use App\Votee\Model\Repository\DemandeRepository;
+use App\Votee\Model\Repository\GroupeRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\UtilisateurRepository;
 
@@ -36,7 +37,7 @@ class ControllerUtilisateur extends AbstractController {
             self::redirection("?controller=utilisateur&action=inscription");
         }
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
-        (new UtilisateurRepository())->inscrire($utilisateur);
+        (new UtilisateurRepository())->sauvegarder($utilisateur);
         (new Notification())->ajouter("success","L'utilisateur a été créé");
         (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
         self::redirection("?action=home");
@@ -129,6 +130,20 @@ class ControllerUtilisateur extends AbstractController {
                 "pagetitle" => "Historique de mes demandes",
                 "cheminVueBody" => "demande/listDemande.php",
                 "title" => "Historique de mes demandes",
+            ]);
+    }
+
+    public static function readUtilisateur(): void {
+        $login = $_GET['login'];
+        $utilisateur = (new UtilisateurRepository())->select($login);
+        $groupes = (new GroupeRepository())->selectGroupeByLogin($login);
+        self::afficheVue('view.php',
+            [
+                "utilisateurC" => $utilisateur,
+                "groupes" => $groupes,
+                "pagetitle" => "Utilisateur",
+                "cheminVueBody" => "utilisateur/readUtilisateur.php",
+                "title" => "Utilisateur",
             ]);
     }
 

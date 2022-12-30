@@ -1,25 +1,41 @@
+<div class="headerProp md:grid items-center flex flex-col gap-5">
+    <span class="text-main text-center md:text-left w-28 font-semibold">Responsable : </span>
+    <div class="flex">
+        <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=<?= rawurlencode($responsable->getLogin())?>">
+            <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                <span class="material-symbols-outlined">account_circle</span>
+                <?= htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
+            </div>
+        </a>
+    </div>
+    <span class="text-main text-center w-28 font-semibold w-28 md:text-left">Co-auteur :</span>
+    <div>
+        <div class="flex items-center flex-wrap gap-2 pt-0">
 <?php
-echo '<div class="flex flex-col gap-5">
-         <div class="flex items-center gap-2">
-             <p class="text-main font-semibold">Responsable : 
-             <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                 <span class="material-symbols-outlined">account_circle</span>'
-                    . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
-             </div>
-             </p>
-         </div>
-         <div class="flex items-center flex-wrap gap-2 pt-0"><p class="text-main font-semibold">Co-auteur :';
-if ($coAuteurs)
-foreach ($coAuteurs as $coAuteur) {
-    echo '<div class="flex gap-1 text-main bg-white shadow-md rounded-2xl p-2">
-            <span class="material-symbols-outlined">account_circle</span>'
-        . htmlspecialchars($coAuteur->getPrenom()) . ' ' . htmlspecialchars($coAuteur->getNom()) .
-        '</div>';
-} else {
-    echo '<p class="text-main">Aucun</p>';
+if (sizeof($coAuteurs) == 0) echo '<p class="text-main">Aucun</p>';
+else {
+    for ($i = 0; $i < sizeof($coAuteurs) && $i < 10; $i++) {
+        echo '<a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($coAuteurs[$i]->getLogin()) . '">
+                <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">account_circle</span>'
+            . htmlspecialchars($coAuteurs[$i]->getPrenom()) . ' ' . htmlspecialchars($coAuteurs[$i]->getNom()) . '
+                </div>
+              </a>';
+    }
 }
-echo '</div>';
+if (sizeof($coAuteurs) > 10) echo '
+                <a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" 
+                   href="./frontController.php?controller=proposition&action=readCoauteur&idQuestion=' . rawurlencode($question->getIdQuestion()) . '&idProposition='. $_GET['idProposition'] . '">
+                    <span class="material-symbols-outlined">more_horiz</span>Voir plus
+                </a>';
+echo '    </div>
+      </div>';
 if (isset($visibilite) && !$visibilite) {
     echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Etat : </p><span class="text-main">Archivée</span></div>';
+}
+
+if (isset($titreProposition)) {
+    echo '<span class="text-main text-center w-28 font-semibold w-28 md:text-left">Titre :</span>
+          <span>' . $titreProposition . '</span>';
 }
 echo '</div>';

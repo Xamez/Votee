@@ -148,3 +148,19 @@ label { font-weight: 600; }
 input[type=checkbox] {
 	display: none;
 }
+
+.search-field:focus-visible {
+	outline: none;
+}
+
+.disable {
+	color: white;
+	border: solid 2px #e52727;
+	background-color: #6B7280;
+}
+
+/* Grid */
+.headerProp {
+	grid-template-columns: min-content auto;
+	grid-template-rows: min-content auto;
+}
