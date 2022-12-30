@@ -1,59 +1,64 @@
 <div class="flex flex-col gap-8 mt-10">
     <div class="flex flex-col sm:flex-row items-center gap-2">
-        <p class="text-main font-semibold">Organisateur :<p>
-        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-            <span class="material-symbols-outlined">account_circle</span>
-            <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
+        <div class="flex items-center gap-2">
+            <div class="flex gap-3 items-center">
+                <span class="text-main font-semibold">Organisateur :</span>
+                <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=<?= rawurlencode($organisateur->getLogin()) ?>">
+                    <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
+                    </div>
+                </a>
+            </div>
         </div>
-    </div>
-    <?php
-    if ($specialiste != null) {
-        echo '<div class="flex flex-col sm:flex-row items-center gap-2">
+        <?php
+        if ($specialiste != null) {
+            echo '<div class="flex flex-col sm:flex-row items-center gap-2">
                   <p class="text-main font-semibold">Spécialiste :<p>
                   <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' .
-                        rawurlencode($specialiste->getLogin()) . '"
+                rawurlencode($specialiste->getLogin()) . '"
                      class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
                       <span class="material-symbols-outlined">account_circle</span>' .
-                        htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
+                htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
                   </a>
               </div>';
-    }
-    ?>
-    <p>
-        <span class="text-main font-semibold">Période actuelle : </span>
-        <?= $question->getPeriodeActuelle() ?>
-    </p>
-</div>
-<div class="flex flex-col gap-3">
-    <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
-    <?php
+        }
+        ?>
+        <div>
+            <span class="text-main font-semibold">Période actuelle : </span>
+            <span><?= $question->getPeriodeActuelle() ?></span>
+        </div>
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
+        <?php
 
-    use App\Votee\Controller\AbstractController;
-    use App\Votee\Lib\ConnexionUtilisateur;
-
-    $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
-    $idQuestion = rawurldecode($question->getIdQuestion());
-
-    foreach ($sections as $key => $section) {
-        echo '<p class="text-xl text-main font-bold">' . $key + 1 . ' - '
-            . htmlspecialchars($section->getTitreSection()) . '
-          </p>';
-    }
-    ?>
-</div>
-<div class="flex flex-col gap-3">
-    <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-    <p>
-        <span class="text-xl text-main font-bold text-lg">Période d'écriture : </span>
-        Du <?= $question->getDateDebutQuestion() . ' au ' . $question->getDateFinQuestion() ?>
-    </p>
-    <p>
-        <span class="text-xl text-main font-bold text-lg">Période de vote : </span>
-        Du <?= $question->getDateDebutVote() . ' au ' . $question->getDateFinVote() ?>
-    </p>
-</div>
-<div class="flex flex-col gap-3">
-    <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
+        use App\Votee\Controller\AbstractController;
+        use App\Votee\Lib\ConnexionUtilisateur;
+    
+        $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
+        $idQuestion = rawurldecode($question->getIdQuestion());
+    
+        foreach ($sections as $key => $section) {
+            echo '<p class="text-xl text-main font-bold">' . $key + 1 . ' - '
+                . htmlspecialchars($section->getTitreSection()) . '
+              </p>';
+            }
+        ?>
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+        <div>
+            <span class="text-xl text-main font-bold text-lg">Période d'écriture : </span>
+            <span>Du <?= $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() ?></span>
+        </div>
+        <div>
+            <span class="text-xl text-main font-bold text-lg">Période de vote : </span>
+            <span>Du <?= $question->getDateDebutVote().' au ' . $question->getDateFinVote() ?></span>
+        </div>
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
 <?php
 if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 foreach ($propositions as $proposition) {

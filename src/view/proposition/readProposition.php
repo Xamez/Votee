@@ -11,7 +11,6 @@ $rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion())
 $rawIdProposition = rawurlencode($idProposition);
 $rawIdQuestion = rawurlencode($question->getIdQuestion());
 
-
 echo '
 <div id="ids">
     <input type="hidden" value="' . rawurlencode($question->getIdQuestion()) . '">
