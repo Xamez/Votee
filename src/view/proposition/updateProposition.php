@@ -17,6 +17,6 @@
     <input type="hidden" name="idQuestion" value="<?= $question->getIdQuestion();?>">
     <input type="hidden" name="action" value="updatedProposition">
     <div class="flex justify-center">
-        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Suivant" />
+        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
     </div>
 </form>

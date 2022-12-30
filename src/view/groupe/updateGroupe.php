@@ -3,6 +3,6 @@
     <input type="hidden" name="action" value="updatedGroupe">
     <div class="flex justify-center">
         <input type="hidden" name="idGroupe" value="<?= $groupe->getIdGroupe();?>">
-        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Suivant" />
+        <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
     </div>
 </form>

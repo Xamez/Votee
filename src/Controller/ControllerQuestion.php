@@ -61,7 +61,6 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    // Permet de voir toutes les questions du site
     public static function all() : void {
         $search = $_GET['search'] ?? null;
         if ($search) $questions = (new QuestionRepository())->selectBySearch($search, 'TITRE');
@@ -76,10 +75,10 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readQuestion() : void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
-        }
+            if (!ConnexionUtilisateur::estConnecte()) {
+                (new Notification())->ajouter("danger","Vous devez vous connecter !");
+                self::redirection("?controller=question&action=all");
+            }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -133,21 +132,26 @@ class ControllerQuestion extends AbstractController {
             $_POST['loginSpe'],
             $_POST['voteType']
         );
+
+        if ((date_create($_POST['dateDebutQuestion']) > date_create($_POST['dateFinQuestion']))
+            || (date_create($_POST['dateDebutVote']) > date_create($_POST['dateFinVote']))
+            || (date_create($_POST['dateFinQuestion']) >= date_create($_POST['dateDebutVote']))) {
+            (new Notification())->ajouter("warning", "Les dates sont incorrectes.");
+            self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
+        }
+
         $idQuestion = (new QuestionRepository())->sauvegarderSequence($question);
         $isOk = true;
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-        if ($idQuestion && $isOk) {
+        if ($idQuestion != null && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
-            self::redirection("?controller=question&action=addVotant&idQuestion=" . $idQuestion);
-        } else if (!$isOk) {
-            (new QuestionRepository())->supprimer($idQuestion);
-            ConnexionUtilisateur::ajouterScoreQuestion();
-            (new Notification())->ajouter("warning", "Une erreur est survenu.");
-            self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
+            self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
         } else {
+            if (!$isOk) (new QuestionRepository())->supprimer($idQuestion);
+            ConnexionUtilisateur::ajouterScoreQuestion();
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
             self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
@@ -231,7 +235,7 @@ class ControllerQuestion extends AbstractController {
 
         if ($isOk) (new Notification())->ajouter("success", "Les votants ont été ajouté avec succès.");
         else (new Notification())->ajouter("warning", "Certains votants n'ont pas pu être ajouté.");
-        self::redirection("?controller=question&action=readQuestion&&idQuestion=" . $idQuestion);
+        self::redirection("?controller=question&action=readQuestion&&idQuestion=$idQuestion");
     }
 
 

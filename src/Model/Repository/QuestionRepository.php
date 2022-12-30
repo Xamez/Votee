@@ -75,7 +75,7 @@ class QuestionRepository extends AbstractRepository {
             JOIN Recevoir r ON q.idQuestion = r.idQuestion
             JOIN Propositions p ON r.idProposition = p.idProposition
             JOIN Voter v ON p.idProposition = v.idProposition
-            WHERE v.login = :paramTag";
+            WHERE v.login = :paramTag AND q.visibilite = 'visible'";
         return self::selectAllCustom($sql, $login);
     }
 
