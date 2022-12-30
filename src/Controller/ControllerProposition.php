@@ -209,6 +209,7 @@ class ControllerProposition extends AbstractController {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($idProposition);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
+            $specialiste = (new UtilisateurRepository())->select($question->getLoginSpecialiste());
             self::afficheVue('view.php',
                 [
                     "question" => $question,
@@ -218,6 +219,7 @@ class ControllerProposition extends AbstractController {
                     "coAuteurs" => $coAuteurs,
                     "textes" => $textes,
                     "responsable" => $responsable,
+                    "specialiste" => $specialiste,
                     "pagetitle" => "Edition de proposition",
                     "cheminVueBody" => "proposition/updateProposition.php",
                     "title" => $question->getTitre(),
@@ -345,11 +347,12 @@ class ControllerProposition extends AbstractController {
                     "coAuteurs" => $coAuteurs,
                     "textes" => $textes,
                     "specialiste" => $specialiste,
+                    'titreProposition' => $proposition->getTitreProposition(),
                     "responsable" => $responsable,
                     "pagetitle" => "Question",
                     "cheminVueBody" => "proposition/readProposition.php",
                     "title" => $question->getTitre(),
-                    "subtitle" => $proposition->getTitreProposition()
+                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas");

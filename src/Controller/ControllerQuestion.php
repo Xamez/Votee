@@ -131,7 +131,7 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $question = new Question(NULL,
-            $_POST['visibilite'],
+            ($_POST['dateDebutQuestion'] > date('Y-m-d') ? 'invisible' : 'visible'),
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
             date_format(date_create($_POST['dateDebutQuestion']), 'd/m/Y'),
@@ -149,7 +149,6 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("warning", "Les dates sont incorrectes.");
             self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
-
         $idQuestion = (new QuestionRepository())->sauvegarderSequence($question);
         $isOk = true;
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
