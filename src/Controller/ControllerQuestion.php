@@ -168,7 +168,7 @@ class ControllerQuestion extends AbstractController {
         $question = (new QuestionRepository())->select($idQuestion);
 
         /* Recupère les administrateurs, l'organisateur, les representant et les coAuteurs de la question */
-        $exception = (new UtilisateurRepository())->selectAllAdministrateur();
+        $exception = (new UtilisateurRepository())->selectAllAdmins();
         $actors = (new UtilisateurRepository())->selectAllActorQuestion($idQuestion);
         $exception = array_merge($actors, $exception);
 
