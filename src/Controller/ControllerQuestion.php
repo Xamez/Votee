@@ -66,6 +66,15 @@ class ControllerQuestion extends AbstractController {
         $search = $_GET['search'] ?? null;
         if ($search) $questions = (new QuestionRepository())->selectBySearch($search, 'TITRE');
         else $questions = (new QuestionRepository())->selectAll();
+        foreach ($questions as $key=>$question) {
+            if (!$question->isVisible()) {
+                unset($questions[$key]);
+                if ($question->getDateDebutQuestion() <= date('d/m/y')) {
+                    $question->setVisibilite("visible");
+                    //(new QuestionRepository())->modifier($question);
+                }
+            }
+        }
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Liste des questions",
@@ -161,7 +170,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function addVotant(): void {
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
@@ -205,7 +214,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function addedVotant() : void {
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
@@ -244,7 +253,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updateQuestion() : void {
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
@@ -261,7 +270,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedQuestion() : void {
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'],['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&all");
         }
@@ -300,10 +309,10 @@ class ControllerQuestion extends AbstractController {
     }
 
     /** Retourne true si la question est en phase d'ecriture et si l'utilisateur a les roles requis */
-    public static function hasPermission($idQuestion, $rolesArray): bool {
+    public static function hasPermission($idQuestion, $rolesArray, $periodeArray): bool {
         $question = (new QuestionRepository())->select($idQuestion);
         $roles = ConnexionUtilisateur::getRolesQuestion($idQuestion);
-        return $question->getPeriodeActuelle() == 'Période d\'écriture' && (count(array_intersect($rolesArray, $roles)) > 0);
+        return in_array($question->getPeriodeActuelle(), $periodeArray) && (count(array_intersect($rolesArray, $roles)) > 0);
     }
 
 }

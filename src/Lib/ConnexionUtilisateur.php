@@ -63,7 +63,7 @@ class ConnexionUtilisateur {
     /**
      * Retourne si l'utilisateur connecté possède une proposition visible pour la question donnée
      */
-    public static function questionValide($idQuestion): bool {
+    public static function hasPropositionVisible($idQuestion): bool {
         if (self::estConnecte()) {
             $idProposition = ConnexionUtilisateur::getPropByLoginVisible($idQuestion);
             if ($idProposition) return true;

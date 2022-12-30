@@ -33,7 +33,7 @@
     <div class="flex flex-col gap-3">
         <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
         <p>
-            <span class="text-xl text-main font-bold text-lg">Période d\'écriture : </span>
+            <span class="text-xl text-main font-bold text-lg">Période d'écriture : </span>
             Du <?= $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() ?>
         </p>
         <p>
@@ -53,7 +53,7 @@ foreach ($propositions as $proposition) {
     if ($proposition->isVisible()) {
         echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition='. rawurlencode($idProposition).'">
                 <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
-                        <div class="flex flex-col items-center gap-2 md:flex-row">
+                    <div class="flex flex-col items-center gap-2 md:flex-row">
                         <p class="font-bold text-dark hidden md:block">Proposition de : </p>
                         <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                             <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom   ()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
@@ -110,12 +110,12 @@ if ($size > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main f
 echo '</div></div>
       <div class="flex gap-2 justify-between">';
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'all', 'title' => 'Retour', "logo" => 'reply']);
-if ($question->getPeriodeActuelle() == 'Période d\'écriture') {
+if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->getPeriodeActuelle() == 'Période de préparation') {
     if (in_array("Organisateur", $rolesQuestion)) {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Editer', "logo" => 'edit']);
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'addVotant', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Votants', "logo" => 'manage_accounts']);
     }
-    if (!ConnexionUtilisateur::questionValide($question->getIdQuestion())) {
+    if ($question->getPeriodeActuelle() == 'Période d\'écriture' && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
         if (ConnexionUtilisateur::creerProposition($question->getIdQuestion()) || in_array("Organisateur", $rolesQuestion)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
         } else {

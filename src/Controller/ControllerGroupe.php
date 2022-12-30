@@ -78,7 +78,7 @@ class ControllerGroupe extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-        $exception = (new UtilisateurRepository())->selectAllAdministrateur();
+        $exception = (new UtilisateurRepository())->selectAllAdmins();
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $membres = (new GroupeRepository())->selectMembres($_GET['idGroupe']);
         if ($membres) $exception = array_merge($exception, $membres);

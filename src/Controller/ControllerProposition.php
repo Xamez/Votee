@@ -124,9 +124,8 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($_GET['idQuestion']);
         if (!ConnexionUtilisateur::estConnecte()
-            || ConnexionUtilisateur::questionValide($question->getIdQuestion())
-            || !(ConnexionUtilisateur::creerProposition($question->getIdQuestion()
-                || in_array("Organisateur", $rolesQuestion)))) {
+            || ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())
+            || !(in_array("Organisateur", $rolesQuestion) || ConnexionUtilisateur::creerProposition($question->getIdQuestion()))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
@@ -152,9 +151,8 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($idQuestion);
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!ConnexionUtilisateur::estConnecte()
-            || ConnexionUtilisateur::questionValide($question->getIdQuestion())
-            || !(ConnexionUtilisateur::creerProposition($question->getIdQuestion()
-                || in_array("Organisateur", $rolesQuestion)))) {
+            || ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())
+            || !(in_array("Organisateur", $rolesQuestion) || ConnexionUtilisateur::creerProposition($question->getIdQuestion()))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
             self::redirection("?controller=question&all");
         }
@@ -260,13 +258,14 @@ class ControllerProposition extends AbstractController {
     public static function addCoauteur():void {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
+        var_dump(self::hasPermission($idQuestion, $idProposition,['Responsable']));
         if (!self::hasPermission($idQuestion, $idProposition,['Responsable'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
 
-        $exception = (new UtilisateurRepository())->selectAllAdministrateur();
+        $exception = (new UtilisateurRepository())->selectAllAdmins();
         $exception[] = (new UtilisateurRepository())->selectResp($idProposition);
 
         $utilisateurs = (new UtilisateurRepository())->selectAll();
@@ -425,7 +424,7 @@ class ControllerProposition extends AbstractController {
         $roles = ConnexionUtilisateur::getRolesProposition($proposition->getIdProposition()); // Recuperation du role de la personne qui est censé posseder la proposition dont on veut créer une fusion
         $rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
         if (!in_array('Responsable', $roles)
-            && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($question->getIdQuestion()))) {
+            && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion()))) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -485,7 +484,7 @@ class ControllerProposition extends AbstractController {
         $oldProposition = (new PropositionRepository())->select($idOldPropMerge);
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
         if (!in_array('Responsable', $roles)
-            && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($_POST['idQuestion']))) {
+            && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($_POST['idQuestion']))) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }

@@ -101,7 +101,7 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
         }
     }
     if (!in_array('Responsable', $roles)
-        && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::questionValide($question->getIdQuestion()))) {
+        && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion()))) {
         if (ConnexionUtilisateur::creerFusion($idProposition)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createFusion', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Créer une fusion', "logo" => 'upload']);
         } else {
