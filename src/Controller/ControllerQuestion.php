@@ -152,23 +152,27 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
 
-        $idQuestion = (new QuestionRepository())->sauvegarderSequence($question);
         $isOk = true;
+
+        $loginSpe = $_POST['loginSpe'];
+        if ($loginSpe == '') $question->setLoginSpecialiste(NULL);
+
+        $idQuestion = (new QuestionRepository())->sauvegarderSequence($question);
+
+        if ($loginSpe != '') $isOk &= (new QuestionRepository())->ajouterSpecialiste($loginSpe); // on appel la procédure après la création de la question par précaution
+
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-        $loginSpe = $_POST['loginSpe'];
-        echo $loginSpe;
-        if ($loginSpe != '-1') $isOk &= (new QuestionRepository())->ajouterSpecialiste($loginSpe);
         if ($idQuestion != NULL && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
-            //self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
+            self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
         } else {
             if (!$isOk) (new QuestionRepository())->supprimer($idQuestion);
             ConnexionUtilisateur::ajouterScoreQuestion();
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-            //self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
+            self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
     }
 

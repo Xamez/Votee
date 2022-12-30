@@ -65,7 +65,7 @@
                 <div class="flex gap-10 items-center">
                     <p class="w-36 font-semibold">Ajouter un spécialiste</p>
                     <select name="loginSpe" class="p-2 rounded-md">
-                        <option value="-1">Aucun</option>
+                        <option value="">Aucun</option>
                         <?php
                         foreach ($users as $user) {
                             echo '<option value="' . $user->getLogin() . '">' . $user->getNom() . ' ' . $user->getPrenom() . '</option>';
