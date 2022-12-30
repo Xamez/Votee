@@ -1,7 +1,7 @@
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=question&action=createdQuestion">
     <div class="flex flex-col gap-7 border-2 p-8 rounded-3xl">
         <div>
-            <div class="flex flex-col">
+            <div class="flex flex-col pb-2">
                 <input type="text" placeholder="Titre de la question" max=150 name="titreQuestion" id="systeme_vote_id" required/>
             </div>
             <div class="flex flex-col">
@@ -24,7 +24,7 @@
         </div>
         <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
         <div>
-            <div class="flex gap-10 items-end">
+            <div class="flex gap-10 items-center">
                 <p class="w-36 font-semibold">Période d'écriture :</p>
                 <div class="flex flex-col">
                     <label for="date_debut_question_id<_id">Débute le </label>
@@ -35,7 +35,7 @@
                     <input type="date" min="<?=date('Y-m-d')?>" name="dateFinQuestion" id="date_fin_question_id" required/>
                 </div>
             </div>
-            <div class="flex gap-10 items-end">
+            <div class="flex gap-10 items-center">
                 <p class="w-36 font-semibold">Période de vote :</p>
                 <div class="flex flex-col">
                     <label for="date_debut_vote_id">Débute le </label>
@@ -49,7 +49,7 @@
         </div>
         <h1 class="title text-dark text-2xl font-semibold">Type de Vote<h1/>
         <div>
-            <div class="flex gap-10 items-end">
+            <div class="flex gap-10 items-center">
                 <p class="w-36 font-semibold">Type de Vote :</p>
                 <select name="voteType" class="p-2 rounded-md">
                     <?php
@@ -62,7 +62,7 @@
         </div>
         <h1 class="title text-dark text-2xl font-semibold">Spécialiste<h1/>
             <div>
-                <div class="flex gap-10 items-end">
+                <div class="flex gap-10 items-center">
                     <p class="w-36 font-semibold">Ajouter un spécialiste</p>
                     <select name="loginSpe" class="p-2 rounded-md">
                         <?php
