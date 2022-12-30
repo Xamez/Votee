@@ -31,4 +31,18 @@ echo '</div></div>';
 if (isset($visibilite) && !$visibilite) {
     echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Etat : </p><span class="text-main">Archivée</span></div>';
 }
+
+if ($specialiste != null) {
+    echo '
+        <span class="text-main text-center md:text-left w-28 font-semibold">Spécialiste : </span>
+        <div class="flex">
+            <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=<?= rawurlencode($responsable->getLogin())?>">
+                <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
+                </div>
+            </a>
+        </div>
+        ';
+}
+
 echo '</div>';
