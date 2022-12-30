@@ -29,7 +29,7 @@ class UtilisateurRepository extends AbstractRepository {
     /** Retourne l'ensemble des roles pour une question et un utilisateur donné */
     public function getRolesQuestion($login, $idQuestion): array {
         $roles = [];
-        $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant"];
+        $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant", "Specialiste"];
         foreach ($procedures as $procedure) {
             $sql = "SELECT :procedureTag(:loginTag, :idQuestionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure, $sql);
@@ -73,6 +73,18 @@ class UtilisateurRepository extends AbstractRepository {
         return $utilisateurs;
     }
 
+    public static function getAdmins() : array {
+        $sql = "SELECT * FROM Administrateurs";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute();
+        $admins = [];
+        $result = $pdoStatement->fetchAll();
+        foreach ($result as $admin) {
+            $admins[] = $admin['LOGIN'];
+        }
+        return $admins;
+    }
+
     public function selectCoAuteur($idProposition): array {
         $coAuteurs = [];
         $sql = "SELECT u.* FROM RedigerCA r
@@ -107,7 +119,6 @@ class UtilisateurRepository extends AbstractRepository {
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
     }
-
 
     public function selectAllAdministrateur() : array {
         $admin = [];

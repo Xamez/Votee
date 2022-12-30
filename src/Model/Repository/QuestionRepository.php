@@ -59,6 +59,18 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
+    public function ajouterSpecialiste(string $loginSpe) {
+        $sql = "CALL AjouterSpecialiste(:loginSpeTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("loginSpeTag" => $loginSpe);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
     /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est coAuteur */
     public function selectQuestionCoau(string $login) {
         $sql = "SELECT DISTINCT q.*

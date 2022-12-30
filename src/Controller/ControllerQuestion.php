@@ -15,7 +15,7 @@ use App\Votee\Model\Repository\UtilisateurRepository;
 
 class ControllerQuestion extends AbstractController {
 
-    public static function home() : void {
+    public static function home(): void {
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Page d'accueil",
@@ -25,7 +25,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function section() : void {
+    public static function section(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
             self::redirection("?controller=question&all");
@@ -47,8 +47,9 @@ class ControllerQuestion extends AbstractController {
         $nbSections = $_REQUEST['nbSections'];
         $voteTypes = VoteTypes::toArray();
         $users = (new UtilisateurRepository())->selectAll();
-        $users = array_filter($users, function ($user) {
-            return $user->getLogin() !== ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
+        $admins = UtilisateurRepository::getAdmins();
+        $users = array_filter($users, function ($user) use ($admins) {
+            return $user->getLogin() !== ConnexionUtilisateur::getUtilisateurConnecte()->getLogin() && !in_array($user->getLogin(), $admins);
         });
         self::afficheVue('view.php',
             [
@@ -61,7 +62,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function all() : void {
+    public static function all(): void {
         $search = $_GET['search'] ?? null;
         if ($search) $questions = (new QuestionRepository())->selectBySearch($search, 'TITRE');
         else $questions = (new QuestionRepository())->selectAll();
@@ -74,7 +75,7 @@ class ControllerQuestion extends AbstractController {
             ]);
     }
 
-    public static function readQuestion() : void {
+    public static function readQuestion(): void {
             if (!ConnexionUtilisateur::estConnecte()) {
                 (new Notification())->ajouter("danger","Vous devez vous connecter !");
                 self::redirection("?controller=question&action=all");
@@ -115,7 +116,7 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function createdQuestion() : void {
+    public static function createdQuestion(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&action=all");
@@ -146,6 +147,7 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
+        $isOk &= (new QuestionRepository())->ajouterSpecialiste($_POST['loginSpe']);
         if ($idQuestion != null && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
             self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
@@ -157,7 +159,7 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
-    public static function addVotant() : void {
+    public static function addVotant(): void {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
