@@ -1,9 +1,9 @@
 <?php
 
 use App\Votee\Controller\ControllerProposition;
-echo '<script type="text/javascript" src="assets/js/accordion.js"></script>';
+echo '<script type="text/javascript" src="assets/js/resultatVote.js"></script>';
 
-ControllerProposition::afficheVue($voteUrl, ["propositions" => $propositions, "resultats" => $resultats, "responsables" => $responsables]);
+ControllerProposition::afficheVue($voteUrl, ["propositions" => $propositions, "resultats" => $resultats, "responsables" => $responsables, "sections" => $sections, "textes" => $textes]);
 
 echo '<div class="flex gap-2 justify-between">
          <a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($idQuestion) . '">

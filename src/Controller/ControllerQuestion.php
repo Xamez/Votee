@@ -125,6 +125,7 @@ class ControllerQuestion extends AbstractController {
             $_POST['loginSpe'],
             $_POST['voteType']
         );
+            $question->setVisibilite(false);
         $idQuestion = (new QuestionRepository())->ajouterQuestion($question);
         $isOk = true;
         for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {

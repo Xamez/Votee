@@ -258,7 +258,7 @@ class ControllerProposition extends AbstractController {
         }
     }
 
-    public static function addCoauteur():void {
+    public static function addCoauteur(): void {
         $idProposition = $_GET['idProposition'];
         if (!self::hasPermission($idProposition)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
@@ -285,7 +285,7 @@ class ControllerProposition extends AbstractController {
             ]);
     }
 
-    public static function addedCoauteur():void {
+    public static function addedCoauteur(): void {
         $idProposition = $_POST['idProposition'];
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idProposition)) {
