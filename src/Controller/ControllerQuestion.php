@@ -147,8 +147,9 @@ class ControllerQuestion extends AbstractController {
             $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
-        $isOk &= (new QuestionRepository())->ajouterSpecialiste($_POST['loginSpe']);
-        if ($idQuestion != null && $isOk) {
+        $loginSpe = $_POST['loginSpe'];
+        if ($loginSpe != '-1') $isOk &= (new QuestionRepository())->ajouterSpecialiste($loginSpe);
+        if ($idQuestion != NULL && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
             self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
         } else {

@@ -318,6 +318,7 @@ class ControllerProposition extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $specialiste = (new UtilisateurRepository())->select($question->getLoginSpecialiste());
         $proposition = (new PropositionRepository())->select($_GET['idProposition']);
         $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
         $filsRaw = (new PropositionRepository())->getFilsFusion($_GET['idProposition']);
@@ -344,6 +345,7 @@ class ControllerProposition extends AbstractController {
                     "sections" => $sections,
                     "coAuteurs" => $coAuteurs,
                     "textes" => $textes,
+                    "specialiste" => $specialiste,
                     "responsable" => $responsable,
                     "pagetitle" => "Question",
                     "cheminVueBody" => "proposition/readProposition.php",

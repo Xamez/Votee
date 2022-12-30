@@ -60,7 +60,7 @@ class QuestionRepository extends AbstractRepository {
     }
 
     public function ajouterSpecialiste(string $loginSpe) {
-        $sql = "CALL AjouterSpecialiste(:loginSpeTag)";
+        $sql = "CALL AjouterSpecialistes(:loginSpeTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $values = array("loginSpeTag" => $loginSpe);
         try {
