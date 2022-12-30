@@ -58,6 +58,13 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
+    /** Rajoute 1 point au score s'il y a eu une erreur dans l'insertion d'une question */
+    public function ajouterScoreQuestion($login): void {
+        $sql = "UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT + 1 WHERE login = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("loginTag" => $login));
+    }
+
     // TODO La remplacer a terme par une verification de la table existe
     public function selectAllActorQuestion($idQuestion): array {
         $sql = "SELECT U.* FROM (
