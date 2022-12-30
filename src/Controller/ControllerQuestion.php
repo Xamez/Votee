@@ -106,6 +106,7 @@ class ControllerQuestion extends AbstractController {
                 }
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
+            $specialiste = (new UtilisateurRepository())->select($question->getLoginSpecialiste());
             self::afficheVue('view.php',
                 [
                     "question" => $question,
@@ -113,6 +114,7 @@ class ControllerQuestion extends AbstractController {
                     "sections" => $sections,
                     "organisateur" => $organisateur,
                     "responsables" => $responsables,
+                    "specialiste" => $specialiste,
                     "groupesVotants" => $groupesVotants,
                     "size" => sizeof($votants) + sizeof($groupes),
                     "pagetitle" => "Question",
@@ -157,15 +159,16 @@ class ControllerQuestion extends AbstractController {
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
         $loginSpe = $_POST['loginSpe'];
+        echo $loginSpe;
         if ($loginSpe != '-1') $isOk &= (new QuestionRepository())->ajouterSpecialiste($loginSpe);
         if ($idQuestion != NULL && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
-            self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
+            //self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
         } else {
             if (!$isOk) (new QuestionRepository())->supprimer($idQuestion);
             ConnexionUtilisateur::ajouterScoreQuestion();
             (new Notification())->ajouter("warning", "L'ajout de la question a échoué.");
-            self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
+            //self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
     }
 
