@@ -11,23 +11,23 @@
                 </a>
             </div>
         </div>
-        <?php
-        if ($specialiste != null) {
-            echo '<div class="flex flex-col sm:flex-row items-center gap-2">
-                  <p class="text-main font-semibold">Spécialiste :<p>
-                  <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' .
-                rawurlencode($specialiste->getLogin()) . '"
-                     class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                      <span class="material-symbols-outlined">account_circle</span>' .
-                htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
-                  </a>
-              </div>';
-        }
-        ?>
-        <div>
-            <span class="text-main font-semibold">Période actuelle : </span>
-            <span><?= $question->getPeriodeActuelle() ?></span>
-        </div>
+    </div>
+    <?php
+    if ($specialiste != null) {
+        echo '<div class="flex flex-col sm:flex-row items-center gap-2">
+              <p class="text-main font-semibold">Spécialiste :<p>
+              <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' .
+            rawurlencode($specialiste->getLogin()) . '"
+                 class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                  <span class="material-symbols-outlined">account_circle</span>' .
+            htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
+              </a>
+          </div>';
+    }
+    ?>
+    <div>
+        <span class="text-main font-semibold">Période actuelle : </span>
+        <span><?= $question->getPeriodeActuelle() ?></span>
     </div>
     <div class="flex flex-col gap-3">
         <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
