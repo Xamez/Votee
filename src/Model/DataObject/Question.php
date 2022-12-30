@@ -99,7 +99,7 @@ class Question extends AbstractDataObject {
 
     public function getLoginSpecialiste(): ?string { return $this->loginSpecialiste; }
 
-    public function setLoginSpecialiste(string $loginSpecialiste): void { $this->loginSpecialiste = $loginSpecialiste; }
+    public function setLoginSpecialiste(?string $loginSpecialiste): void { $this->loginSpecialiste = $loginSpecialiste; }
 
     public function getVoteType(): string {return $this->voteType;}
 
