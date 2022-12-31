@@ -34,6 +34,7 @@ main { flex: 1; }
 .bg-red { background-color: #ee8579; }
 .shadow-button { filter: drop-shadow(8px 8px 0px #B8B8F8); }
 .bg-light {	background: rgba(174, 164, 255, 0.5); }
+.shadow-4xl { box-shadow: rgba(0, 0, 0, 0.37) 1px 2px 10px 1px; }
 
 /* Permet d'avoir un effet quand on passe la souris sur les liens dans le burger-menu*/
 .link-underline {
@@ -164,3 +165,5 @@ input[type=checkbox] {
 	grid-template-columns: min-content auto;
 	grid-template-rows: min-content auto;
 }
+
+

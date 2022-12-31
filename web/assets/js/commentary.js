@@ -63,7 +63,7 @@ window.onload = () => {
       
     const createEditableCommentary = (span, textCommentaire) => {
         const tooltip = document.createElement('div');
-        tooltip.classList.add('tooltipEditable', 'flex', 'flex-col', 'justify-center', 'cursor-default', 'z-1', 'absolute', 'bg-main', 'text-white', 'rounded', 'p-2', 'text-sm', 'shadow-lg', 'gap-3');
+        tooltip.classList.add('tooltipEditable', 'flex', 'flex-col', 'justify-center', 'cursor-default', 'z-1', 'absolute', 'shadow-4xl', 'bg-white', 'rounded', 'p-2', 'text-sm', 'gap-3');
         tooltip.style.top = span.offsetTop + span.offsetHeight + 'px';
         tooltip.style.left = span.offsetLeft + 'px';
 
