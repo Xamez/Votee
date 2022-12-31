@@ -95,6 +95,7 @@ class ControllerUtilisateur extends AbstractController {
             $questionsRepre = (new QuestionRepository())->selectQuestionResp($login);
             $questionsCoau = (new QuestionRepository())->selectQuestionCoau($login);
             $questionsVota = (new QuestionRepository())->selectQuestionVota($login);
+            $questionsSpecia = (new QuestionRepository())->selectQuestionSpecia($login);
         }
         self::afficheVue('view.php',
             [
@@ -102,6 +103,7 @@ class ControllerUtilisateur extends AbstractController {
                 "questionsRepre" => $questionsRepre,
                 "questionsCoau" => $questionsCoau,
                 "questionsVota" => $questionsVota,
+                "questionsSpecia" => $questionsSpecia,
                 "pagetitle" => "Liste des questions",
                 "cheminVueBody" => "question/listQuestion.php",
                 "title" => "Liste des votes",

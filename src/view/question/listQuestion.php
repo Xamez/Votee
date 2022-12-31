@@ -2,7 +2,7 @@
 
 use App\Votee\Controller\AbstractController;
 
-$categories = ["Organisateur" => $questionsOrga, "Responsable" => $questionsRepre, "CoAuteur" => $questionsCoau, "Votant" => $questionsVota];
+$categories = ["Organisateur" => $questionsOrga, "Responsable" => $questionsRepre, "CoAuteur" => $questionsCoau, "Votant" => $questionsVota, "Specialiste" => $questionsSpecia];
 
 echo '<div class="flex flex-col gap-10 mt-10">';
 foreach ($categories as $key=>$category) {
