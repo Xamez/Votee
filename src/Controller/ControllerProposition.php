@@ -3,6 +3,7 @@
 namespace App\Votee\Controller;
 
 use App\Votee\Lib\ConnexionUtilisateur;
+use App\Votee\Lib\MotDePasse;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Proposition;
 use App\Votee\Model\DataObject\Texte;
@@ -127,7 +128,7 @@ class ControllerProposition extends AbstractController {
             || ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())
             || !(in_array("Organisateur", $rolesQuestion) || ConnexionUtilisateur::creerProposition($question->getIdQuestion()))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
         if ($question) {
@@ -154,7 +155,7 @@ class ControllerProposition extends AbstractController {
             || ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())
             || !(in_array("Organisateur", $rolesQuestion) || ConnexionUtilisateur::creerProposition($question->getIdQuestion()))) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $proposition = new Proposition(NULL, NULL,  $_POST['titreProposition'], 'visible', NULL );
         $idProposition = (new PropositionRepository())->sauvegarderSequence($proposition);
@@ -201,7 +202,7 @@ class ControllerProposition extends AbstractController {
         $proposition = (new PropositionRepository())->select($idProposition);
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
         $textes = (new TexteRepository())->selectAllByKey($idProposition);
@@ -360,7 +361,8 @@ class ControllerProposition extends AbstractController {
     public static function deleteProposition(): void {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
+        $rolesQuest = ConnexionUtilisateur::getRolesQuestion($idQuestion);
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable']) && !in_array('Organisateur', $rolesQuest)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
@@ -375,16 +377,25 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function deletedProposition(): void {
-        $idProposition = $_GET['idProposition'];
-        $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
+        $idProposition = $_POST['idProposition'];
+        $idQuestion = $_POST['idQuestion'];
+        $motDePasse = $_POST['motDePasse'];
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        $rolesQuest = ConnexionUtilisateur::getRolesQuestion($idQuestion);
+        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable']) && !in_array('Organisateur', $rolesQuest)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-        if ((new PropositionRepository())->supprimer($idProposition)) {
+        if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
+            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            self::redirection("?controller=proposition&action=deleteProposition&idQuestion=$idQuestion&idProposition=$idProposition");
+        }
+        $proposition = (new PropositionRepository())->select($idProposition);
+        $proposition->setVisibilite('invisible');
+        if ((new PropositionRepository())->modifier($proposition)) {
             (new Notification())->ajouter("success", "La proposition a été supprimée.");
         } else (new Notification())->ajouter("warning", "La proposition n'a pas pu être supprimée.");
-        self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_GET['idQuestion']);
+        self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
     }
 
     public static function createdCommentaire(): void {

@@ -22,7 +22,7 @@ class ConnexionUtilisateur {
         Session::getInstance()->supprimer(static::$cleConnexion);
     }
 
-    /** Retourne le login de l'utilisateur connecté */
+    /** Retourne l'utilisateur connecté */
     public static function getUtilisateurConnecte() {
         $login = self::estConnecte() ? Session::getInstance()->lire(static::$cleConnexion) : null;
         if ($login != null) {
