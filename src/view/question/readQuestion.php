@@ -120,22 +120,26 @@ foreach ($groupesVotants as $key => $groupeVotant) {
               </a>';
     }
 }
-if ($size > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
+$rawIdQuestion = rawurlencode($question->getIdQuestion());
+if ($size > 10) echo '<a class="flex items-center gap-2 p-2 text-white bg-main font-semibold rounded-2xl" href="./frontController.php?controller=question&action=readVotant&idQuestion=' . $rawIdQuestion . '">
                         <span class="material-symbols-outlined">more_horiz</span>Voir plus
                       </a>';
-echo '</div></div>
+echo '    </div>
+      </div>
       <div class="flex gap-2 justify-between">';
+
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'all', 'title' => 'Retour', "logo" => 'reply']);
 if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->getPeriodeActuelle() == 'Période de préparation') {
     if (in_array("Organisateur", $rolesQuestion)) {
-        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Editer', "logo" => 'edit']);
-        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'addVotant', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Votants', "logo" => 'manage_accounts']);
+        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Editer', "logo" => 'edit']);
+        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'addVotant', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Votants', "logo" => 'manage_accounts']);
+        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'deleteQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Supprimer', "logo" => 'delete']);
     }
     if ($question->getPeriodeActuelle() == 'Période d\'écriture' && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
-        if (ConnexionUtilisateur::creerProposition($question->getIdQuestion()) || in_array("Organisateur", $rolesQuestion)) {
-            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
+        if (ConnexionUtilisateur::creerProposition($idQuestion) || in_array("Organisateur", $rolesQuestion)) {
+            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
         } else {
-            AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $idQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
+            AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $rawIdQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
         }
     }
 }

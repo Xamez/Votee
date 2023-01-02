@@ -3,6 +3,7 @@
 namespace App\Votee\Controller;
 
 use App\Votee\Lib\ConnexionUtilisateur;
+use App\Votee\Lib\MotDePasse;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
@@ -28,7 +29,7 @@ class ControllerQuestion extends AbstractController {
     public static function section(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         self::afficheVue('view.php',
             [
@@ -42,7 +43,7 @@ class ControllerQuestion extends AbstractController {
     public static function createQuestion(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $nbSections = $_REQUEST['nbSections'];
         $voteTypes = VoteTypes::toArray();
@@ -180,7 +181,7 @@ class ControllerQuestion extends AbstractController {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
 
@@ -224,7 +225,7 @@ class ControllerQuestion extends AbstractController {
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
 
         /* Gestion des ajouts et suppression des votants */
@@ -263,7 +264,7 @@ class ControllerQuestion extends AbstractController {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
         self::afficheVue('view.php',
@@ -280,7 +281,7 @@ class ControllerQuestion extends AbstractController {
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'],['Période d\'écriture', 'Période de préparation'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&all");
+            self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
         $question->setVisibilite('visible');
@@ -292,6 +293,43 @@ class ControllerQuestion extends AbstractController {
         } else {
             (new Notification())->ajouter("warning", "La modification de la question a échoué.");
             self::redirection("?controller=question&action=updateQuestion&idQuestion=$idQuestion");
+        }
+    }
+
+    public static function deleteQuestion() : void {
+        $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&action=all");
+        }
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Supprimer une question",
+                "cheminVueBody" => "question/deleteQuestion.php",
+                "title" => "Supprimer une question",
+                "idQuestion" => $idQuestion
+            ]);
+    }
+
+    public static function deletedQuestion() : void {
+        $idQuestion = $_POST['idQuestion'];
+        $motDePasse = $_POST['motDePasse'];
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection("?controller=question&action=all");
+        }
+        if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
+            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            self::redirection("?controller=question&action=deleteQuestion&idQuestion=$idQuestion");
+        }
+        $isOk = (new QuestionRepository())->supprimer($idQuestion);
+        if ($isOk) {
+            (new Notification())->ajouter("success", "La question a été supprimée.");
+            self::redirection("?controller=question&action=all");
+        } else {
+            (new Notification())->ajouter("warning", "La suppression de la question a échoué.");
+            self::redirection("?controller=question&action=deleteQuestion&idQuestion=$idQuestion");
         }
     }
 
