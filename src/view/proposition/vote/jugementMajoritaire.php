@@ -4,7 +4,7 @@ echo '<div class="flex gap-2 flex-wrap justify-center items-center">';
 
 $values = ['-3', '-2', '-1', '1', '2', '3'];
 $colors_select = ['ef4444', 'f97316', 'facc15', '22D3EE', '34D399', '22c55e']; // [red-500, orange-500, yellow-400, cyan-400, emerald-400, green-500]
-$colors_unselect = ['c4b5fd60', 'c4b5fd', 'a78bfa', '8b5cf6', '9333ea', '7c3aed'];
+$colors_unselect = ['c4b5fd60', 'c4b5fd', 'a78bfa', '8b5cf6', '7c3aed', '9333ea'];
 $labels = ['A rejeter', 'Insuffisant', 'Passable', 'Assez bien', 'Bien', 'Très Bien'];
 
 for ($i = 0; $i < sizeof($labels); $i++) {
