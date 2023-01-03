@@ -15,7 +15,7 @@ enum VoteTypes : string {
                 return $voteType;
             }
         }
-        throw new Exception("VoteType not found");
+        throw new Exception("VoteType '" . $keyString . "' not found");
     }
 
     public static function toArray(): array {

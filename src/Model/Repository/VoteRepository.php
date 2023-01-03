@@ -2,6 +2,7 @@
 
 namespace App\Votee\Model\Repository;
 
+use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Vote;
 use App\Votee\Model\DataObject\VoteTypes;
 use PDOException;
@@ -50,14 +51,19 @@ class VoteRepository extends AbstractRepository {
         return $result["NOTE"];
     }
 
-    function getNotes(string $idQuestion, string $idProposition) : array {
+    function getNotes(Question $question, string $idProposition) : array {
+        $idQuestion = $question->getIdQuestion();
         $sql = "SELECT login FROM Existe WHERE IDQUESTION = :idQuestionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
         $result = $pdoStatement->fetchAll();
         $notes = array();
-        foreach ($result as $votant)
-            $notes[$votant["LOGIN"]] = $this->getNote($idProposition, $votant["LOGIN"]);
+        foreach ($result as $votant) {
+            $note = $this->getNote($idProposition, $votant["LOGIN"]);
+            if (VoteTypes::getFromKey($question->getVoteType()) == VoteTypes::JUGEMENT_MAJORITAIRE)
+                $notes[$note] = -2; // par défaut, les personnes n'ayant pas voté sont considérées comme ayant voté "à rejeter" soit "-2"
+            $notes[$votant["LOGIN"]] = $note;
+        }
         return $notes;
     }
 
@@ -68,10 +74,9 @@ class VoteRepository extends AbstractRepository {
      * - Le premier élément est un entier représentant le nombre de points de la proposition
      * - Le second est un tableau associatif dont les clés sont les notes et les valeurs sont les pourcentages de votants ayant donné cette note
      */
-    function getResultatsForProposition(string $idQuestion, string $idProposition) : array {
-        $notes = $this->getNotes($idQuestion, $idProposition);
+    function getResultatsForProposition(Question $question, string $idProposition) : array {
+        $notes = $this->getNotes($question, $idProposition);
         $resultats = array_count_values($notes);
-
         $totalPoints = 0;
         foreach ($resultats as $note => $nombre) {
             $resultats[$note] = round($nombre / sizeof($notes) * 100);
@@ -81,12 +86,12 @@ class VoteRepository extends AbstractRepository {
         return [$totalPoints, $resultats];
     }
 
-    function getResultats($idQuestion) : array {
+    function getResultats(Question $question) : array {
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
         $resultats = array();
         foreach ($propositions as $proposition) {
             $idProposition = $proposition->getIdProposition();
-            $resultats[$idProposition] = $this->getResultatsForProposition($idQuestion, $idProposition);
+            $resultats[$idProposition] = $this->getResultatsForProposition($question, $idProposition);
         }
         arsort($resultats); // On trie les résultats par ordre décroissant de points
 

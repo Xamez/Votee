@@ -36,7 +36,7 @@ class ControllerProposition extends AbstractController {
 
     public static function createdVote(): void {
         $roles = ConnexionUtilisateur::getRolesQuestion($_POST['idQuestion']);
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $question = (new QuestionRepository())->select($_POST['idQuestion']);
         if (!(count(array_intersect(['Responsable', 'Organisateur', 'Votant'], $roles)) > 0)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
@@ -94,7 +94,7 @@ class ControllerProposition extends AbstractController {
 
     public static function resultatPropositions(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if ($question->getPeriodeActuelle() != "Période des résultats") {
+        if ($question->getPeriodeActuelle() != "Période de résultat") {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas accéder aux résultats de cette question.");
             self::redirection("?controller=question&readAllQuestion");
         } else {
@@ -106,7 +106,7 @@ class ControllerProposition extends AbstractController {
             $question = (new QuestionRepository())->select($_GET['idQuestion']);
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion" => $_GET['idQuestion']));
-            $resultats = (new VoteRepository())->getResultats($question->getIdQuestion());
+            $resultats = (new VoteRepository())->getResultats($question);
             foreach ($propositions as $proposition) {
                 $idProposition = $proposition->getIdProposition();
                 $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
