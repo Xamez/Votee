@@ -12,6 +12,11 @@
 	min-height: 100vh;
 }
 
+*, html {
+
+	scroll-behavior: smooth !important;
+}
+
 main { flex: 1; }
 
 .bg-image-urne {
@@ -19,6 +24,16 @@ main { flex: 1; }
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
+}
+
+.img-home {
+	width: 30rem;
+}
+
+@media screen and (min-width: 1280px) {
+	.img-home {
+		width: 50rem;
+	}
 }
 
 /* Quelques classes pour des couleurs utile */ 
