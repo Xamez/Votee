@@ -1,8 +1,8 @@
 <?php
 
-$values = ['-2', '-1', '0', '1', '2'];
-$colors = ['f87171', 'fb923c', 'facc15', '4ade80', '22d3ee'];
-$labels = ["Insuffisant", "Passable", "Abstention", "Bien", "Très Bien"];
+$values = ['-3', '-2', '-1', '1', '2', '3'];
+$colors = ['ef4444', 'f97316', 'facc15', '22D3EE', '34D399', '22c55e']; // [red-500, orange-500, yellow-400, cyan-400, emerald-400, green-500]
+$labels = ['A rejeter', 'Insuffisant', 'Passable', 'Assez bien', 'Bien', 'Très Bien'];
 
 echo '<div class="flex flex-col gap-4 result-element">';
 
@@ -57,11 +57,13 @@ foreach ($resultats as $idProposition => $resultat) {
     $i++;
 }
 
-echo '<div class="flex flex-col gap-2 justify-center items-center flex-col md:flex-row pt-6">';
-echo '<p>Légende</p>';
-for ($i = 0; $i < sizeof($values); $i++) {
-    echo '<div class="flex h-8 text-center items-center rounded-md" style="background-color: #' . $colors[$i] .'"><p class="text-white p-2">' . $labels[$i] . '</p></div>';
-}
+echo '<div class="flex flex-col justify-center items-center gap-2">';
+    echo '<p>Légende</p>';
+    echo '<div class="flex flex-wrap justify-center gap-2">';
+    for ($i = 0; $i < sizeof($values); $i++) {
+        echo '<div class="flex h-8 text-center items-center rounded-md" style="background-color: #' . $colors[$i] .'"><p class="text-white p-2">' . $labels[$i] . '</p></div>';
+    }
+    echo '</div>';
 echo '</div>';
 
 echo '</div>';

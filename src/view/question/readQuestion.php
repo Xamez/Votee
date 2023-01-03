@@ -145,7 +145,7 @@ if (sizeof($propositions) > 0) {
         if (count(array_intersect(['Votant', 'Organisateur', 'Responsable'], $rolesQuestion)) > 0) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'voterPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voter pour tous', "logo" => 'how_to_vote']);
         }
-    } else if ($question->getPeriodeActuelle() == 'Période des résultats') {
+    } else if ($question->getPeriodeActuelle() == 'Période de résultat') {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'resultatPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voir les résultats', "logo" => 'list_alt']);
     }
 }

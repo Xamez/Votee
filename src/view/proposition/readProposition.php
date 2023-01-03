@@ -61,9 +61,15 @@ foreach ($sections as $numParagraphe => $section) {
     ';
 }
 
-echo '</div>
-      <div class="flex flex-col sm:flex-row justify-center gap-2 justify-between">';
-            AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
+echo '</div>';
+
+if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == 'Période de vote') {
+    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
+}
+
+echo '<div class="flex flex-col sm:flex-row justify-center gap-2 justify-between">';
+
+AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
 
 if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
 
@@ -109,8 +115,4 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
     }
 }
 
-
-if ($visibilite && $question->getPeriodeActuelle() == 'Période de vote') {
-    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
-}
 echo '</div>';
