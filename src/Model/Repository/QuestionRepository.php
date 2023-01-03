@@ -43,13 +43,13 @@ class QuestionRepository extends AbstractRepository {
         );
     }
 
-    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est organisateur */
+    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est organisateur */
     public function selectQuestionOrga($login): array {
-        $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_organisateur IN (SELECT login_organisateur FROM Organisateurs WHERE login_organisateur = :paramTag)";
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_organisateur = :paramTag";
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est responsable */
+    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est responsable */
     public function selectQuestionResp(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -59,19 +59,13 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    public function ajouterSpecialiste(string $loginSpe) {
-        $sql = "CALL AjouterSpecialistes(:loginSpeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $values = array("loginSpeTag" => $loginSpe);
-        try {
-            $pdoStatement->execute($values);
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
+    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est spécialiste */
+    public function selectQuestionSpecia($login): array {
+        $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_specialiste = :paramTag";
+        return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est coAuteur */
+    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est coAuteur */
     public function selectQuestionCoau(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -81,7 +75,7 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour lesquelle l'utilisateur donnée est votant */
+    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est votant */
     public function selectQuestionVota(string $login) {
         $sql = "SELECT DISTINCT q.* FROM QUESTIONS q
             JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -100,6 +94,18 @@ class QuestionRepository extends AbstractRepository {
             $questionsFormatObjet[] = $this->construire($question);
         }
         return $questionsFormatObjet;
+    }
+
+    public function ajouterSpecialiste(string $loginSpe) {
+        $sql = "CALL AjouterSpecialistes(:loginSpeTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("loginSpeTag" => $loginSpe);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     /** Retourne le nombre de proposition (score) que l'utilisateur donné va pouvoir créer pour la question donnée */
