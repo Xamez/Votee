@@ -30,7 +30,7 @@
         <span><?= $question->getPeriodeActuelle() ?></span>
     </div>
     <div class="flex flex-col gap-3">
-        <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
+        <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
         <?php
 
         use App\Votee\Controller\AbstractController;
@@ -47,14 +47,45 @@
         ?>
     </div>
     <div class="flex flex-col gap-3">
-        <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-        <div>
-            <span class="text-xl text-main font-bold text-lg">Période d'écriture : </span>
-            <span>Du <?= $question->getDateDebutQuestion().' au ' . $question->getDateFinQuestion() ?></span>
-        </div>
-        <div>
-            <span class="text-xl text-main font-bold text-lg">Période de vote : </span>
-            <span>Du <?= $question->getDateDebutVote().' au ' . $question->getDateFinVote() ?></span>
+        <h1 class="title text-dark text-2xl font-semibold mb-10"">Calendrier</h1>
+        <div class="flex items-center mb-10">
+            <?php
+            $diffEcriture = strtotime($question->getDateFinQuestion()) - strtotime($question->getDateDebutQuestion());
+            $widthEcriture = max(0, min((strtotime(date('Y-m-d')) - strtotime($question->getDateDebutQuestion())) / ($diffEcriture == 0 ? 1 : $diffEcriture) * 100, 100));
+            $diffVote = strtotime($question->getDateFinVote()) - strtotime($question->getDateDebutVote());
+            $widthVote = max(0, min((strtotime(date('Y-m-d')) - strtotime($question->getDateDebutVote())) / ($diffVote == 0 ? 1 : $diffVote)  * 100, 100));
+            echo '
+            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($question->getDateDebutQuestion() <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
+                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateDebutQuestion()), 'd/m/Y') . '</span>
+            </div>
+            <div class="bg-dark h-6 w-full relative">
+                <span class="text-white absolute mix-blend-difference text-center w-full absolute -translate-x-1/2">Periode d\'écriture</span>
+                <div class="bg-light h-6 ' . ($widthEcriture == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthEcriture . '%"></div>
+            </div>';
+            if (strtotime($question->getDateDebutVote()) - strtotime($question->getDateFinQuestion()) != 0) {
+                $widthTransition = max(0, min((strtotime(date('Y-m-d')) - strtotime($question->getDateFinQuestion())) / (strtotime($question->getDateDebutVote()) - strtotime($question->getDateFinQuestion())) * 100, 100));
+                echo '
+            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($widthEcriture == 100 ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
+                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateFinQuestion()), 'd/m/Y') . '</span>
+            </div>
+            <div class="bg-dark h-6 w-full relative">
+                <span class="text-white absolute mix-blend-difference text-center w-full absolute -translate-x-1/2">Periode de transition</span>
+                <div class="bg-light hover:h-8 h-6 ' . ($widthTransition == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthTransition . '%"></div>
+            </div>';
+            }
+            echo '
+            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($question->getDateDebutVote() <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
+                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateDebutVote()), 'd/m/Y') . '</span>
+            </div>
+            <div class="bg-dark h-6 w-full relative">
+                <span class="text-white absolute mix-blend-difference text-center w-full absolute -translate-x-1/2">Periode de vote</span>
+                <div class="bg-light h-6 ' . ($widthVote == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthVote . '%"></div>
+            </div>
+            
+            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($widthVote == 100 ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
+                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateFinVote()), 'd/m/Y') . '</span>
+            </div>';
+            ?>
         </div>
     </div>
     <div class="flex flex-col gap-3">

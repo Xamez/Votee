@@ -33,10 +33,10 @@ class Question extends AbstractDataObject {
         $this->visibilite = $visibilite;
         $this->titre = $titre;
         $this->description = $description;
-        $this->dateDebutQuestion = $dateDebutQuestion;
-        $this->dateFinQuestion = $dateFinQuestion;
-        $this->dateDebutVote = $dateDebutVote;
-        $this->dateFinVote = $dateFinVote;
+        $this->dateDebutQuestion = $this->changeDate($dateDebutQuestion);
+        $this->dateFinQuestion = $this->changeDate($dateFinQuestion);
+        $this->dateDebutVote = $this->changeDate($dateDebutVote);
+        $this->dateFinVote = $this->changeDate($dateFinVote);
         $this->loginOrganisateur = $loginOrganisateur;
         $this->loginSpecialiste = $loginSpecialiste;
         $this->voteType = $voteType;
@@ -107,13 +107,13 @@ class Question extends AbstractDataObject {
 
     public function getPeriodeActuelle() : string {
         $date = date('Y-m-d');
-        if ($date >= $this->changeDate($this->getDateDebutQuestion()) && $date <= $this->changeDate($this->getDateFinQuestion())) {
+        if ($date >= ($this->getDateDebutQuestion()) && $date <= ($this->getDateFinQuestion())) {
             return "Période d'écriture";
-        } elseif ($date > $this->changeDate($this->getDateFinQuestion()) && $date < $this->changeDate($this->getDateDebutVote())) {
+        } elseif ($date > ($this->getDateFinQuestion()) && $date < ($this->getDateDebutVote())) {
             return "Période de transition";
-        } else if ($date >= $this->changeDate($this->getDateDebutVote()) && $date <= $this->changeDate($this->getDateFinVote())) {
+        } else if ($date >= ($this->getDateDebutVote()) && $date <= ($this->getDateFinVote())) {
             return "Période de vote";
-        } else if ($date < $this->changeDate($this->getDateDebutQuestion())) {
+        } else if ($date < ($this->getDateDebutQuestion())) {
             return "Période de préparation";
         } else {
             return "Période de résultat";
