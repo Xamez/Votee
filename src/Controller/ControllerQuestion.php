@@ -72,7 +72,7 @@ class ControllerQuestion extends AbstractController {
                 unset($questions[$key]);
                 if ($question->getDateDebutQuestion() <= date('d/m/y')) {
                     $question->setVisibilite("visible");
-                    //(new QuestionRepository())->modifier($question);
+                    (new QuestionRepository())->modifier($question);
                 }
             }
         }
