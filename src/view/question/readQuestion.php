@@ -59,7 +59,7 @@
                 <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateDebutQuestion()), 'd/m/Y') . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
-                <span class="text-white absolute mix-blend-difference text-center w-full absolute -translate-x-1/2">Periode d\'écriture</span>
+                <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période d\'écriture</span>
                 <div class="bg-light h-6 ' . ($widthEcriture == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthEcriture . '%"></div>
             </div>';
             if (strtotime($question->getDateDebutVote()) - strtotime($question->getDateFinQuestion()) != 0) {
@@ -69,7 +69,7 @@
                 <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateFinQuestion()), 'd/m/Y') . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
-                <span class="text-white absolute mix-blend-difference text-center w-full absolute -translate-x-1/2">Periode de transition</span>
+                <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période de transition</span>
                 <div class="bg-light hover:h-8 h-6 ' . ($widthTransition == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthTransition . '%"></div>
             </div>';
             }
@@ -78,7 +78,7 @@
                 <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateDebutVote()), 'd/m/Y') . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
-                <span class="text-white absolute mix-blend-difference text-center w-full absolute -translate-x-1/2">Periode de vote</span>
+                <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période de vote</span>
                 <div class="bg-light h-6 ' . ($widthVote == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthVote . '%"></div>
             </div>
             
@@ -95,7 +95,6 @@ if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune propositi
 foreach ($propositions as $proposition) {
     $idProposition = $proposition->getIdProposition();
     $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
-
 
     if ($proposition->isVisible()) {
         echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
@@ -121,9 +120,9 @@ foreach ($propositions as $proposition) {
                               </div>
                               <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                           </div>
-                      <div class="flex gap-2">';
-            if (!$proposition->isVisible()) echo '<span class="material-symbols-outlined">visibility_off</span>';
-            echo '<span class="material-symbols-outlined">arrow_forward_ios</span>
+                      <div class="flex gap-2">
+                        <span class="material-symbols-outlined">visibility_off</span>
+                        <span class="material-symbols-outlined">arrow_forward_ios</span>
                       </div>
                   </div>
               </a>';

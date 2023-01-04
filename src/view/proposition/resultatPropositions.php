@@ -12,4 +12,4 @@ ControllerProposition::afficheVue($voteUrl, ["propositions" => $propositions, "r
             <p>Retour</p>
         </div>
     </a>
-<div>
+</div>
