@@ -2,6 +2,14 @@
 
 use App\Votee\Lib\ConnexionUtilisateur;
 
-$utilisisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-echo $utilisateur->getPrenom();
-echo $utilisateur->getNom();
+$utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+?>
+
+<div>
+    <div>
+        Nom : <?php echo $utilisateur->getNom(); ?>
+    </div>
+    <div>
+        Prenom : <?php echo $utilisateur->getPrenom(); ?>
+    </div>
+</div>
