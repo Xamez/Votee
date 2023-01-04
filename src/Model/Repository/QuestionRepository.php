@@ -151,38 +151,4 @@ class QuestionRepository extends AbstractRepository {
             return false;
         }
     }
-
-    public function ajouterGroupe($idQuestion, $idGroupe): bool {
-        $sql = "CALL AjouterGroupeAQuestion(:idQuestionTag, :groupeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        try {
-            $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "groupeTag" => $idGroupe));
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
-
-    public function supprimerGroupe($idQuestion, $idGroupe): bool {
-        $sql = "CALL SupprimerGroupeDeQuestion(:idQuestionTag, :groupeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        try {
-            $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "groupeTag" => $idGroupe));
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
-
-    public function selectGroupe($idQuestion): array {
-        $groupes = [];
-        $sql = "SELECT * FROM Groupes g JOIN ExisterGroupe e ON g.idGroupe = e.idGroupe WHERE IDQUESTION = :idQuestionTag";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion));
-        foreach ($pdoStatement as $formatTableau) {
-            $groupes[] = (new GroupeRepository())->construire($formatTableau);
-        }
-        return $groupes;
-    }
-
 }

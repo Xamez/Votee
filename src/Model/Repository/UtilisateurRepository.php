@@ -65,7 +65,7 @@ class UtilisateurRepository extends AbstractRepository {
         $pdoStatement->execute(array("loginTag" => $login));
     }
 
-    // TODO La remplacer a terme par une verification de la table existe
+    /** Récupère tous les acteurs d'une question (responsable, organisateurs et coAuteurs) */
     public function selectAllActorQuestion($idQuestion): array {
         $sql = "SELECT U.* FROM (
     SELECT DISTINCT LOGIN_ORGANISATEUR FROM (

@@ -315,14 +315,22 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function readProposition(): void {
+        $idQuestion = $_GET['idQuestion'];
+        $idProposition = $_GET['idProposition'];
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger", "Vous devez vous connecter !");
             self::redirection("?controller=question&action=all");
         }
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        $proposition = (new PropositionRepository())->select($_GET['idProposition']);
-        $textes = (new TexteRepository())->selectAllByKey($_GET['idProposition']);
-        $filsRaw = (new PropositionRepository())->getFilsFusion($_GET['idProposition']);
+        $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
+        if (!self::hasPermission($idQuestion, $idProposition,['Responsable', 'CoAuteur', 'Auteur']) && !in_array('Organisateur', $rolesQuestion)) {
+            (new Notification())->ajouter("warning", "Vous ne pouvez pas accéder à cette proposition !");
+            self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
+        }
+
+        $question = (new QuestionRepository())->select($idQuestion);
+        $proposition = (new PropositionRepository())->select($idProposition);
+        $textes = (new TexteRepository())->selectAllByKey($idProposition);
+        $filsRaw = (new PropositionRepository())->getFilsFusion($idProposition);
         $fils = [];
         foreach ($filsRaw as $filsR) {
             $fils[] = (new PropositionRepository())->select($filsR[0]);
@@ -332,10 +340,10 @@ class ControllerProposition extends AbstractController {
             $texte->setTexte($parsedown->text($texte->getTexte()));
         }
         if ($question && $textes) {
-            $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-            $responsable = (new UtilisateurRepository())->selectResp($_GET['idProposition']);
-            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($_GET['idProposition']);
-            $commentaires = (new CommentaireRepository())->getCommentaireByIdProposition($_GET['idProposition']);
+            $sections = (new SectionRepository())->selectAllByKey($idQuestion);
+            $responsable = (new UtilisateurRepository())->selectResp($idProposition);
+            $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
+            $commentaires = (new CommentaireRepository())->getCommentaireByIdProposition($idProposition);
             self::afficheVue('view.php',
                 [
                     "visibilite" => $proposition->isVisible(),

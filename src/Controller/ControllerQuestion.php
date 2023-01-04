@@ -183,24 +183,30 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
         }
-        $question = (new QuestionRepository())->select($idQuestion);
-
-        /* Recupère les administrateurs, l'organisateur, les representant et les coAuteurs de la question */
-        $exception = (new UtilisateurRepository())->selectAllAdmins();
+        /* Récupère les administrateurs, l'organisateur, les représentants et les coAuteurs de la question */
+        $admins = (new UtilisateurRepository())->selectAllAdmins();
         $actors = (new UtilisateurRepository())->selectAllActorQuestion($idQuestion);
-        $exception = array_merge($actors, $exception);
+        $allActors = array_merge($actors, $admins);
 
-        $utilisateurs = (new UtilisateurRepository())->selectAll();
+        $allUtilisateurs = (new UtilisateurRepository())->selectAll();
 
-        $votants = (new QuestionRepository())->selectVotant($idQuestion);
-        $votants = array_udiff($votants, array((new UtilisateurRepository())->select($question->getLogin())), function ($a, $b) {
-            return $a->getLogin() <=> $b->getLogin();
-        });
-        if ($votants) $exception = array_merge($exception,$votants);
-
-        $newUtilisateurs = array_udiff($utilisateurs, $exception, function ($a, $b) {
+        /* Supprime les acteurs de la question de la liste des futurs votants */
+        $utilWithoutActors = array_udiff($allUtilisateurs, $allActors, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
+
+        /* Supprimes les acteurs de la question de la liste des votants actuels */
+        $allVotants = (new QuestionRepository())->selectVotant($idQuestion);
+        $votants = array_udiff($allVotants, $allActors, function ($a, $b) {
+            return strcmp($a->getLogin(), $b->getLogin());
+        });
+
+        /* Supprime les votants actuels de la question de la liste des futurs votants */
+        $newUtilisateurs = array_udiff($utilWithoutActors, $allVotants, function ($a, $b) {
+            return strcmp($a->getLogin(), $b->getLogin());
+        });
+
+        /* Récupère les groupes et scinde ceux qui sont déjà attribués à la question et ceux qui ne le sont pas */
         $groupesExistants = (new GroupeRepository())->selectGroupeQuestion($idQuestion);
         $groupes = (new GroupeRepository())->selectAll();
         $newGroupes = array_udiff($groupes, $groupesExistants, function ($a, $b) {
@@ -212,10 +218,10 @@ class ControllerQuestion extends AbstractController {
                 "cheminVueBody" => "question/addVotant.php",
                 "title" => "Ajouter un votant",
                 "subtitle" => "Ajouter un ou plusieurs votants à la question",
-                "actors" => $actors,
                 "idQuestion" => $idQuestion,
-                "newUtilisateurs" => $newUtilisateurs,
+                "actors" => $actors,
                 "votants" => $votants,
+                "newUtilisateurs" => $newUtilisateurs,
                 "groupes" => $groupesExistants,
                 "newGroupes" => $newGroupes
             ]);
