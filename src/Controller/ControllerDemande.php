@@ -14,7 +14,7 @@ class ControllerDemande extends AbstractController {
     public static function readAllDemande(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByDest($utilisateur->getLogin());
@@ -40,7 +40,7 @@ class ControllerDemande extends AbstractController {
     public static function readDemande(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
         $auteur = (new UtilisateurRepository())->select($demande->getLogin());
@@ -79,7 +79,7 @@ class ControllerDemande extends AbstractController {
     public static function createDemande(): void {;
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         $titreDemande = $_GET['titreDemande'];
         if (!in_array($titreDemande, ['question','fusion', 'proposition'], true )) {
@@ -104,7 +104,7 @@ class ControllerDemande extends AbstractController {
     public static function createdDemande(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger", "Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         $idProposition = $_POST['idProposition'] != "" ? $_POST['idProposition'] : null;
         $idQuestion = $_POST['idQuestion'] != "" ? $_POST['idQuestion'] : null;
