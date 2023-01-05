@@ -318,7 +318,7 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_GET['idProposition'];
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger", "Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!self::hasPermission($idQuestion, $idProposition,['Responsable', 'CoAuteur', 'Auteur']) && !in_array('Organisateur', $rolesQuestion)) {
@@ -371,7 +371,7 @@ class ControllerProposition extends AbstractController {
         $rolesQuest = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable']) && !in_array('Organisateur', $rolesQuest)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         self::afficheVue('view.php',
             [

@@ -88,7 +88,7 @@ class ControllerQuestion extends AbstractController {
     public static function readQuestion(): void {
             if (!ConnexionUtilisateur::estConnecte()) {
                 (new Notification())->ajouter("danger","Vous devez vous connecter !");
-                self::redirection("?controller=question&action=all");
+                self::redirection("?controller=utilisateur&action=connexion");
             }
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
@@ -342,7 +342,7 @@ class ControllerQuestion extends AbstractController {
     public static function readVotant():void {
         if (!ConnexionUtilisateur::estConnecte()) {
             (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+            self::redirection("?controller=utilisateur&action=connexion");
         }
         $idQuestion = $_GET['idQuestion'];
         $question = (new QuestionRepository())->select($idQuestion);
