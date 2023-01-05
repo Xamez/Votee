@@ -13,7 +13,6 @@
 }
 
 *, html {
-	cursor : wait;
 	scroll-behavior: smooth !important;
 }
 

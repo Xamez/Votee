@@ -103,7 +103,7 @@ class Question extends AbstractDataObject {
 
     public function getVoteType(): string {return $this->voteType;}
 
-    public function setvoteType(string $voteType): void{$this->voteType = $voteType;}
+    public function setVoteType(string $voteType): void{$this->voteType = $voteType;}
 
     public function getPeriodeActuelle() : string {
         $date = date('Y-m-d');
