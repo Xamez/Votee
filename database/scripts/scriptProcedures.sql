@@ -310,6 +310,12 @@
         END;
 
 
+		CREATE OR REPLACE PROCEDURE ModifierUtilisateurs(p_login Utilisateurs.login%TYPE, p_mdp Utilisateurs.motDePasse%TYPE, p_nom Utilisateurs.nom%TYPE, p_prenom Utilisateurs.prenom%TYPE, p_description UTILISATEURS.description%TYPE) IS
+        BEGIN
+            UPDATE UTILISATEURS SET motDePasse = p_mdp, nom = p_nom, prenom = p_prenom, description = p_description WHERE login = p_login;
+        END;
+
+
 
 -- ###############################################
 -- PROCEDURES SUPPRESSION
