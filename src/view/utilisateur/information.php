@@ -12,4 +12,7 @@ $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
     <div>
         Prenom : <?php echo $utilisateur->getPrenom(); ?>
     </div>
+    <div>
+        Description : <?php echo $utilisateur->getDescription(); ?>
+    </div>
 </div>

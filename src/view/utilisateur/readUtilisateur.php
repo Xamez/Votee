@@ -1,13 +1,17 @@
 <h1 class="title text-dark text-2xl font-semibold">Informations</h1>
 
 <!-- créer une carte utilisateur avec logo sur la gauche et toutes les informations sur la droite (nom, prénom, description) dans des champs avec des flex tout ça tenant sur la hauteur de l'image de profil-->
-<div class="flex justify-center gap-2">
+<div class="flex justify-center gap-2 border-4 p-8 rounded-xl ">
     <div>
         <span style="font-size: 250px" class="material-symbols-outlined select-none">face</span>
     </div>
-    <div class="flex flex-col gap-3 text-xl justify-start">
-        <span><?=htmlspecialchars($utilisateurC->getPrenom()). ' ' . htmlspecialchars($utilisateurC->getNom())?></span>
-        <span>description olala</span>
+    <div class="flex flex-col gap-3 text-xl justify-center break-all border-2 p-8">
+        <div class="border-2 p-2 rounded-lg">
+            <span class="text-2xl"><?=htmlspecialchars($utilisateurC->getPrenom()). ' ' . htmlspecialchars($utilisateurC->getNom())?></span>
+        </div>
+        <div>
+            <span><?=htmlspecialchars($utilisateurC->getDescription())?></span>
+        </div>
     </div>
 </div>
 
