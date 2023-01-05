@@ -29,44 +29,50 @@
         <span class="text-main font-semibold">Période actuelle : </span>
         <span><?= $question->getPeriodeActuelle() ?></span>
     </div>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
-        <?php
-
-        use App\Votee\Controller\AbstractController;
-        use App\Votee\Lib\ConnexionUtilisateur;
-    
-        $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
-        $idQuestion = rawurldecode($question->getIdQuestion());
-    
-        foreach ($sections as $key => $section) {
-            echo '<p class="text-xl text-main font-bold">' . $key + 1 . ' - '
-                . htmlspecialchars($section->getTitreSection()) . '
-              </p>';
-            }
-        ?>
-    </div>
-    <div class="flex flex-col gap-3">
-        <h1 class="title text-dark text-2xl font-semibold mb-10"">Calendrier</h1>
-        <div class="flex items-center mb-10">
+        <div class="p-7 flex flex-col gap-4">
             <?php
-            $diffEcriture = strtotime($question->getDateFinQuestion()) - strtotime($question->getDateDebutQuestion());
-            $widthEcriture = max(0, min((strtotime(date('Y-m-d')) - strtotime($question->getDateDebutQuestion())) / ($diffEcriture == 0 ? 1 : $diffEcriture) * 100, 100));
-            $diffVote = strtotime($question->getDateFinVote()) - strtotime($question->getDateDebutVote());
-            $widthVote = max(0, min((strtotime(date('Y-m-d')) - strtotime($question->getDateDebutVote())) / ($diffVote == 0 ? 1 : $diffVote)  * 100, 100));
+
+            use App\Votee\Controller\AbstractController;
+            use App\Votee\Lib\ConnexionUtilisateur;
+
+            $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
+            $idQuestion = rawurldecode($question->getIdQuestion());
+
+            foreach ($sections as $key => $section) {
+                echo '<p class="text-xl text-main font-bold">' . $key + 1 . ' - '
+                    . htmlspecialchars($section->getTitreSection()) . '
+                  </p>';
+                }
+            ?>
+        </div>
+    </div>
+    <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
+        <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+        <div class="flex items-center p-10">
+            <?php
+            $debutEcriture = $question->getDateDebutQuestion();
+            $finEcriture = $question->getDateFinQuestion();
+            $debutVote = $question->getDateDebutVote();
+            $finVote = $question->getDateFinVote();
+            $diffEcriture = strtotime($finEcriture) - strtotime($debutEcriture);
+            $widthEcriture = max(0, min((strtotime(date('Y-m-d')) - strtotime($debutEcriture)) / ($diffEcriture == 0 ? 1 : $diffEcriture) * 100, 100));
+            $diffVote = strtotime($finVote) - strtotime($debutVote);
+            $widthVote = max(0, min((strtotime(date('Y-m-d')) - strtotime($debutVote)) / ($diffVote == 0 ? 1 : $diffVote)  * 100, 100));
             echo '
-            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($question->getDateDebutQuestion() <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
-                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateDebutQuestion()), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($debutEcriture <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' ' . ($debutEcriture == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date_format(date_create($debutEcriture), 'd/m/Y') . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période d\'écriture</span>
                 <div class="bg-light h-6 ' . ($widthEcriture == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthEcriture . '%"></div>
             </div>';
-            if (strtotime($question->getDateDebutVote()) - strtotime($question->getDateFinQuestion()) != 0) {
-                $widthTransition = max(0, min((strtotime(date('Y-m-d')) - strtotime($question->getDateFinQuestion())) / (strtotime($question->getDateDebutVote()) - strtotime($question->getDateFinQuestion())) * 100, 100));
+            if (strtotime($debutVote) - strtotime($finEcriture) != 0) {
+                $widthTransition = max(0, min((strtotime(date('Y-m-d')) - strtotime($finEcriture)) / (strtotime($debutVote) - strtotime($finEcriture)) * 100, 100));
                 echo '
-            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($widthEcriture == 100 ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
-                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateFinQuestion()), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($widthEcriture == 100 ? 'bg-main' : 'bg-light') . ' ' . ($finEcriture == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date_format(date_create($finEcriture), 'd/m/Y') . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période de transition</span>
@@ -74,22 +80,30 @@
             </div>';
             }
             echo '
-            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($question->getDateDebutVote() <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
-                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateDebutVote()), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($debutVote <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' ' . ($debutVote == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date_format(date_create($debutVote), 'd/m/Y') . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période de vote</span>
                 <div class="bg-light h-6 ' . ($widthVote == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthVote . '%"></div>
             </div>
             
-            <div class="w-9 h-9 border-4 border-white rounded-3xl ' . ($widthVote == 100 ? 'bg-main' : 'bg-light') . ' flex flex-col items-center z-10 -m-1">
-                <span class="font-semibold relative top-10">' . date_format(date_create($question->getDateFinVote()), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($widthVote == 100 ? 'bg-main' : 'bg-light') . ' ' . ($finVote == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date_format(date_create($finVote), 'd/m/Y') . '</span>
             </div>';
             ?>
         </div>
+        <?php
+        if (in_array(date('Y-m-d'), [$debutEcriture, $finEcriture, $debutVote, $finVote])) {
+            echo '<div class="flex justify-center w-full mt-10">
+                    <a class="w-60 cursor-pointer p-2 text-white bg-main font-semibold rounded-lg text-center">Passer à la nouvelle phase</a>
+                  </div>';
+        }
+        ?>
     </div>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
+        <div class="flex flex-col gap-3 p-7">
 <?php
 if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 foreach ($propositions as $proposition) {
@@ -128,12 +142,12 @@ foreach ($propositions as $proposition) {
               </a>';
         }
     }
-
 }
 echo '</div>
-      <div class="flex flex-col gap-3">
+      </div>
+      <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
          <h1 class="title text-dark text-2xl font-semibold">Votants</h1>
-            <div class="flex flex-wrap gap-2 justify-center">';
+            <div class="flex flex-wrap gap-2 justify-center gap-2 p-7">';
 if (sizeof($groupesVotants) == 0) echo '<span class="text-center">Aucun votant</span>';
 foreach ($groupesVotants as $key => $groupeVotant) {
     if (trim($key, " 0..9") == 'votant') {

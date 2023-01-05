@@ -261,7 +261,6 @@ class ControllerProposition extends AbstractController {
     public static function addCoauteur():void {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
-        var_dump(self::hasPermission($idQuestion, $idProposition,['Responsable']));
         if (!self::hasPermission($idQuestion, $idProposition,['Responsable'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&action=all");
