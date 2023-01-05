@@ -99,7 +99,6 @@ window.onload = () => {
         span.appendChild(tooltip);
     }
 
-    console.log("caled");
     commentaries.forEach(commentary => {
         commentary.addEventListener("mouseover", e => {
             const id = e.target.getAttribute("data-id");
@@ -187,6 +186,10 @@ window.onload = () => {
         }
 
         commentary.indexCharDebut += nbSpecialChars * 5;
+
+        console.log(commentary.indexCharDebut);
+        console.log(selectedHtmlEntityReference.toString().length)
+        console.log(selectedHtmlEntityReference);
         commentary.indexCharFin = commentary.indexCharDebut + selectedHtmlEntityReference.toString().length;
 
         popup.style.display = "block";
