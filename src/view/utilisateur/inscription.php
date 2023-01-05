@@ -11,6 +11,9 @@
                 <input class="w-80 border-2" type="text" placeholder="Nom" name="nom" required/>
             </div>
             <div>
+                <input class="w-80 border-2" type="text" placeholder="Description" name="description" required/>
+            </div>
+            <div>
                 <input class="w-80 border-2" type="password" placeholder="Mot de passe" name="password" required/>
             </div>
             <div>

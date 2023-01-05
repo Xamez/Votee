@@ -22,7 +22,8 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurFormatTableau['MOTDEPASSE'],
             $utilisateurFormatTableau['NOM'],
             $utilisateurFormatTableau['PRENOM'],
-            $utilisateurFormatTableau['NBQUESTRESTANT']
+            $utilisateurFormatTableau['NBQUESTRESTANT'],
+            $utilisateurFormatTableau['DESCRIPTION']
         );
     }
 
