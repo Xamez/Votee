@@ -41,15 +41,15 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
             self::redirection("?controller=question&readAllQuestion");
         } else if ($question->getPeriodeActuelle() == "Période de vote") {
-            $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
+            $vote = (new VoteRepository())->voter($question, $_POST['idVotant'], $_POST['idProposition'], $_POST['noteProposition']);
             if ($vote)
                 (new Notification())->ajouter("success", "Le vote a bien été effectué.");
             else
                 (new Notification())->ajouter("warning", "Le vote existe déjà.");
-            if ($_POST["isRedirected"] ?? false)
-                self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
-            else
+            if (array_key_exists("isRedirected", $_POST))
                 self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
+            else
+                self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
         } else {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas voter en dehors de la période de vote.");
             self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . '&idProposition=' . $_POST['idProposition']);

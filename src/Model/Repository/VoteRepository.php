@@ -25,7 +25,26 @@ class VoteRepository extends AbstractRepository {
     function getProcedureUpdate(): array { return array('procedure' => "ModifierVotes"); }
     function getProcedureDelete(): string { return ""; }
 
-    function ajouterVote(string $idProposition, string $login, int $note) : bool {
+    function voter(Question $question, string $login, string $idProposition, int $note) : bool {
+        $voteType = VoteTypes::getFromKey($question->getVoteType());
+        $isOk = true;
+        if ($voteType == VoteTypes::CLASSEMENT) {
+            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$question->getIdQuestion()));
+            foreach ($propositions as $proposition) {
+                $sql = "DELETE FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire()} = :idPropositionTag AND LOGIN = :loginTag";
+                $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+                $values = array("idPropositionTag" => $proposition->getIdProposition(), "loginTag" => $login);
+                try {
+                    $pdoStatement->execute($values);
+                } catch (PDOException) {
+                    $isOk = false;
+                }
+            }
+        }
+        return $isOk && $this->ajouterVote($login, $idProposition, $note);
+    }
+
+    private function ajouterVote(string $login, string $idProposition, int $note) : bool {
         if ($this->getNote($idProposition, $login) == 0) {
             $sql = "CALL {$this->getProcedureInsert()['procedure']}(:loginTag, :idPropositionTag, :noteTag)";
         } else {
@@ -37,7 +56,18 @@ class VoteRepository extends AbstractRepository {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
+            return false;
+        }
+    }
+
+    function supprimerVote(string $login, string $idProposition) : bool {
+        $sql = "DELETE FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire()} = :idPropositionTag AND LOGIN = :loginTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array("idPropositionTag" => $idProposition, "loginTag" => $login);
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
             return false;
         }
     }
@@ -60,8 +90,9 @@ class VoteRepository extends AbstractRepository {
         $notes = array();
         foreach ($result as $votant) {
             $note = $this->getNote($idProposition, $votant["LOGIN"]);
-            if (VoteTypes::getFromKey($question->getVoteType()) == VoteTypes::JUGEMENT_MAJORITAIRE)
-                $notes[$note] = -2; // par défaut, les personnes n'ayant pas voté sont considérées comme ayant voté "à rejeter" soit "-2"
+            $voteType = VoteTypes::getFromKey($question->getVoteType());
+            if ($voteType == VoteTypes::JUGEMENT_MAJORITAIRE || $voteType == VoteTypes::CLASSEMENT)
+                $notes[$note] = -2; // par défaut, les personnes n'ayant pas voté sont considérées comme ayant voté contre soit "-2"
             $notes[$votant["LOGIN"]] = $note;
         }
         return $notes;
@@ -91,10 +122,41 @@ class VoteRepository extends AbstractRepository {
         $resultats = array();
         foreach ($propositions as $proposition) {
             $idProposition = $proposition->getIdProposition();
-            $resultats[$idProposition] = $this->getResultatsForProposition($question, $idProposition);
+            $resultats["prop-$idProposition"] = $this->getResultatsForProposition($question, $idProposition);
         }
-        arsort($resultats); // On trie les résultats par ordre décroissant de points
-
+        if (VoteTypes::getFromKey($question->getVoteType()) == VoteTypes::JUGEMENT_MAJORITAIRE) {
+            // on trie les propositions en trouvant la mention majoritaire et si égalité, on trie par ordre décroissant des points:
+            // pour la mention majoritaire, on ajoute un par un le nbr de % jusqu'à atteindre 50% puis on prend la dernière mention ajoutée
+            $mentions = array();
+            foreach ($resultats as $idProposition => $resultat) {
+                $mentions[$idProposition] = 0;
+                $pourcentages = $resultat[1];
+                $total = 0;
+                foreach ($pourcentages as $mention => $pourcentage) {
+                    $total += $pourcentage;
+                    if ($total >= 50) {
+                        $mentions[$idProposition] = $mention;
+                        break;
+                    }
+                }
+            }
+            $points = array();
+            foreach ($resultats as $idProposition => $resultat) {
+                $points[$idProposition] = $resultat[0];
+            }
+            // va trier avec les mentions, puis si égalité, avec les points
+            array_multisort($mentions, SORT_DESC, $points, SORT_DESC, $resultats);
+        } else {
+            arsort($resultats); // On trie les résultats par ordre décroissant de points
+        }
+        // on défini comme key de $resultats 'prop-X' pour que array_multisort puisse trier en gardant les clés intactes
+        // une fois fini, on remet les clés correctement avec uniquement l'id de la proposition
+        foreach ($resultats as $idProposition => $resultat) {
+            $oldIdProposition = $idProposition;
+            $idProposition = substr($idProposition, 5);
+            $resultats[$idProposition] = $resultat;
+            unset($resultats[$oldIdProposition]);
+        }
         return $resultats;
     }
 
