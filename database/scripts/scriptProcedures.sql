@@ -315,7 +315,7 @@
 
 -- ###############################################
 -- PROCEDURES MODIFIER
-		
+
 		CREATE OR REPLACE PROCEDURE ModifierDemandes(p_idDemande Effectuer.idDemande%TYPE, p_etatDemande Effectuer.etatDemande%TYPE, p_idProposition Effectuer.idProposition%TYPE, p_idQuestion Effectuer.idQuestion%TYPE) IS
 		BEGIN
 			UPDATE Effectuer SET etatDemande = p_etatDemande, idProposition = p_idProposition, idQuestion = p_idQuestion WHERE idDemande = p_idDemande;
@@ -442,7 +442,7 @@
 		SELECT NBQUESTRESTANT INTO questActuel FROM UTILISATEURS WHERE LOGIN = :NEW.LOGIN_ORGANISATEUR;
 		SELECT NBQUESTRESTANT INTO ScoreQuestion FROM UTILISATEURS WHERE LOGIN = :NEW.LOGIN_ORGANISATEUR;
 
-		IF ((:NEW.dateDebutQuestion > :NEW.dateFinQuestion) OR (:NEW.dateFinQuestion < :NEW.dateDebutQuestion) OR (:NEW.dateDebutVote > :NEW.dateFinVote) OR (:NEW.dateFinVote < :NEW.dateDebutVote) 
+		IF ((:NEW.dateDebutQuestion > :NEW.dateFinQuestion) OR (:NEW.dateFinQuestion < :NEW.dateDebutQuestion) OR (:NEW.dateDebutVote > :NEW.dateFinVote) OR (:NEW.dateFinVote < :NEW.dateDebutVote)
 			OR
 			(:NEW.dateDebutQuestion > :NEW.dateDebutVote) OR (:NEW.dateDebutQuestion > :NEW.dateFinVote) OR (:NEW.dateFinQuestion > :NEW.dateDebutVote) OR (:NEW.dateFinQuestion > :NEW.dateFinVote)) THEN
 			RAISE_APPLICATION_ERROR(-20104, 'Les dates sont mauvaises !');
