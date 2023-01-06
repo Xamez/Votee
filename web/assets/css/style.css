@@ -12,6 +12,10 @@
 	min-height: 100vh;
 }
 
+*, html {
+	scroll-behavior: smooth !important;
+}
+
 main { flex: 1; }
 
 .bg-image-urne {
@@ -21,7 +25,17 @@ main { flex: 1; }
 	background-repeat: no-repeat;
 }
 
-/* Quelques classes pour des couleurs utile */ 
+.img-home {
+	width: 30rem;
+}
+
+@media screen and (min-width: 1280px) {
+	.img-home {
+		width: 50rem;
+	}
+}
+
+/* Quelques classes pour des couleurs utile */
 .text-dark { color: #2E3436; }
 .text-light { color: rgba(174, 164, 255, 0.5); }
 .nav-button:hover { color: #ddd; }
@@ -151,6 +165,16 @@ label { font-weight: 600; }
 
 input[type=checkbox] {
 	display: none;
+}
+
+/* Pour avoir toutes les barres qui font la même taille (le cas ou la somme fait pas 100% à cause des floats) */
+.result-element-bar > div:last-child {
+	flex-grow: 1;
+}
+
+.result-element > div:first-child .user {
+	background: #0fde30;
+	color: white;
 }
 
 .search-field:focus-visible {
