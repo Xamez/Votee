@@ -17,7 +17,7 @@
             for ($i = 1; $i <= $nbSections; $i++) {
                 echo '<div class="flex flex-col">
                          <label for="systeme_vote_id' . $i . '">Section ' . $i . ' :</label>
-                         <input type="text" placeholder="Nom de la section" minlength="10" maxlength="150" name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
+                         <input type="text" placeholder="Nom de la section" minlength="10" maxlength="350" name="section' . $i .'" id="systeme_vote_id'. $i . '" required/>
                       </div>';
             }
             ?>
