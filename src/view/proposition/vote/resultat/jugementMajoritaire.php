@@ -6,8 +6,6 @@ $labels = ['A rejeter', 'Insuffisant', 'Passable', 'Assez bien', 'Bien', 'Très 
 
 echo '<div class="flex flex-col gap-4 result-element">';
 
-$i = 0;
-
 foreach ($resultats as $idProposition => $resultat) {
 
     echo '<div data-id="' . $idProposition . '" class="proposition hidden absolute w-3/5 z-10 left-1/2" style="transform: translateX(-50%)">';
@@ -25,16 +23,15 @@ foreach ($resultats as $idProposition => $resultat) {
     echo '<div class="flex flex-col lg:flex-row items-center justify-center gap-4">';
 
     $responsable = $responsables[$idProposition];
+    $resultat = $resultat[1];
 
     echo '
     <div data-id="' . $idProposition . '" class="user flex items-center lg:w-1/4 cursor-pointer">
-        <div class="flex gap-1 ' . ($i == 0 ? "bg-green-400 text-white" : "bg-white text-main"). ' shadow-md rounded-2xl w-fit p-2 items-center">
-            <span class="material-symbols-outlined pr-1">' . ($i == 0 ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
+        <div class="flex gap-1 ' . ($resultat == $resultatGagnant ? "bg-green-400 text-white" : "bg-white text-main"). ' shadow-md rounded-2xl w-fit p-2 items-center">
+            <span class="material-symbols-outlined pr-1">' . ($resultat == $resultatGagnant ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) . '
         </div>
     </div>
     ';
-
-    $resultat = $resultat[1];
 
     echo '<div class="flex w-full items-center result-element-bar">';
 
@@ -54,7 +51,6 @@ foreach ($resultats as $idProposition => $resultat) {
     echo '</div>';
     echo '</div>';
 
-    $i++;
 }
 
 echo '<div class="flex flex-col justify-center items-center gap-2">';
