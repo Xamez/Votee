@@ -23,7 +23,6 @@ abstract class AbstractRepository {
             $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
