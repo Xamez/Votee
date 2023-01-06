@@ -170,4 +170,16 @@ class UtilisateurRepository extends AbstractRepository {
         }
         return $responsables;
     }
+
+    /** Tous les utilisateurs qui peuvent creer une proposition => devenir responsable */
+    public function selectProchainResp($idQuestion): array {
+        $responsables = [];
+        $sql = "SELECT u.* FROM ScorePropositions sp JOIN Utilisateurs u ON u.login = sp.login WHERE nbPropRestant > 0 AND idQuestion = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+        foreach ($pdoStatement as $responsable) {
+            $responsables[] = $this->construire($responsable);
+        }
+        return $responsables;
+    }
 }

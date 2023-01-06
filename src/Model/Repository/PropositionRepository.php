@@ -107,4 +107,27 @@ class PropositionRepository extends AbstractRepository {
         return $result;
     }
 
+    /** Rajoute 1 point au score pour créer une proposition */
+    public function ajouterScoreProposition($login, $idQuestion): bool {
+        $sql = "CALL AjouterScorePropositions(:loginTag, :idQuestionTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute(array("idQuestionTag"=>$idQuestion, "loginTag"=>$login));
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    /** Enlever 1 point au score pour créer une proposition */
+    public function enleverScoreProposition($login, $idQuestion): bool {
+        $sql = "CALL EnleverScorePropositions(:loginTag, :idQuestionTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        try {
+            $pdoStatement->execute(array("loginTag" => $login, "idQuestionTag" => $idQuestion));
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
 }
