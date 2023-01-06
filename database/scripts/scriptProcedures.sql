@@ -246,22 +246,40 @@
 
 		CREATE OR REPLACE PROCEDURE AjouterScorePropositions(p_login Utilisateurs.login%TYPE, p_idQuestion Questions.idQuestion%TYPE) IS
             isInScoreProp NUMBER;
+            ScoreProp NUMBER;
         BEGIN
             SELECT COUNT(*) INTO isInScoreProp FROM SCOREPROPOSITIONS WHERE LOGIN = p_login AND SCOREPROPOSITIONS.IDQUESTION = p_idQuestion;
+            SELECT NBPROPRESTANT INTO ScoreProp FROM SCOREPROPOSITIONS WHERE LOGIN = p_login AND SCOREPROPOSITIONS.IDQUESTION = p_idQuestion;
             IF isInScoreProp > 0 THEN
-                UPDATE SCOREPROPOSITIONS SET NBPROPRESTANT = NBPROPRESTANT + 1 WHERE LOGIN = p_login AND IDQUESTION = p_idQuestion;
+                IF ScoreProp > -1 AND ScoreProp < 2 THEN
+                    UPDATE SCOREPROPOSITIONS SET NBPROPRESTANT = NBPROPRESTANT + 1 WHERE LOGIN = p_login AND IDQUESTION = p_idQuestion;
+                END IF;
             ELSIF p_idQuestion IS NOT NULL THEN
                 INSERT INTO SCOREPROPOSITIONS VALUES(p_login, p_idQuestion, 1);
             END IF;
         END;
 
 
+		CREATE OR REPLACE PROCEDURE EnleverScorePropositions(p_login Utilisateurs.login%TYPE, p_idQuestion Questions.idQuestion%TYPE) IS
+		    ScoreProp NUMBER;
+        BEGIN
+            SELECT NBPROPRESTANT INTO ScoreProp FROM SCOREPROPOSITIONS WHERE LOGIN = p_login AND SCOREPROPOSITIONS.IDQUESTION = p_idQuestion;
+            IF ScoreProp > -1 AND ScoreProp < 2 THEN
+                UPDATE SCOREPROPOSITIONS SET NBPROPRESTANT = NBPROPRESTANT - 1 WHERE LOGIN = p_login AND IDQUESTION = p_idQuestion;
+            END IF;
+        END;
+
+
         CREATE OR REPLACE PROCEDURE AjouterScoreFusion(p_login Utilisateurs.login%TYPE, p_idProposition Propositions.idProposition%TYPE) IS
             isInScoreFusion NUMBER;
+            UserScoreFusion NUMBER;
         BEGIN
             SELECT COUNT(*) INTO isInScoreFusion FROM SCOREFUSION WHERE LOGIN = p_login AND SCOREFUSION.IDPROPOSITION = p_idProposition;
+            SELECT NBFUSIONRESTANT INTO UserScoreFusion FROM SCOREFUSION WHERE LOGIN = p_login AND SCOREFUSION.IDPROPOSITION = p_idProposition;
             IF isInScoreFusion > 0 THEN
-                UPDATE SCOREFUSION SET NBFUSIONRESTANT = NBFUSIONRESTANT + 1 WHERE LOGIN = p_login AND IDPROPOSITION = p_idProposition;
+                IF UserScoreFusion > -1 AND UserScoreFusion < 2 THEN
+                    UPDATE SCOREFUSION SET NBFUSIONRESTANT = NBFUSIONRESTANT + 1 WHERE LOGIN = p_login AND IDPROPOSITION = p_idProposition;
+                END IF;
             ELSIF p_idProposition IS NOT NULL THEN
                 INSERT INTO SCOREFUSION(LOGIN, IDPROPOSITION, NBFUSIONRESTANT) VALUES(p_login, p_idProposition, 1);
             END IF;
@@ -362,12 +380,17 @@
         AFTER UPDATE OF ETATDEMANDE OR UPDATE OF IDQUESTION OR UPDATE OF IDPROPOSITION
         ON EFFECTUER
         FOR EACH ROW
+        DECLARE
+            ScoreQuestion NUMBER;
         BEGIN
+            SELECT NBQUESTRESTANT INTO ScoreQuestion FROM UTILISATEURS WHERE LOGIN = :NEW.LOGIN;
             IF :NEW.ETATDEMANDE = 'accepte' THEN
                 IF :NEW.TITREDEMANDE = 'fusion' THEN
                     AjouterScoreFusion(:NEW.LOGIN, :NEW.IDPROPOSITION);
                 ELSIF :NEW.TITREDEMANDE = 'question' THEN
-                    UPDATE UTILISATEURS SET UTILISATEURS.NBQUESTRESTANT = UTILISATEURS.NBQUESTRESTANT + 1 WHERE LOGIN = :NEW.LOGIN;
+                    IF ScoreQuestion > -1 AND ScoreQuestion < 2 THEN
+                        UPDATE UTILISATEURS SET UTILISATEURS.NBQUESTRESTANT = UTILISATEURS.NBQUESTRESTANT + 1 WHERE LOGIN = :NEW.LOGIN;
+                    END IF;
                 ELSIF :NEW.TITREDEMANDE = 'proposition' THEN
                     AjouterScorePropositions(:NEW.LOGIN, :NEW.IDQUESTION);
                 END IF;
@@ -412,10 +435,12 @@
 		isTitre NUMBER;
 		isDesc NUMBER;
 	    questActuel NUMBER;
+	    ScoreQuestion NUMBER;
 	BEGIN
 		SELECT COUNT(*) INTO isTitre FROM Questions WHERE titre = :NEW.titre;
 		SELECT COUNT(*) INTO isDesc FROM Questions WHERE description = :NEW.description;
 		SELECT NBQUESTRESTANT INTO questActuel FROM UTILISATEURS WHERE LOGIN = :NEW.LOGIN_ORGANISATEUR;
+		SELECT NBQUESTRESTANT INTO ScoreQuestion FROM UTILISATEURS WHERE LOGIN = :NEW.LOGIN_ORGANISATEUR;
 
 		IF ((:NEW.dateDebutQuestion > :NEW.dateFinQuestion) OR (:NEW.dateFinQuestion < :NEW.dateDebutQuestion) OR (:NEW.dateDebutVote > :NEW.dateFinVote) OR (:NEW.dateFinVote < :NEW.dateDebutVote) 
 			OR
@@ -425,7 +450,9 @@
 			RAISE_APPLICATION_ERROR(-20105, 'Cette question existe déjà');
 		ELSE
 		    IF questActuel != 0 THEN
-		        UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT - 1 WHERE LOGIN = :NEW.LOGIN_ORGANISATEUR;
+		        IF ScoreQuestion > -1 AND ScoreQuestion < 2 THEN
+                    UPDATE UTILISATEURS SET UTILISATEURS.NBQUESTRESTANT = UTILISATEURS.NBQUESTRESTANT - 1 WHERE LOGIN = :NEW.LOGIN_ORGANISATEUR;
+                END IF;
 		    END IF;
 		END IF;
 	END;
@@ -504,6 +531,7 @@
 			isTheOtherPropVisible NUMBER;
 
 			loginOrgaQuestion VARCHAR(50);
+			ScoreProposition NUMBER;
 		BEGIN
 			-- ############## PREMIERE PARTIE ##############
 			SELECT COUNT(*) INTO isAlreadyCoAuth FROM RedigerCA WHERE login = p_login AND idProposition = p_idProposition;
@@ -512,6 +540,7 @@
 			SELECT COUNT(*) INTO isInAnotherProp FROM RedigerR rr JOIN Propositions p ON rr.idProposition = p.idProposition JOIN Recevoir r ON p.idProposition = r.idProposition WHERE login = p_login AND r.idQuestion = p_idQuestion;
 			SELECT COUNT(*) INTO isTheOtherPropVisible FROM RedigerR rr JOIN Propositions p ON rr.idProposition = p.idProposition JOIN Recevoir r ON p.idProposition = r.idProposition WHERE visibiliteProposition = 'visible' AND login = p_login AND r.idQuestion = p_idQuestion;
 			SELECT LOGIN_ORGANISATEUR INTO loginOrgaQuestion FROM QUESTIONS WHERE IDQUESTION = p_idQuestion;
+			SELECT NBPROPRESTANT INTO ScoreProposition FROM SCOREPROPOSITIONS WHERE IDQUESTION = p_idQuestion AND LOGIN = p_login;
 
 
 			IF isAlreadyCoAuth >= 1 THEN
@@ -523,7 +552,9 @@
                 IF loginOrgaQuestion != p_login THEN
                     SELECT NBPROPRESTANT INTO propositionActuel FROM SCOREPROPOSITIONS WHERE LOGIN = p_login AND IDQUESTION = p_idQuestion;
                     IF propositionActuel != 0 THEN
-                        UPDATE SCOREPROPOSITIONS SET NBPROPRESTANT = NBPROPRESTANT - 1 WHERE LOGIN = p_login AND IDQUESTION = p_idQuestion;
+                        IF ScoreProposition > -1 AND ScoreProposition < 2 THEN
+                            UPDATE SCOREPROPOSITIONS SET NBPROPRESTANT = NBPROPRESTANT - 1 WHERE LOGIN = p_login AND IDQUESTION = p_idQuestion;
+                        END IF;
                     END IF;
                 ELSE
                     IF isInAnotherProp != 0 THEN
@@ -538,9 +569,13 @@
 
 		CREATE OR REPLACE PROCEDURE AjouterRepPropRedigerR(p_login Responsables.login%TYPE, p_idProposition Propositions.idProposition%TYPE, p_idPropositionAncien Propositions.idProposition%TYPE, p_idQuestion Questions.idQuestion%TYPE, isFusion NUMBER) IS
             fusionActuel NUMBER;
+            scoreFusion NUMBER;
 		BEGIN
             AjouterRedigerR(p_login, p_idProposition, p_idQuestion);
             AJOUTERVOTANTAQUESTION(p_idQuestion, p_login);
+
+            SELECT NBFUSIONRESTANT INTO scoreFusion FROM SCOREFUSION WHERE login = p_login AND idProposition = p_idProposition;
+
             IF p_idPropositionAncien IS NOT NULL THEN
 		        SELECT NBFUSIONRESTANT INTO fusionActuel FROM SCOREFUSION WHERE LOGIN = p_login AND idProposition = p_idPropositionAncien;
 		    ELSE
@@ -548,7 +583,9 @@
 		    END IF;
             IF isFusion = 1 THEN
                 IF fusionActuel != 0 THEN
-                    UPDATE ScoreFusion SET NBFUSIONRESTANT = NBFUSIONRESTANT - 1 WHERE LOGIN = p_login AND idProposition = p_idPropositionAncien;
+                    IF scoreFusion > -1 AND scoreFusion < 2 THEN
+                        UPDATE SCOREFUSION SET NBFUSIONRESTANT = NBFUSIONRESTANT - 1 WHERE LOGIN = p_login AND idProposition = p_idPropositionAncien;
+                    END IF;
                 END IF;
             END IF;
         END;
