@@ -106,7 +106,7 @@ class ControllerUtilisateur extends AbstractController {
                 "questionsSpecia" => $questionsSpecia,
                 "pagetitle" => "Liste des questions",
                 "cheminVueBody" => "question/listQuestion.php",
-                "title" => "Liste des votes",
+                "title" => "Liste des questions",
             ]);
     }
 
