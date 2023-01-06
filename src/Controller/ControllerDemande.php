@@ -12,10 +12,7 @@ use App\Votee\Model\Repository\UtilisateurRepository;
 class ControllerDemande extends AbstractController {
 
     public static function readAllDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByDest($utilisateur->getLogin());
         $demandesAccepte = $demandesRefuse = $demandesAttente = [];
@@ -38,10 +35,7 @@ class ControllerDemande extends AbstractController {
     }
 
     public static function readDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
         $auteur = (new UtilisateurRepository())->select($demande->getLogin());
         self::afficheVue('view.php',
@@ -77,10 +71,7 @@ class ControllerDemande extends AbstractController {
     }
 
     public static function createDemande(): void {;
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $titreDemande = $_GET['titreDemande'];
         if (!in_array($titreDemande, ['question','fusion', 'proposition'], true )) {
             (new Notification())->ajouter("danger","Erreur lors du chargement de la page !");
@@ -102,10 +93,7 @@ class ControllerDemande extends AbstractController {
     }
 
     public static function createdDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger", "Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $idProposition = $_POST['idProposition'] != "" ? $_POST['idProposition'] : null;
         $idQuestion = $_POST['idQuestion'] != "" ? $_POST['idQuestion'] : null;
         $destinataire = '';

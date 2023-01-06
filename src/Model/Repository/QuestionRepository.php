@@ -43,13 +43,13 @@ class QuestionRepository extends AbstractRepository {
         );
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est organisateur */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est organisateur */
     public function selectQuestionOrga($login): array {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_organisateur = :paramTag";
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est responsable */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est responsable */
     public function selectQuestionResp(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -59,13 +59,13 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est spécialiste */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est spécialiste */
     public function selectQuestionSpecia($login): array {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_specialiste = :paramTag";
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est coAuteur */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est coAuteur */
     public function selectQuestionCoau(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -75,7 +75,7 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est votant */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est votant */
     public function selectQuestionVota(string $login) {
         $sql = "SELECT DISTINCT q.* FROM QUESTIONS q
             JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -108,7 +108,7 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
-    /** Retourne le nombre de proposition (score) que l'utilisateur donné va pouvoir créer pour la question donnée */
+    /** Nombre de propositions (score) que l'utilisateur donné va pouvoir créer pour la question donnée */
     public function getPropRestant(int $idQuestion, string $login): ?int {
         $sql = "SELECT nbPropRestant FROM ScorePropositions WHERE IDQUESTION = :idQuestionTag AND LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);

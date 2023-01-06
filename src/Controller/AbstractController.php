@@ -2,6 +2,9 @@
 
 namespace App\Votee\Controller;
 
+use App\Votee\Lib\ConnexionUtilisateur;
+use App\Votee\Lib\Notification;
+
 class AbstractController {
 
     public static function afficheVue(string $cheminVue, array $parametres = []): void {
@@ -31,5 +34,21 @@ class AbstractController {
     public static function redirection($url): void {
         header("Location: $url");
         exit();
+    }
+
+    /** Si l'utilisateur n'est pas connecté, notification et redirection vers l'url */
+    public static function redirectConnexion($url): void {
+        if (!ConnexionUtilisateur::estConnecte()) {
+            (new Notification())->ajouter("danger", "Vous devez vous connecter !");
+            self::redirection($url);
+        }
+    }
+
+    /** Si l'utilisateur n'est pas administrateur, notification et redirection vers l'url */
+    public static function redirectAdmin($url): void {
+        if (!ConnexionUtilisateur::estAdministrateur()) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            self::redirection($url);
+        }
     }
 }

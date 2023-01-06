@@ -86,10 +86,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readQuestion(): void {
-            if (!ConnexionUtilisateur::estConnecte()) {
-                (new Notification())->ajouter("danger","Vous devez vous connecter !");
-                self::redirection("?controller=utilisateur&action=connexion");
-            }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -340,10 +337,7 @@ class ControllerQuestion extends AbstractController {
     }
 
     public static function readVotant():void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $idQuestion = $_GET['idQuestion'];
         $question = (new QuestionRepository())->select($idQuestion);
         $groupes = (new GroupeRepository())->selectGroupeQuestion($idQuestion);

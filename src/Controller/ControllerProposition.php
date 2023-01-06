@@ -316,10 +316,7 @@ class ControllerProposition extends AbstractController {
     public static function readProposition(): void {
         $idQuestion = $_GET['idQuestion'];
         $idProposition = $_GET['idProposition'];
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger", "Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!self::hasPermission($idQuestion, $idProposition,['Responsable', 'CoAuteur', 'Auteur']) && !in_array('Organisateur', $rolesQuestion)) {
             (new Notification())->ajouter("warning", "Vous ne pouvez pas accéder à cette proposition !");
