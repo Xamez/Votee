@@ -181,14 +181,18 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
 
+        $admins = (new UtilisateurRepository())->selectAllAdmins();
         /* Responsables actuels de la question */
         $responsables = (new UtilisateurRepository())->selectRespQuestion($idQuestion);
 
         /* Liste de tous les utilisateurs de la base de donnée */
         $utilisateurs = (new UtilisateurRepository())->selectAll();
 
+        /* Liste des utilisateurs qui peuvent créer une proposition => devenir responsable (permissions) */
+        $responsablesPossibles = (new UtilisateurRepository())->selectProchainResp($idQuestion);
+
         /* Utilisateurs sans les responsables actuels */
-        $newUtilisateurs = array_udiff($utilisateurs, $responsables, function ($a, $b) {
+        $newUtilisateurs = array_udiff($utilisateurs, array_merge(array_merge($responsables,$responsablesPossibles),$admins), function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
 
@@ -199,6 +203,7 @@ class ControllerQuestion extends AbstractController {
                 "title" => "Ajouter des responsables",
                 "subtitle" => "Ajouter un ou plusieurs responsable à la question",
                 "responsables" => $responsables,
+                "responsablesPossibles" => $responsablesPossibles,
                 "utilisateurs" => $newUtilisateurs,
                 "idQuestion" => $idQuestion,
             ]);
@@ -211,9 +216,18 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
 
-        //TODO Gestion de la suppression de responsable, de l'ajout et faire attention, car ceux qui ont déjà une proposition, il faut pas y toucher
-
+        /* Gestion des ajouts et suppression des représentants */
+        $oldResp = (new UtilisateurRepository())->selectProchainResp($idQuestion);
+        $responsables = [];
+        foreach ($oldResp as $resp) $responsables[] = $resp->getLogin();
+        if (array_key_exists('resps', $_POST)) $responsables = array_diff($responsables, $_POST['resps']);
         $isOk = true;
+        foreach ($_POST['utilisateurs'] as $login) {
+            $isOk = (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
+        }
+        foreach ($responsables as $login) {
+            $isOk =  (new PropositionRepository())->enleverScoreProposition($login, $idQuestion);
+        }
 
         if ($isOk) {
             (new Notification())->ajouter("success", "Les responsables ont été ajouté avec succès.");
