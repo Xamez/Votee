@@ -26,7 +26,7 @@ class PropositionRepository extends AbstractRepository {
         );
     }
 
-    /** Retourne l'id d'une proposition (visible) d'un login dans une question */
+    /** Id d'une proposition (visible) d'un login dans une question */
     public function selectPropById($idQuestion, $login): array {
         $sql = "SELECT p.IDPROPOSITION
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -79,6 +79,7 @@ class PropositionRepository extends AbstractRepository {
         }
     }
 
+    /** Id de la question dans laquelle la proposition donnée est */
     public function getIdQuestion(int $idProposition) {
         $sql = "SELECT idQuestion FROM Recevoir WHERE idProposition = :idPropositionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -87,7 +88,7 @@ class PropositionRepository extends AbstractRepository {
         return $result[0];
     }
 
-
+    /** Nombre de fois qu'un utilisateur va pouvoir créer une fusion pour une proposition donnée (généralement 1) */
     public function getFusionRestant(int $idProposition, string $login): ?int {
         $sql = "SELECT nbFusionRestant FROM ScoreFusion WHERE IDPROPOSITION = :idPropositionTag AND LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -96,6 +97,7 @@ class PropositionRepository extends AbstractRepository {
         return $nbFusionRestant ? $nbFusionRestant[0] : null;
     }
 
+    /** Les 2 parents d'une proposition fusionnée */
     public function getFilsFusion($idProposition):array {
         $sql = "SELECT idProposition FROM Propositions WHERE idPropFusionParent = :idPropositionTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);

@@ -105,6 +105,7 @@ class Question extends AbstractDataObject {
 
     public function setvoteType(string $voteType): void{$this->voteType = $voteType;}
 
+    /** Période de la question (3 importantes : Ecriture, Vote et Résultat) et 2 à titre d'information (Transition et préparation */
     public function getPeriodeActuelle() : string {
         $date = date('Y-m-d');
         if ($date >= ($this->getDateDebutQuestion()) && $date <= ($this->getDateFinQuestion())) {
@@ -120,6 +121,7 @@ class Question extends AbstractDataObject {
         }
     }
 
+    /** Permet d'encoder la date pour que le php puisse l'utiliser */
     public function changeDate(string $date) {
         $old_date = explode('/', $date);
         $new_data = $old_date[2].'-'.$old_date[1].'-'.$old_date[0];

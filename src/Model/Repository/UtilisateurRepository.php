@@ -26,7 +26,7 @@ class UtilisateurRepository extends AbstractRepository {
         );
     }
 
-    /** Retourne l'ensemble des roles pour une question et un utilisateur donné */
+    /** Ensemble des roles d'un utilisateur pour une question donné */
     public function getRolesQuestion($login, $idQuestion): array {
         $roles = [];
         $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant", "Specialiste"];
@@ -42,7 +42,7 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
-    /** Retourne l'ensemble des roles pour une proposition et un utilisateur donné */
+    /** Ensemble des roles d'un utilisateur pour une proposition donné */
     public function getRolesProposition($login, $idProposition): array {
         $roles = [];
         $procedures = ["Responsable", "CoAuteur"];
@@ -58,14 +58,14 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
-    /** Rajoute 1 point au score s'il y a eu une erreur dans l'insertion d'une question */
+    /** Rajoute 1 point au score (utile s'il y a eu une erreur dans l'insertion d'une question) */
     public function ajouterScoreQuestion($login): void {
         $sql = "UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT + 1 WHERE login = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("loginTag" => $login));
     }
 
-    /** Récupère tous les acteurs d'une question (responsable, organisateurs et coAuteurs) */
+    /** Tous les acteurs d'une question (responsable, organisateurs et coAuteurs) */
     public function selectAllActorQuestion($idQuestion): array {
         $sql = "SELECT U.* FROM (
     SELECT DISTINCT LOGIN_ORGANISATEUR FROM (
@@ -93,6 +93,7 @@ class UtilisateurRepository extends AbstractRepository {
         return $utilisateurs;
     }
 
+    /** Tous les logins des administrateurs de la base */
     public static function getAdmins() : array {
         $sql = "SELECT * FROM Administrateurs";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -105,8 +106,9 @@ class UtilisateurRepository extends AbstractRepository {
         return $admins;
     }
 
+    /** Tous les administrateurs de la base */
     public function selectAllAdmins() : array {
-        $sql = "SELECT * FROM UTILISATEURS WHERE LOGIN IN (SELECT LOGIN FROM ADMINISTRATEURS)";
+        $sql = "SELECT * FROM UTILISATEURS u JOIN ADMINISTRATEURS a ON u.LOGIN = a.LOGIN";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute();
         foreach ($pdoStatement as $utilisateur) {
@@ -115,6 +117,7 @@ class UtilisateurRepository extends AbstractRepository {
         return $utilisateurs;
     }
 
+    /** Tous les coAuteurs d'une proposition donnée */
     public function selectCoAuteur($idProposition): array {
         $coAuteurs = [];
         $sql = "SELECT u.* FROM RedigerCA r
@@ -130,6 +133,7 @@ class UtilisateurRepository extends AbstractRepository {
         return $coAuteurs;
     }
 
+    /** Tous les responsables d'une proposition donnée */
     public function selectResp($idProposition): ?Utilisateur {
         $sql = "SELECT u.* FROM RedigerR r
                 JOIN responsables re ON r.login = re.login
@@ -142,7 +146,8 @@ class UtilisateurRepository extends AbstractRepository {
         return $responsable ? $this->construire($responsable): null;
     }
 
-    public function selectAdministrateur($login) {
+    /** True si l'utilisateur donné est un admin, false sinon */
+    public function selectAdministrateur($login): bool {
         $sql = "SELECT * FROM Administrateurs WHERE login = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
         $pdoStatement->execute(array("loginTag" => $login));

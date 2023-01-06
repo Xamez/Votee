@@ -98,6 +98,7 @@ class GroupeRepository extends AbstractRepository {
         }
     }
 
+    /** Retourne tous les groupes dans lesquel l'utilisateur donnée appartient */
     public function selectGroupeByLogin($login): array {
         $sql = "SELECT * FROM Groupes g JOIN Appartenir a ON g.IDGROUPE = a.IDGROUPE WHERE LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);

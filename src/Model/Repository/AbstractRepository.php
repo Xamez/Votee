@@ -7,6 +7,7 @@ use PDOException;
 
 abstract class AbstractRepository {
 
+    /** Utilise la méthode {@link sauvegarder} en renvoyant l'id de l'object crée en base de donnée (issue d'une sequence) */
     public function sauvegarderSequence(AbstractDataObject $dataObject) {
         $this->sauvegarder($dataObject);
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT {$this->getNomSequence()}.CURRVAL AS lastInsertId FROM DUAL");
@@ -23,7 +24,6 @@ abstract class AbstractRepository {
             $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }
@@ -102,20 +102,7 @@ abstract class AbstractRepository {
         return $result ? $this->construire($result) : null;
     }
 
-//    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
-//        $ligne = "";
-//        foreach ($valeurAttributs as $key => $valeurAttribut) {
-//            $ligne .= $key . "= :" . $key . ' AND ';
-//        }
-//        $ligne = substr_replace($ligne, "", -5);
-//        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
-//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-//        $pdoStatement->execute($valeurAttributs);
-//        $object = $pdoStatement->fetch();
-//
-//        return $this->construire($object);
-//    }
-
+    /** Ensemble des données après l'application d'un filtre de recherche */
     public function selectBySearch($search, $cle):array {
         $objects = [];
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER({$cle}) LIKE :rechercheTag";
@@ -126,16 +113,10 @@ abstract class AbstractRepository {
     }
 
     protected abstract function getNomTable(): string;
-
     protected abstract function getNomClePrimaire(): string;
-
     protected abstract function getNomSequence(): string;
-
     protected abstract function construire(array $objetFormatTableau) : AbstractDataObject;
-
     protected abstract function getProcedureInsert(): array;
-
     protected abstract function getProcedureUpdate(): array;
-
     protected abstract function getProcedureDelete(): string;
 }

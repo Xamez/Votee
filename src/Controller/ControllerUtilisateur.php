@@ -111,10 +111,7 @@ class ControllerUtilisateur extends AbstractController {
     }
 
     public static function historiqueDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=utilisateur&action=connexion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByUtil($utilisateur->getLogin());
         $demandesAccepte = $demandesRefuse = $demandesAttente = [];

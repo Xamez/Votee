@@ -18,15 +18,11 @@ class CommentaireRepository extends AbstractRepository {
 
     }
     function getNomTable(): string { return "Commentaires"; }
-
     protected function getNomSequence(): string { return ""; }
-
     function getNomClePrimaire(): string { return "IDCOMMENTAIRE"; }
 
     function getProcedureInsert(): array { return []; }
-
     function getProcedureUpdate(): array { return array("procedure" =>"ModifierCommentaires"); }
-
     function getProcedureDelete(): string { return "SupprimerCommentaires"; }
 
     public function construire(array $propositionFormatTableau) : Commentaire {
