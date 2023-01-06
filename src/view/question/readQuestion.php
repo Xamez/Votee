@@ -75,7 +75,7 @@ if ($question->getPeriodeActuelle() == 'Période de résultat') {
         if ($resultat[1] == $resultatGagnant)
             $propositionsGagnantes[] = $idProposition;
 
-    if (sizeof($rolesQuestion) == 0) {
+    if (sizeof($rolesQuestion) > 0) {
         foreach ($resultats as $idProposition => $ignored) {
             $proposition = $proposition = (new PropositionRepository())->select($idProposition);
             echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
