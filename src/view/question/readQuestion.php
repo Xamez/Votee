@@ -35,10 +35,12 @@
 
         use App\Votee\Controller\AbstractController;
         use App\Votee\Lib\ConnexionUtilisateur;
-    
+        use App\Votee\Model\Repository\PropositionRepository;
+        use App\Votee\Model\Repository\VoteRepository;
+
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
         $idQuestion = rawurldecode($question->getIdQuestion());
-    
+
         foreach ($sections as $key => $section) {
             echo '<p class="text-xl text-main font-bold">' . $key + 1 . ' - '
                 . htmlspecialchars($section->getTitreSection()) . '
@@ -61,45 +63,94 @@
         <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
 <?php
 if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
-foreach ($propositions as $proposition) {
-    $idProposition = $proposition->getIdProposition();
-    $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
 
 
-    if ($proposition->isVisible()) {
-        echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
+if ($question->getPeriodeActuelle() == 'Période de résultat') {
+    $resultats = (new VoteRepository())->getResultats($question);
+
+    $resultatGagnant = $resultats[array_key_first($resultats)];
+    $resultatGagnant = $resultatGagnant[1];
+    $propositionsGagnantes = [];
+    foreach ($resultats as $idProposition => $resultat)
+        if ($resultat[1] == $resultatGagnant)
+            $propositionsGagnantes[] = $idProposition;
+
+    if (sizeof($rolesQuestion) > 0) {
+        foreach ($resultats as $idProposition => $ignored) {
+            $proposition = $proposition = (new PropositionRepository())->select($idProposition);
+            echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
+                      <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
+                          <div class="flex flex-col items-center gap-2 md:flex-row">
+                              <p class="font-bold text-dark hidden md:block">Proposition de : </p>
+                              <div class="' . (in_array($idProposition, $propositionsGagnantes ) ? "bg-green-400 text-white" : "bg-white text-main") . ' flex gap-1 shadow-md rounded-2xl w-fit p-2">
+                                  <span class="material-symbols-outlined">' . (in_array($idProposition, $propositionsGagnantes ) ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                              </div>
+                              <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
+                          </div>
+                          <span class="material-symbols-outlined">arrow_forward_ios</span>
+                      </div>
+                  </a>';
+        }
+    } else {
+        foreach ($propositionsGagnantes as $idProposition) {
+            $proposition = $proposition = (new PropositionRepository())->select($idProposition);
+            echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
                   <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
                       <div class="flex flex-col items-center gap-2 md:flex-row">
                           <p class="font-bold text-dark hidden md:block">Proposition de : </p>
-                          <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-                              <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                          <div class="bg-green-400 text-white flex gap-1 shadow-md rounded-2xl w-fit p-2">
+                              <span class="material-symbols-outlined">military_tech</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                           </div>
                           <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                       </div>
                       <span class="material-symbols-outlined">arrow_forward_ios</span>
                   </div>
               </a>';
-    } else {
-        if (count(array_intersect(['CoAuteur', 'Responsable'], $rolesQuestion)) > 0 || in_array("Organisateur", $rolesQuestion)) {
-            echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
-                      <div class="flex bg-light justify-between p-2 items-center rounded">
-                          <div class="flex items-center gap-2">
-                              <p class="font-bold text-dark">Proposition de : </p>
-                              <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
-                                  <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
-                              </div>
-                              <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
-                          </div>
-                      <div class="flex gap-2">';
-            if (!$proposition->isVisible()) echo '<span class="material-symbols-outlined">visibility_off</span>';
-            echo '<span class="material-symbols-outlined">arrow_forward_ios</span>
-                      </div>
-                  </div>
-              </a>';
         }
     }
+} else {
+    if (sizeof($rolesQuestion) > 0) {
+        foreach ($propositions as $proposition) {
+            $idProposition = $proposition->getIdProposition();
+            $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
 
+            if ($proposition->isVisible()) {
+                echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
+                          <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
+                              <div class="flex flex-col items-center gap-2 md:flex-row">
+                                  <p class="font-bold text-dark hidden md:block">Proposition de : </p>
+                                  <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                                      <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                                  </div>
+                                  <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
+                              </div>
+                              <span class="material-symbols-outlined">arrow_forward_ios</span>
+                          </div>
+                      </a>';
+            } else {
+                if (count(array_intersect(['CoAuteur', 'Responsable'], $rolesQuestion)) > 0 || in_array("Organisateur", $rolesQuestion)) {
+                    echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
+                          <div class="flex bg-light justify-between p-2 items-center rounded">
+                              <div class="flex items-center gap-2">
+                                  <p class="font-bold text-dark">Proposition de : </p>
+                                  <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
+                                      <span class="material-symbols-outlined">account_circle</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                                  </div>
+                                  <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
+                              </div>
+                          <div class="flex gap-2">';
+                    if (!$proposition->isVisible())
+                        echo '<span class="material-symbols-outlined">visibility_off</span>';
+                    echo '<span class="material-symbols-outlined">arrow_forward_ios</span>
+                          </div>
+                      </div>
+                  </a>';
+                }
+            }
+        }
+    }
 }
+
 echo '</div>
       <div class="flex flex-col gap-3">
          <h1 class="title text-dark text-2xl font-semibold">Votants</h1>
@@ -145,7 +196,7 @@ if (sizeof($propositions) > 0) {
         if (count(array_intersect(['Votant', 'Organisateur', 'Responsable'], $rolesQuestion)) > 0) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'voterPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voter pour tous', "logo" => 'how_to_vote']);
         }
-    } else if ($question->getPeriodeActuelle() == 'Période des résultats') {
+    } else if ($question->getPeriodeActuelle() == 'Période de résultat') {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'resultatPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voir les résultats', "logo" => 'list_alt']);
     }
 }

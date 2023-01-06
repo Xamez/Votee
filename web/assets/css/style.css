@@ -13,7 +13,6 @@
 }
 
 *, html {
-	cursor : wait;
 	scroll-behavior: smooth !important;
 }
 
@@ -165,6 +164,16 @@ input[type=checkbox] {
 	display: none;
 }
 
+/* Pour avoir toutes les barres qui font la même taille (le cas ou la somme fait pas 100% à cause des floats) */
+.result-element-bar > div:last-child {
+	flex-grow: 1;
+}
+
+.result-element > div:first-child .user {
+	background: #0fde30;
+	color: white;
+}
+
 .search-field:focus-visible {
 	outline: none;
 }
@@ -180,5 +189,3 @@ input[type=checkbox] {
 	grid-template-columns: min-content auto;
 	grid-template-rows: min-content auto;
 }
-
-

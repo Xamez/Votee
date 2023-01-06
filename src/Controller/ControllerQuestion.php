@@ -324,6 +324,3 @@ class ControllerQuestion extends AbstractController {
     }
 
 }
-
-
-
