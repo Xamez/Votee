@@ -47,7 +47,7 @@ class AbstractController {
     /** Si l'utilisateur n'est pas administrateur, notification et redirection vers l'url */
     public static function redirectAdmin($url): void {
         if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection($url);
         }
     }

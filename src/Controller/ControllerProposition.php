@@ -38,7 +38,7 @@ class ControllerProposition extends AbstractController {
     public static function createdVote(): void {
         $roles = ConnexionUtilisateur::getRolesProposition($_POST['idProposition']);
         if (!(count(array_intersect(['Responsable', 'Organisateur', 'Votant'], $roles)) > 0)) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&readAllQuestion");
         } else {
             $vote = (new VoteRepository())->ajouterVote($_POST['idProposition'], $_POST['idVotant'], $_POST['noteProposition']);
@@ -201,7 +201,7 @@ class ControllerProposition extends AbstractController {
         $idQuestion = $_GET['idQuestion'];
         $proposition = (new PropositionRepository())->select($idProposition);
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
@@ -235,7 +235,7 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_POST['idProposition'];
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         $proposition = (new PropositionRepository())->select($idProposition);
@@ -262,7 +262,7 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, $idProposition,['Responsable'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
@@ -293,7 +293,7 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_POST['idProposition'];
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         $oldCoAuteur = (new UtilisateurRepository())->selectCoAuteur($idProposition);
@@ -367,7 +367,7 @@ class ControllerProposition extends AbstractController {
         $idQuestion = $_GET['idQuestion'];
         $rolesQuest = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable']) && !in_array('Organisateur', $rolesQuest)) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=utilisateur&action=connexion");
         }
         self::afficheVue('view.php',
@@ -387,7 +387,7 @@ class ControllerProposition extends AbstractController {
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $rolesQuest = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         if (!self::hasPermission($idQuestion, $idProposition, ['Responsable']) && !in_array('Organisateur', $rolesQuest)) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
@@ -443,7 +443,7 @@ class ControllerProposition extends AbstractController {
         $rolesQuest = ConnexionUtilisateur::getRolesQuestion($question->getIdQuestion());
         if (!in_array('Responsable', $roles)
             && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion()))) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == 'Période d\'écriture') {
@@ -503,7 +503,7 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($_POST['idQuestion']);
         if (!in_array('Responsable', $roles)
             && !(in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($_POST['idQuestion']))) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == 'Période d\'écriture') {

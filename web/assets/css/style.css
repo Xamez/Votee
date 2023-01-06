@@ -37,6 +37,7 @@ main { flex: 1; }
 .shadow-button { filter: drop-shadow(8px 8px 0px #B8B8F8); }
 .bg-light {	background: #d6d1ff; }
 .shadow-4xl { box-shadow: rgba(0, 0, 0, 0.37) 1px 2px 10px 1px; }
+.shadow-around { box-shadow: rgba(12, 12, 12, 0.23) 1px 1px 4px 0px;}
 
 /* Permet d'avoir un effet quand on passe la souris sur les liens dans le burger-menu*/
 .link-underline {

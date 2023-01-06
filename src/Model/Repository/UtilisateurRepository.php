@@ -108,13 +108,14 @@ class UtilisateurRepository extends AbstractRepository {
 
     /** Tous les administrateurs de la base */
     public function selectAllAdmins() : array {
+        $administrateurs = [];
         $sql = "SELECT * FROM UTILISATEURS u JOIN ADMINISTRATEURS a ON u.LOGIN = a.LOGIN";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute();
-        foreach ($pdoStatement as $utilisateur) {
-            $utilisateurs[] = $this->construire($utilisateur);
+        foreach ($pdoStatement as $administrateur) {
+            $administrateurs[] = $this->construire($administrateur);
         }
-        return $utilisateurs;
+        return $administrateurs;
     }
 
     /** Tous les coAuteurs d'une proposition donnée */
@@ -125,7 +126,7 @@ class UtilisateurRepository extends AbstractRepository {
                 JOIN roles ro ON c.login = ro.login
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("idProposition" => $idProposition));
         foreach ($pdoStatement as $utilisateur) {
             $coAuteurs[] = $this->construire($utilisateur);
@@ -149,9 +150,24 @@ class UtilisateurRepository extends AbstractRepository {
     /** True si l'utilisateur donné est un admin, false sinon */
     public function selectAdministrateur($login): bool {
         $sql = "SELECT * FROM Administrateurs WHERE login = :loginTag";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("loginTag" => $login));
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
+    }
+
+    /** Tous les responsables d'une question donnée */
+    public function selectRespQuestion($idQuestion): array {
+        $responsables = [];
+        $sql = "Select DISTINCT U.* FROM Utilisateurs u
+                JOIN RedigerR rr ON u.login = rr.login 
+                JOIN Recevoir r ON rr.idProposition = r.idProposition 
+                WHERE idQuestion = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+        foreach ($pdoStatement as $responsable) {
+            $responsables[] = $this->construire($responsable);
+        }
+        return $responsables;
     }
 }

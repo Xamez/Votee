@@ -165,7 +165,7 @@ class ControllerQuestion extends AbstractController {
         }
         if ($idQuestion != NULL && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
-            self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
+            self::redirection("?controller=question&action=addResp&idQuestion=$idQuestion");
         } else {
             if (!$isOk) (new QuestionRepository())->supprimer($idQuestion);
             ConnexionUtilisateur::ajouterScoreQuestion();
@@ -174,10 +174,61 @@ class ControllerQuestion extends AbstractController {
         }
     }
 
+    public static function addResp(): void {
+        $idQuestion = $_GET['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
+            self::redirection("?controller=question&action=all");
+        }
+
+        /* Responsables actuels de la question */
+        $responsables = (new UtilisateurRepository())->selectRespQuestion($idQuestion);
+
+        /* Liste de tous les utilisateurs de la base de donnée */
+        $utilisateurs = (new UtilisateurRepository())->selectAll();
+
+        /* Utilisateurs sans les responsables actuels */
+        $newUtilisateurs = array_udiff($utilisateurs, $responsables, function ($a, $b) {
+            return strcmp($a->getLogin(), $b->getLogin());
+        });
+
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Ajouter des responsables",
+                "cheminVueBody" => "question/addResp.php",
+                "title" => "Ajouter des responsables",
+                "subtitle" => "Ajouter un ou plusieurs responsable à la question",
+                "responsables" => $responsables,
+                "utilisateurs" => $newUtilisateurs,
+                "idQuestion" => $idQuestion,
+            ]);
+    }
+
+    public static function addedResp(): void {
+        $idQuestion = $_POST['idQuestion'];
+        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
+            self::redirection("?controller=question&action=all");
+        }
+
+        //TODO Gestion de la suppression de responsable, de l'ajout et faire attention, car ceux qui ont déjà une proposition, il faut pas y toucher
+
+        $isOk = true;
+
+        if ($isOk) {
+            (new Notification())->ajouter("success", "Les responsables ont été ajouté avec succès.");
+            if ($_POST['type'] == 'update') self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
+            else self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
+        } else {
+            (new Notification())->ajouter("warning", "Certains responsables n'ont pas pu être ajouté.");
+            self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
+        }
+    }
+
     public static function addVotant(): void {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         /* Récupère les administrateurs, l'organisateur, les représentants et les coAuteurs de la question */
@@ -211,9 +262,9 @@ class ControllerQuestion extends AbstractController {
         });
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Ajouter un votant",
+                "pagetitle" => "Ajouter des votants",
                 "cheminVueBody" => "question/addVotant.php",
-                "title" => "Ajouter un votant",
+                "title" => "Ajouter des votants",
                 "subtitle" => "Ajouter un ou plusieurs votants à la question",
                 "idQuestion" => $idQuestion,
                 "actors" => $actors,
@@ -227,7 +278,7 @@ class ControllerQuestion extends AbstractController {
     public static function addedVotant() : void {
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
 
@@ -258,7 +309,7 @@ class ControllerQuestion extends AbstractController {
 
         if ($isOk) (new Notification())->ajouter("success", "Les votants ont été ajouté avec succès.");
         else (new Notification())->ajouter("warning", "Certains votants n'ont pas pu être ajouté.");
-        self::redirection("?controller=question&action=readQuestion&&idQuestion=$idQuestion");
+        self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
     }
 
 
@@ -266,7 +317,7 @@ class ControllerQuestion extends AbstractController {
     public static function updateQuestion() : void {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
@@ -283,7 +334,7 @@ class ControllerQuestion extends AbstractController {
     public static function updatedQuestion() : void {
         $idQuestion = $_POST['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'],['Période d\'écriture', 'Période de préparation'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
@@ -302,7 +353,7 @@ class ControllerQuestion extends AbstractController {
     public static function deleteQuestion() : void {
         $idQuestion = $_GET['idQuestion'];
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         self::afficheVue('view.php',
@@ -319,7 +370,7 @@ class ControllerQuestion extends AbstractController {
         $motDePasse = $_POST['motDePasse'];
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
         if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
