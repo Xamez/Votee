@@ -176,7 +176,21 @@ AbstractController::afficheVue('button.php', ['controller' => 'question', 'actio
 if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->getPeriodeActuelle() == 'Période de préparation') {
     if (in_array("Organisateur", $rolesQuestion)) {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Editer', "logo" => 'edit']);
-        AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'addVotant', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Votants', "logo" => 'manage_accounts']);
+        echo '<div class="flex bg-white shadow-around gap-3 rounded-2xl">
+                <a href="./frontController.php?controller=question&action=addVotant&idQuestion=' . $rawIdQuestion . '">
+                    <div class="p-2 flex gap-2 justify-center">
+                        <span class="material-symbols-outlined">manage_accounts</span>
+                        <p>Votants</p>
+                    </div>
+                </a>
+                <div class="opacity-20 bg-dark w-0.5 h-full" ></div>
+                <a href="./frontController.php?controller=question&action=addResp&&idQuestion=' . $rawIdQuestion . '">
+                    <div class="p-2 flex gap-2 justify-center">
+                        <span class="material-symbols-outlined">manage_accounts</span>
+                        <p>Responsables</p>
+                    </div>
+                </a>
+              </div>';
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'deleteQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Supprimer', "logo" => 'delete']);
     }
     if ($question->getPeriodeActuelle() == 'Période d\'écriture' && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
