@@ -210,7 +210,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->get
                     </div>
                 </a>
                 <div class="opacity-20 bg-dark w-0.5 h-full" ></div>
-                <a href="./frontController.php?controller=question&action=addResp&&idQuestion=' . $rawIdQuestion . '">
+                <a href="./frontController.php?controller=question&action=addResp&idQuestion=' . $rawIdQuestion . '">
                     <div class="p-2 flex gap-2 justify-center">
                         <span class="material-symbols-outlined">manage_accounts</span>
                         <p>Responsables</p>
