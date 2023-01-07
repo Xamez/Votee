@@ -151,4 +151,22 @@ class QuestionRepository extends AbstractRepository {
             return false;
         }
     }
+
+    public function modifierHeureQuestion($question): bool {
+        $sql = "CALL ModifierHeureQuestion(:idQuestionTag, :debutEcritureTag, :finEcritureTag, :debutVoteTag, :finVoteTag)";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array(
+            "idQuestionTag" => $question->getIdQuestion(),
+            "debutEcritureTag" => date('d/m/Y H:i:s', $question->getDateDebutQuestion()),
+            "finEcritureTag" => date('d/m/Y H:i:s', $question->getDateFinQuestion()),
+            "debutVoteTag" => date('d/m/Y H:i:s', $question->getDateDebutVote()),
+            "finVoteTag" => date('d/m/Y H:i:s', $question->getDateFinVote())
+        );
+        try {
+            $pdoStatement->execute($values);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
 }

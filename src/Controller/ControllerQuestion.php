@@ -130,14 +130,15 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&action=all");
         }
+        var_dump(date_format(date_create($_POST['dateDebutQuestion']), 'd/m/y 23:59:59'));
         $question = new Question(NULL,
             ($_POST['dateDebutQuestion'] > date('Y-m-d') ? 'invisible' : 'visible'),
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
-            date_format(date_create($_POST['dateDebutQuestion']), 'd/m/Y'),
-            date_format(date_create($_POST['dateFinQuestion']), 'd/m/Y'),
-            date_format(date_create($_POST['dateDebutVote']), 'd/m/Y'),
-            date_format(date_create($_POST['dateFinVote']), 'd/m/Y'),
+            date_format(date_create($_POST['dateDebutQuestion']), 'd/m/y 23:59:59'),
+            date_format(date_create($_POST['dateFinQuestion']), 'd/m/y 23:59:59'),
+            date_format(date_create($_POST['dateDebutVote']), 'd/m/y 23:59:59'),
+            date_format(date_create($_POST['dateFinVote']), 'd/m/y 23:59:59'),
             $_POST['loginOrga'],
             $_POST['loginSpe'],
             $_POST['voteType']
@@ -145,7 +146,7 @@ class ControllerQuestion extends AbstractController {
 
         if ((date_create($_POST['dateDebutQuestion']) > date_create($_POST['dateFinQuestion']))
             || (date_create($_POST['dateDebutVote']) > date_create($_POST['dateFinVote']))
-            || (date_create($_POST['dateFinQuestion']) >= date_create($_POST['dateDebutVote']))) {
+            || (date_create($_POST['dateFinQuestion']) > date_create($_POST['dateDebutVote']))) {
             (new Notification())->ajouter("warning", "Les dates sont incorrectes.");
             self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
@@ -417,6 +418,38 @@ class ControllerQuestion extends AbstractController {
                 "groupes" => $groupes,
                 "votants" => $votants
             ]);
+    }
+
+    public static function changePhase():void {
+        $idQuestion = $_GET['idQuestion'];
+        if (!in_array('Organisateur', ConnexionUtilisateur::getRolesQuestion($idQuestion))) {
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
+            self::redirection("?controller=question&action=all");
+        }
+        $question = (new QuestionRepository())->select($idQuestion);
+        $now = strtotime("now");
+        $today = strtotime("today");
+        $debutEcriture = $question->getDateDebutQuestion();
+        $finEcriture = $question->getDateFinQuestion();
+        $debutVote = $question->getDateDebutVote();
+        $finVote = $question->getDateFinVote();
+
+        if (in_array($today, [strtotime(date("Y-m-d", $debutEcriture)), strtotime(date("Y-m-d", $finEcriture)), strtotime(date("Y-m-d", $debutVote)), strtotime(date("Y-m-d", $finVote))])) {
+
+            if ($now < $debutEcriture && $today == strtotime(date("Y-m-d", $debutEcriture))) $question->setDateDebutQuestion($now);
+            elseif ($now < $finEcriture && $today == strtotime(date("Y-m-d", $finEcriture))) $question->setDateFinQuestion($now);
+            elseif ($now < $debutVote && $today == strtotime(date("Y-m-d", $debutVote))) $question->setDateDebutVote($now);
+            elseif ($now < $finVote && $today == strtotime(date("Y-m-d", $finVote))) $question->setDateFinVote($now);
+
+            $isOk = (new QuestionRepository())->modifierHeureQuestion($question);
+            if ($isOk) (new Notification())->ajouter("success", "La phase de la question a été modifiée.");
+            else (new Notification())->ajouter("warning", "La modification de la phase de la question a échoué.");
+
+            self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
+        } else {
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas changer de phase.");
+            self::redirection("?controller=question&action=all");
+        }
     }
 
     /** Retourne true si la question est en phase d'ecriture et si l'utilisateur a les roles requis */

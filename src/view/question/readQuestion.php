@@ -58,23 +58,26 @@
             $finEcriture = $question->getDateFinQuestion();
             $debutVote = $question->getDateDebutVote();
             $finVote = $question->getDateFinVote();
-            $diffEcriture = strtotime($finEcriture) - strtotime($debutEcriture);
-            $widthEcriture = max(0, min((strtotime(date('Y-m-d')) - strtotime($debutEcriture)) / ($diffEcriture == 0 ? 1 : $diffEcriture) * 100, 100));
-            $diffVote = strtotime($finVote) - strtotime($debutVote);
-            $widthVote = max(0, min((strtotime(date('Y-m-d')) - strtotime($debutVote)) / ($diffVote == 0 ? 1 : $diffVote)  * 100, 100));
+            $now = strtotime("now");
+            $today = strtotime("today");
+            $diffEcriture = strtotime(date('Y-m-d',$finEcriture)) - strtotime(date('Y-m-d',$debutEcriture));
+            $widthEcriture = max(0, min((($today - strtotime(date('Y-m-d',$debutEcriture))) * 100 )/ $diffEcriture, 100));
+            $diffVote = strtotime(date('Y-m-d',$finVote)) - strtotime(date('Y-m-d',$debutVote));
+            $widthVote = max(0, min((($today - strtotime(date('Y-m-d',$debutVote))) * 100) / $diffVote, 100));
             echo '
-            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($debutEcriture <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' ' . ($debutEcriture == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
-                <span class="font-semibold relative top-10">' . date_format(date_create($debutEcriture), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($now >= $debutEcriture ? 'bg-main' : 'bg-light') . ' ' . ($now < $debutEcriture && $today == strtotime(date("Y-m-d", $debutEcriture)) ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date('d/m/Y',$debutEcriture) . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période d\'écriture</span>
                 <div class="bg-light h-6 ' . ($widthEcriture == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthEcriture . '%"></div>
             </div>';
-            if (strtotime($debutVote) - strtotime($finEcriture) != 0) {
-                $widthTransition = max(0, min((strtotime(date('Y-m-d')) - strtotime($finEcriture)) / (strtotime($debutVote) - strtotime($finEcriture)) * 100, 100));
+            if ($debutVote - $finEcriture != 0) {
+                $diffTransition = strtotime(date('Y-m-d',$debutVote)) - strtotime(date('Y-m-d', $finEcriture));
+                $widthTransition = max(0, min((($today - strtotime(date('Y-m-d',$finEcriture)))  * 100) / $diffTransition, 100));
                 echo '
-            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($widthEcriture == 100 ? 'bg-main' : 'bg-light') . ' ' . ($finEcriture == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
-                <span class="font-semibold relative top-10">' . date_format(date_create($finEcriture), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($now >= $finEcriture ? 'bg-main' : 'bg-light') . ' ' . ($now < $finEcriture && $today == strtotime(date("Y-m-d", $finEcriture)) ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date('d/m/Y',$finEcriture) . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période de transition</span>
@@ -82,23 +85,27 @@
             </div>';
             }
             echo '
-            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($debutVote <= date('Y-m-d') ? 'bg-main' : 'bg-light') . ' ' . ($debutVote == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
-                <span class="font-semibold relative top-10">' . date_format(date_create($debutVote), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($now >= $debutVote ? 'bg-main' : 'bg-light') . ' ' . ($now < $debutVote && $today == strtotime(date("Y-m-d", $debutVote)) ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' .  date("d/m/Y", $debutVote) . '</span>
             </div>
             <div class="bg-dark h-6 w-full relative">
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période de vote</span>
                 <div class="bg-light h-6 ' . ($widthVote == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthVote . '%"></div>
             </div>
             
-            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($widthVote == 100 ? 'bg-main' : 'bg-light') . ' ' . ($finVote == date('Y-m-d') ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
-                <span class="font-semibold relative top-10">' . date_format(date_create($finVote), 'd/m/Y') . '</span>
+            <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($now >= $finVote ? 'bg-main' : 'bg-light') . ' ' . ($now < $finVote && $today == strtotime(date("Y-m-d", $finVote)) ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
+                <span class="font-semibold relative top-10">' . date("d/m/Y", $finVote) . '</span>
             </div>';
             ?>
         </div>
         <?php
-        if (in_array(date('Y-m-d'), [$debutEcriture, $finEcriture, $debutVote, $finVote])) {
+        if (in_array('Organisateur', ConnexionUtilisateur::getRolesQuestion($idQuestion)) &&
+            (($now < $debutEcriture && $today == strtotime(date("Y-m-d", $debutEcriture))) ||
+            ($now < $finEcriture && $today == strtotime(date("Y-m-d", $finEcriture))) ||
+            ($now < $debutVote && $today == strtotime(date("Y-m-d", $debutVote))) ||
+            ($now < $finVote && $today == strtotime(date("Y-m-d", $finVote))))) {
             echo '<div class="flex justify-center w-full mt-10">
-                    <a class="w-60 cursor-pointer p-2 text-white bg-main font-semibold rounded-lg text-center">Passer à la nouvelle phase</a>
+                    <a href="./frontController.php?controller=question&action=changePhase&idQuestion=' . $idQuestion . '" class="w-60 cursor-pointer p-2 text-white bg-main font-semibold rounded-lg text-center">Passer à la nouvelle phase</a>
                   </div>';
         }
         ?>

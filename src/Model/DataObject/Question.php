@@ -49,10 +49,10 @@ class Question extends AbstractDataObject {
             "VISIBILITE" => $this->getVisibilite(),
             "TITRE" => $this->getTitre(),
             "DESCRIPTION" => $this->getDescription(),
-            "DATEDEBUTQUESTION" => $this->getDateDebutQuestion(),
-            "DATEFINQUESTION" => $this->getDateFinQuestion(),
-            "DATEDEBUTVOTE" => $this->getDateDebutVote(),
-            "DATEFINVOTE" => $this->getDateFinVote(),
+            "DATEDEBUTQUESTION" => date('d/m/Y H:i:s',$this->getDateDebutQuestion()),
+            "DATEFINQUESTION" => date('d/m/Y H:i:s',$this->getDateFinQuestion()),
+            "DATEDEBUTVOTE" => date('d/m/Y H:i:s',$this->getDateDebutVote()),
+            "DATEFINVOTE" => date('d/m/Y H:i:s',$this->getDateFinVote()),
             "LOGIN_ORGANISATEUR" => $this->getLogin(),
             "LOGIN_SPECIALISTE" => $this->getLoginSpecialiste(),
             "TYPEVOTE" => $this->getVoteType(),
@@ -107,7 +107,7 @@ class Question extends AbstractDataObject {
 
     /** Période de la question (3 importantes : Ecriture, Vote et Résultat) et 2 à titre d'information (Transition et préparation */
     public function getPeriodeActuelle() : string {
-        $date = date('Y-m-d');
+        $date = strtotime("now");
         if ($date >= ($this->getDateDebutQuestion()) && $date <= ($this->getDateFinQuestion())) {
             return "Période d'écriture";
         } elseif ($date > ($this->getDateFinQuestion()) && $date < ($this->getDateDebutVote())) {
@@ -123,10 +123,10 @@ class Question extends AbstractDataObject {
 
     /** Permet d'encoder la date pour que le php puisse l'utiliser */
     public function changeDate(string $date) {
-        $old_date = explode('/', $date);
-        $new_data = $old_date[2].'-'.$old_date[1].'-'.$old_date[0];
-        $date = date_format(date_create($new_data),'Y-m-d');
-        return $date;
+        $splitDate = explode(' ', $date);
+        $oldDate = explode('/', $splitDate[0]);
+        $newData = $oldDate[2].'-'.$oldDate[1].'-'.$oldDate[0];
+        return strtotime(date_format(date_create($newData), 'Y-m-d') .' '.explode(',',$splitDate[1])[0]);
     }
 
 }
