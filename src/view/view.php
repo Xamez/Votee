@@ -16,7 +16,7 @@
     <nav class="flex justify-between items-center gap-10 p-2 mx-10 border-b-2">
         <div class="flex gap-3 items-center">
             <img class="w-14" src="assets//resources/logo_votee.png" alt="logo">
-            <span class="text-xl font-semibold text-dark">Votee</span>
+            <span class="text-xl font-semibold text-dark hidden sm:block">Votee</span>
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
             <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
