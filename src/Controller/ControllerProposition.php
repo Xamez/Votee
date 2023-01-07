@@ -337,12 +337,16 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_GET['idProposition'];
         self::redirectConnexion("?controller=utilisateur&action=connexion");
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
-        if (!self::hasPermission($idQuestion, $idProposition,['Responsable', 'CoAuteur', 'Auteur']) && !in_array('Organisateur', $rolesQuestion)) {
+        $question = (new QuestionRepository())->select($idQuestion);
+        $propsGagnante = self::getPropositionsGagantes($question);
+        if (!($question->getPeriodeActuelle() == 'Période d\'écriture' && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur'])) > 0))
+            && !(in_array($question->getPeriodeActuelle(), ['Période de résultat', 'Période de vote']) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
+            && !in_array('Organisateur', $rolesQuestion)
+            && !($question->getPeriodeActuelle() == 'Période de résultat' && in_array($idProposition, $propsGagnante))) {
             (new Notification())->ajouter("warning", "Vous ne pouvez pas accéder à cette proposition !");
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         }
 
-        $question = (new QuestionRepository())->select($idQuestion);
         $proposition = (new PropositionRepository())->select($idProposition);
         $textes = (new TexteRepository())->selectAllByKey($idProposition);
         $filsRaw = (new PropositionRepository())->getFilsFusion($idProposition);
@@ -584,6 +588,18 @@ class ControllerProposition extends AbstractController {
                 "title" => "Co-auteurs",
                 "subtitle" => "Liste des co-auteurs"
             ]);
+    }
+
+
+    public static function getPropositionsGagantes($question): array {
+        $resultats = (new VoteRepository())->getResultats($question);
+
+        $resultatGagnant = $resultats[array_key_first($resultats)][1];
+        $propositionsGagnantes = [];
+        foreach ($resultats as $idProposition => $resultat)
+            if ($resultat[1] == $resultatGagnant)
+                $propositionsGagnantes[] = $idProposition;
+        return $propositionsGagnantes;
     }
 
     /** Retourne true si la proposition est visible, si la question est en phase d'ecriture et si l'utilisateur a les roles requis */
