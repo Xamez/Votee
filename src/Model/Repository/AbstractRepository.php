@@ -20,10 +20,14 @@ abstract class AbstractRepository {
         $sql = "CALL {$this->getProcedureInsert()['procedure']}(:" . implode(', :', array_slice($this->getProcedureInsert(), 1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         foreach ($this->getProcedureInsert() as $value) $values[$value] = $value;
+        print_r($values);
         try {
             $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
+            foreach (array_intersect_key($object->formatTableau(), $values) as $item) {
+                echo $item . "<br>";
+            }
             return false;
         }
     }
