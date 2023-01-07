@@ -7,6 +7,7 @@ use App\Votee\Lib\MotDePasse;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Proposition;
 use App\Votee\Model\DataObject\Texte;
+use App\Votee\Model\DataObject\Vote;
 use App\Votee\Model\Repository\CommentaireRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
@@ -338,7 +339,7 @@ class ControllerProposition extends AbstractController {
         self::redirectConnexion("?controller=utilisateur&action=connexion");
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         $question = (new QuestionRepository())->select($idQuestion);
-        $propsGagnante = self::getPropositionsGagantes($question);
+        $propsGagnante = (new VoteRepository())->getPropositionsGagantes($question);
         if (!($question->getPeriodeActuelle() == 'Période d\'écriture' && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur'])) > 0))
             && !(in_array($question->getPeriodeActuelle(), ['Période de résultat', 'Période de vote']) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
             && !in_array('Organisateur', $rolesQuestion)
@@ -588,18 +589,6 @@ class ControllerProposition extends AbstractController {
                 "title" => "Co-auteurs",
                 "subtitle" => "Liste des co-auteurs"
             ]);
-    }
-
-
-    public static function getPropositionsGagantes($question): array {
-        $resultats = (new VoteRepository())->getResultats($question);
-
-        $resultatGagnant = $resultats[array_key_first($resultats)][1];
-        $propositionsGagnantes = [];
-        foreach ($resultats as $idProposition => $resultat)
-            if ($resultat[1] == $resultatGagnant)
-                $propositionsGagnantes[] = $idProposition;
-        return $propositionsGagnantes;
     }
 
     /** Retourne true si la proposition est visible, si la question est en phase d'ecriture et si l'utilisateur a les roles requis */

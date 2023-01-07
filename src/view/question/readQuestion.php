@@ -119,14 +119,7 @@ if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune propositi
 
 if ($question->getPeriodeActuelle() == 'Période de résultat') {
     $resultats = (new VoteRepository())->getResultats($question);
-
-    $resultatGagnant = $resultats[array_key_first($resultats)];
-    $resultatGagnant = $resultatGagnant[1];
-    $propositionsGagnantes = [];
-    foreach ($resultats as $idProposition => $resultat)
-        if ($resultat[1] == $resultatGagnant)
-            $propositionsGagnantes[] = $idProposition;
-
+    $propsGagnante = (new VoteRepository())->getPropositionsGagantes($question, $resultats);
     if (sizeof($rolesQuestion) > 0) {
         foreach ($resultats as $idProposition => $ignored) {
             $proposition = (new PropositionRepository())->select($idProposition);
@@ -171,7 +164,6 @@ if ($question->getPeriodeActuelle() == 'Période de résultat') {
         foreach ($propositions as $proposition) {
             $idProposition = $proposition->getIdProposition();
             $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
-
             if ($proposition->isVisible()) {
                 AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
             } else {
