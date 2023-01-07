@@ -59,11 +59,13 @@ foreach ($resultats as $idProposition => $resultat) {
 
 }
 
-echo '<div class="flex flex-col gap-2 justify-center items-center flex-col md:flex-row pt-6">';
+echo '<div class="flex flex-col justify-center items-center gap-2">';
 echo '<p>Légende</p>';
+echo '<div class="flex flex-wrap justify-center gap-2">';
 for ($i = 0; $i < sizeof($values); $i++) {
     echo '<div class="flex h-8 text-center items-center rounded-md" style="background-color: #' . $colors[$i] .'"><p class="text-white p-2">' . $labels[$i] . '</p></div>';
 }
+echo '</div>';
 echo '</div>';
 
 echo '</div>';
