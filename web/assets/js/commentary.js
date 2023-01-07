@@ -34,7 +34,7 @@ function getElement(element) {
 
 let popup;
 
-window.onload = () => {
+window.addEventListener("load", () => {
 
     const ids = document.getElementById("ids");
     commentary.idQuestion = ids.children[0].value;
@@ -197,9 +197,9 @@ window.onload = () => {
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
     });
 
-}
+});
 
-window.onresize = () => {
+window.addEventListener('resize', () => {
     if (popup.style.display === 'none') return;
     popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
-}
+});

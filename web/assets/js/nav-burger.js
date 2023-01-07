@@ -1,4 +1,4 @@
-window.onload = () => {
+window.addEventListener("load", () => {
 
     const navBurger = document.getElementById('nav-burger');
     const openIcon = document.getElementById('open-icon');
@@ -13,4 +13,4 @@ window.onload = () => {
     openIcon.addEventListener('click', toggleNav);
     closeIcon.addEventListener('click', toggleNav);
 
-};
+});
