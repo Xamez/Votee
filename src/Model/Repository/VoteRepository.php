@@ -88,11 +88,15 @@ class VoteRepository extends AbstractRepository {
         $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
         $result = $pdoStatement->fetchAll();
         $notes = array();
+        $voteType = VoteTypes::getFromKey($question->getVoteType());
         foreach ($result as $votant) {
             $note = $this->getNote($idProposition, $votant["LOGIN"]);
-            $voteType = VoteTypes::getFromKey($question->getVoteType());
-            if ($voteType == VoteTypes::JUGEMENT_MAJORITAIRE || $voteType == VoteTypes::CLASSEMENT)
-                $notes[$note] = -2; // par défaut, les personnes n'ayant pas voté sont considérées comme ayant voté contre soit "-2"
+            if ($note == 0) {
+                if ($voteType == VoteTypes::CLASSEMENT)
+                    $note = -3;
+                else if (($voteType == VoteTypes::JUGEMENT_MAJORITAIRE))
+                    $note = -3; // par défaut, les personnes n'ayant pas voté sont considérées comme ayant voté contre soit "-2"
+            }
             $notes[$votant["LOGIN"]] = $note;
         }
         return $notes;
@@ -121,8 +125,10 @@ class VoteRepository extends AbstractRepository {
         $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
         $resultats = array();
         foreach ($propositions as $proposition) {
-            $idProposition = $proposition->getIdProposition();
-            $resultats["prop-$idProposition"] = $this->getResultatsForProposition($question, $idProposition);
+            if ($proposition->isVisible()) {
+                $idProposition = $proposition->getIdProposition();
+                $resultats["prop-$idProposition"] = $this->getResultatsForProposition($question, $idProposition);
+            }
         }
         if (VoteTypes::getFromKey($question->getVoteType()) == VoteTypes::JUGEMENT_MAJORITAIRE) {
             // on trie les propositions en trouvant la mention majoritaire et si égalité, on trie par ordre décroissant des points:
