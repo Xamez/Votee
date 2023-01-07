@@ -61,7 +61,7 @@
             $now = strtotime("now");
             $today = strtotime("today");
             $diffEcriture = strtotime(date('Y-m-d',$finEcriture)) - strtotime(date('Y-m-d',$debutEcriture));
-            $widthEcriture = max(0, min((($today - strtotime(date('Y-m-d',$debutEcriture))) * 100 )/ $diffEcriture, 100));
+            $widthEcriture = max(0, min((($today - strtotime(date('Y-m-d',$debutEcriture))) * 100 ) / $diffEcriture, 100));
             $diffVote = strtotime(date('Y-m-d',$finVote)) - strtotime(date('Y-m-d',$debutVote));
             $widthVote = max(0, min((($today - strtotime(date('Y-m-d',$debutVote))) * 100) / $diffVote, 100));
             echo '
@@ -130,18 +130,24 @@ if ($question->getPeriodeActuelle() == 'Période de résultat') {
     if (sizeof($rolesQuestion) > 0) {
         foreach ($resultats as $idProposition => $ignored) {
             $proposition = (new PropositionRepository())->select($idProposition);
-            echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
-                      <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
-                          <div class="flex flex-col items-center gap-2 md:flex-row">
-                              <p class="font-bold text-dark hidden md:block">Proposition de : </p>
-                              <div class="' . (in_array($idProposition, $propositionsGagnantes ) ? "bg-green-400 text-white" : "bg-white text-main") . ' flex gap-1 shadow-md rounded-2xl w-fit p-2">
-                                  <span class="material-symbols-outlined">' . (in_array($idProposition, $propositionsGagnantes ) ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+            if ($proposition->isVisible()) {
+                echo '<a href="./frontController.php?controller=proposition&action=readProposition&idQuestion=' . $idQuestion . '&idProposition=' . rawurlencode($idProposition) . '">
+                          <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
+                              <div class="flex flex-col items-center gap-2 md:flex-row">
+                                  <p class="font-bold text-dark hidden md:block">Proposition de : </p>
+                                  <div class="' . (in_array($idProposition, $propositionsGagnantes ) ? "bg-green-400 text-white" : "bg-white text-main") . ' flex gap-1 shadow-md rounded-2xl w-fit p-2">
+                                      <span class="material-symbols-outlined">' . (in_array($idProposition, $propositionsGagnantes) ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
+                                  </div>
+                                  <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                               </div>
-                              <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
+                              <span class="material-symbols-outlined">arrow_forward_ios</span>
                           </div>
-                          <span class="material-symbols-outlined">arrow_forward_ios</span>
-                      </div>
-                  </a>';
+                      </a>';
+            } else {
+                if (count(array_intersect(['CoAuteur', 'Responsable'], $rolesQuestion)) > 0 || in_array("Organisateur", $rolesQuestion)) {
+                    AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
+                }
+            }
         }
     } else {
         foreach ($propositionsGagnantes as $idProposition) {
