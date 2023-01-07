@@ -1,3 +1,5 @@
+ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-DD-MM HH24:MI:SS.FF';
+
 CREATE TABLE Utilisateurs(
    login VARCHAR(50),
    motDePasse VARCHAR(255) NOT NULL,
@@ -84,10 +86,10 @@ CREATE TABLE Questions(
    visibilite VARCHAR(50) NOT NULL,
    titre VARCHAR(2000) NOT NULL,
    description VARCHAR(2000) NOT NULL,
-   dateDebutQuestion DATE NOT NULL,
-   dateFinQuestion DATE NOT NULL,
-   dateDebutVote DATE NOT NULL,
-   dateFinVote DATE NOT NULL,
+   dateDebutQuestion TIMESTAMP NOT NULL,
+   dateFinQuestion TIMESTAMP NOT NULL,
+   dateDebutVote TIMESTAMP NOT NULL,
+   dateFinVote TIMESTAMP NOT NULL,
    login_specialiste VARCHAR(50),
    login_organisateur VARCHAR(50) NOT NULL,
    PRIMARY KEY(idQuestion),
