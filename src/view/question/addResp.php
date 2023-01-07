@@ -26,7 +26,7 @@
 
     <div class="flex justify-center">
         <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>"/>
-        <input type="hidden" name="type" value="update"/>
+        <input type="hidden" name="type" value="<?= $type ?>"/>
         <input class="w-36 p-2 text-white bg-main font-semibold rounded-lg" type="submit" value="Valider" />
     </div>
 </form>

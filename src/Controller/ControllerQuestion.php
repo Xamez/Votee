@@ -146,7 +146,9 @@ class ControllerQuestion extends AbstractController {
 
         if ((date_create($_POST['dateDebutQuestion']) > date_create($_POST['dateFinQuestion']))
             || (date_create($_POST['dateDebutVote']) > date_create($_POST['dateFinVote']))
-            || (date_create($_POST['dateFinQuestion']) > date_create($_POST['dateDebutVote']))) {
+            || (date_create($_POST['dateFinQuestion']) > date_create($_POST['dateDebutVote']))
+            || (date_create($_POST['dateFinQuestion']) == date_create($_POST['dateDebutQuestion']))
+            || (date_create($_POST['dateFinVote']) == date_create($_POST['dateDebutVote']))) {
             (new Notification())->ajouter("warning", "Les dates sont incorrectes.");
             self::redirection("?action=controller=question&action=createQuestion&nbSections=" . $_POST['nbSections']);
         }
@@ -166,7 +168,7 @@ class ControllerQuestion extends AbstractController {
         }
         if ($idQuestion != NULL && $isOk) {
             (new Notification())->ajouter("success", "La question a été créée.");
-            self::redirection("?controller=question&action=addResp&idQuestion=$idQuestion");
+            self::redirection("?controller=question&action=addResp&type=create&idQuestion=$idQuestion");
         } else {
             if (!$isOk) (new QuestionRepository())->supprimer($idQuestion);
             ConnexionUtilisateur::ajouterScoreQuestion();
@@ -181,8 +183,10 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
+        $question = (new QuestionRepository())->select($idQuestion);
 
         $admins = (new UtilisateurRepository())->selectAllAdmins();
+        $organisateur = (new UtilisateurRepository())->select($question->getLogin());
         /* Responsables actuels de la question */
         $responsables = (new UtilisateurRepository())->selectRespQuestion($idQuestion);
 
@@ -192,8 +196,13 @@ class ControllerQuestion extends AbstractController {
         /* Liste des utilisateurs qui peuvent créer une proposition => devenir responsable (permissions) */
         $responsablesPossibles = (new UtilisateurRepository())->selectProchainResp($idQuestion);
 
+        $exeptions = $admins;
+        $exeptions[] = $organisateur;
+        $exeptions = array_merge($exeptions,$responsablesPossibles);
+        $exeptions = array_merge($exeptions,$responsables);
+
         /* Utilisateurs sans les responsables actuels */
-        $newUtilisateurs = array_udiff($utilisateurs, array_merge(array_merge($responsables,$responsablesPossibles),$admins), function ($a, $b) {
+        $newUtilisateurs = array_udiff($utilisateurs, $exeptions, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
 
@@ -207,6 +216,7 @@ class ControllerQuestion extends AbstractController {
                 "responsablesPossibles" => $responsablesPossibles,
                 "utilisateurs" => $newUtilisateurs,
                 "idQuestion" => $idQuestion,
+                "type" => $_GET['type']
             ]);
     }
 
@@ -232,8 +242,8 @@ class ControllerQuestion extends AbstractController {
 
         if ($isOk) {
             (new Notification())->ajouter("success", "Les responsables ont été ajouté avec succès.");
-            if ($_POST['type'] == 'update') self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
-            else self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
+            if ($_POST['type'] == 'create') self::redirection("?controller=question&action=addVotant&idQuestion=$idQuestion");
+            else self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         } else {
             (new Notification())->ajouter("warning", "Certains responsables n'ont pas pu être ajouté.");
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
@@ -453,10 +463,10 @@ class ControllerQuestion extends AbstractController {
     }
 
     /** Retourne true si la question est en phase d'ecriture et si l'utilisateur a les roles requis */
-    public static function hasPermission($idQuestion, $rolesArray, $periodeArray): bool {
+    public static function hasPermission($idQuestion, $rolesArray, $periodesArray): bool {
         $question = (new QuestionRepository())->select($idQuestion);
         $roles = ConnexionUtilisateur::getRolesQuestion($idQuestion);
-        return in_array($question->getPeriodeActuelle(), $periodeArray) && (count(array_intersect($rolesArray, $roles)) > 0);
+        return in_array($question->getPeriodeActuelle(), $periodesArray) && (count(array_intersect($rolesArray, $roles)) > 0);
     }
 
 }
