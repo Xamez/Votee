@@ -119,7 +119,7 @@ if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune propositi
 
 if ($question->getPeriodeActuelle() == 'Période de résultat') {
     $resultats = (new VoteRepository())->getResultats($question);
-    $propsGagnante = (new VoteRepository())->getPropositionsGagantes($question, $resultats);
+    $propositionsGagnantes = (new VoteRepository())->getPropositionsGagantes($question, $resultats);
     if (sizeof($rolesQuestion) > 0) {
         foreach ($resultats as $idProposition => $ignored) {
             $proposition = (new PropositionRepository())->select($idProposition);
@@ -128,7 +128,7 @@ if ($question->getPeriodeActuelle() == 'Période de résultat') {
                           <div class="flex flex-col bg-light justify-between p-2 items-center rounded md:flex-row">
                               <div class="flex flex-col items-center gap-2 md:flex-row">
                                   <p class="font-bold text-dark hidden md:block">Proposition de : </p>
-                                  <div class="' . (in_array($idProposition, $propositionsGagnantes ) ? "bg-green-400 text-white" : "bg-white text-main") . ' flex gap-1 shadow-md rounded-2xl w-fit p-2">
+                                  <div class="' . (in_array($idProposition, $propositionsGagnantes) ? "bg-green-400 text-white" : "bg-white text-main") . ' flex gap-1 shadow-md rounded-2xl w-fit p-2">
                                       <span class="material-symbols-outlined">' . (in_array($idProposition, $propositionsGagnantes) ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                                   </div>
                                   <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
