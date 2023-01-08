@@ -34,15 +34,19 @@ foreach ($sections as $numParagraphe => $section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
     $sectionDescHTML = $textes[$numParagraphe]->getTexte();
 
+    $paragraph = $sectionDescHTML;
+
     $paragraph = "";
     $paragraphRaw = ""; // version sans les span des commentaires
 
-    $sectionDescHTMLChars = str_split($sectionDescHTML);
+    // le str_split ne marche pas en raison des accents qui sont considérés comme 2 caractères
+    $sectionDescHTMLChars = preg_split('//u', $sectionDescHTML, -1, PREG_SPLIT_NO_EMPTY);
 
     foreach ($sectionDescHTMLChars as $key => $char) {
+        echo $char . " ";
         foreach ($commentaires as $commentaire) {
             if ($commentaire->getNumeroParagraphe() == $numParagraphe) {
-                if ($commentaire->getIndexCharDebut() === $key) {
+                if ($commentaire->getIndexCharDebut() == $key) {
                     $paragraph .= '<span id="' . $commentaire->getIdCommentaire() . '" class="commentary cursor-pointer bg-light" data-id="' . htmlspecialchars($commentaire->getTexteCommentaire()) . '">';
                 } else if ($commentaire->getIndexCharFin() == $key)
                     $paragraph .= '</span>';
@@ -55,7 +59,7 @@ foreach ($sections as $numParagraphe => $section) {
 
     echo '
         <h1 class="text-main text-2xl font-bold">'. $numParagraphe + 1 . ' - ' . $sectionTitreHTML . '</h1>
-        <div data-id="' . $paragraphRaw . '" id="' . $numParagraphe .'" class="proposition-markdown break-all text-justify">
+        <div data-id="' . $sectionDescHTML . '" id="' . $numParagraphe .'" class="proposition-markdown break-all text-justify">
             ' . $paragraph . '
         </div>
     ';
