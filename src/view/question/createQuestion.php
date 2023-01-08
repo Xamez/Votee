@@ -13,6 +13,7 @@
             <?php
 
             use App\Votee\Lib\ConnexionUtilisateur;
+            use App\Votee\Model\DataObject\Periodes;
 
             for ($i = 1; $i <= $nbSections; $i++) {
                 echo '<div class="flex flex-col">
@@ -25,7 +26,7 @@
         <h2 class="title text-dark text-2xl font-semibold">Calendrier</h2>
         <div>
             <div class="flex gap-10 items-center">
-                <p class="w-36 font-semibold">Période d'écriture :</p>
+                <p class="w-36 font-semibold"><?= Periodes::ECRITURE->value ?> :</p>
                 <div class="flex flex-col">
                     <label for="date_debut_question_id">Débute le </label>
                     <input type="date" min="<?=date('Y-m-d')?>" value="<?= date('Y-m-d') ?>" name="dateDebutQuestion" id="date_debut_question_id" required/>
@@ -36,7 +37,7 @@
                 </div>
             </div>
             <div class="flex gap-10 items-center">
-                <p class="w-36 font-semibold">Période de vote :</p>
+                <p class="w-36 font-semibold"><?= Periodes::VOTE->value ?> :</p>
                 <div class="flex flex-col">
                     <label for="date_debut_vote_id">Débute le </label>
                     <input type="date" min="<?=date('Y-m-d')?>" name="dateDebutVote" id="date_debut_vote_id" required/>
