@@ -48,7 +48,7 @@ class ControllerUtilisateur extends AbstractController {
                 self::redirection("?controller=utilisateur&action=connexion");
             }
         } else {
-            (new Notification())->ajouter("success","L'inscription a échoué.");
+            (new Notification())->ajouter("warning","L'inscription a échoué.");
             self::redirection("?controller=utilisateur&action=inscription");
         }
 
