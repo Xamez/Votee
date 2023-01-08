@@ -19,34 +19,10 @@
             <span class="text-xl font-semibold text-dark hidden sm:block">Votee</span>
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
-            <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
             <?php
-
             use App\Votee\Controller\AbstractController;
-            use App\Votee\Model\Repository\DemandeRepository;
-            use App\Votee\Lib\ConnexionUtilisateur;
             use App\Votee\Lib\Notification;
-
-                if (ConnexionUtilisateur::estConnecte()) {
-                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                            <span class="link-underline link-underline-color">Demande';
-                    $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-                    if ($utilisateur != null) {
-                        $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
-                        if ($result != null) {
-                            if ($result > 0) {
-                                echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
-                            }
-                        }
-                    }
-                    echo '</span></a>';
-                }
-                if (ConnexionUtilisateur::estAdministrateur()) {
-                    echo '<a href="./frontController.php?controller=groupe&action=readAllGroupe">
-                            <span class="link-underline link-underline-color">Groupes</span>
-                          </a>';
-                }
+            AbstractController::afficheVue('navbar.php');
             ?>
         </div>
         <div class="flex items-center gap-4">
@@ -65,23 +41,8 @@
                 <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main w-40 z-10 rounded-lg text-white text-xl p-2 pl-2">
                     <span id="close-icon" class="material-symbols-outlined cursor-pointer cursor-pointer text-red-500 text-right pb-0" style="font-size: 1.5rem;">close</span>
                     <?php
-                    if (ConnexionUtilisateur::estConnecte()) {
-                        echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                              <span class="link-underline link-underline-color">Demande';
-                        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-                        if ($utilisateur != null) {
-                            $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
-                            if ($result != null) {
-                                if ($result > 0) {
-                                    echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
-                                }
-                            }
-                        }
-                        echo '</span></a>';
-                    }
+                    AbstractController::afficheVue('navbar.php');
                     ?>
-                    <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-                    <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
                 </div>
             </div>
         </div>
