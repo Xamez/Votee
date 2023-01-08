@@ -109,15 +109,15 @@ class Question extends AbstractDataObject {
     public function getPeriodeActuelle() : string {
         $date = strtotime("now");
         if ($date >= ($this->getDateDebutQuestion()) && $date <= ($this->getDateFinQuestion())) {
-            return "Période d'écriture";
+            return Periodes::ECRITURE->value;
         } elseif ($date > ($this->getDateFinQuestion()) && $date < ($this->getDateDebutVote())) {
-            return "Période de transition";
+            return Periodes::TRANSITION->value;
         } else if ($date >= ($this->getDateDebutVote()) && $date <= ($this->getDateFinVote())) {
-            return "Période de vote";
+            return Periodes::VOTE->value;
         } else if ($date < ($this->getDateDebutQuestion())) {
-            return "Période de préparation";
+            return Periodes::PREPARATION->value;
         } else {
-            return "Période de résultat";
+            return Periodes::RESULTAT->value;
         }
     }
 

@@ -3,6 +3,7 @@
 use App\Votee\Controller\AbstractController;
 use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
+use App\Votee\Model\DataObject\Periodes;
 
 require "propositionHeader.php";
 
@@ -31,7 +32,7 @@ if ($fils) {
 $commentaryEnabled = count(array_intersect(['Organisateur', 'Specialiste'], $rolesQuest)) > 0 || count(array_intersect(['Responsable'], $roles));
 AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
 
-if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == 'Période de vote') {
+if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == Periodes::VOTE->value) {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
 }
 
@@ -39,7 +40,7 @@ echo '<div class="flex flex-col sm:flex-row justify-center gap-2 justify-between
 
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
 
-if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
+if ($visibilite && $question->getPeriodeActuelle() == Periodes::ECRITURE->value) {
 
     echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
 

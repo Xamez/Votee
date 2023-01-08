@@ -5,6 +5,7 @@ namespace App\Votee\Controller;
 use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\MotDePasse;
 use App\Votee\Lib\Notification;
+use App\Votee\Model\DataObject\Periodes;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\VoteTypes;
@@ -65,8 +66,19 @@ class ControllerQuestion extends AbstractController {
 
     public static function all(): void {
         $search = $_GET['search'] ?? null;
+        $periode = $_GET['periode'] ?? null;
+
+        // filtre search
         if ($search) $questions = (new QuestionRepository())->selectBySearch($search, 'TITRE');
         else $questions = (new QuestionRepository())->selectAll();
+
+        // filtre periode
+        if ($periode) {
+            $questions = array_filter($questions, function ($question) use ($periode) {
+                return $question->getPeriodeActuelle() === $periode;
+            });
+        }
+
         foreach ($questions as $key=>$question) {
             if (!$question->isVisible()) {
                 unset($questions[$key]);
@@ -178,7 +190,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function addResp(): void {
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -220,7 +232,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function addedResp(): void {
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -250,7 +262,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function addVotant(): void {
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -300,7 +312,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function addedVotant() : void {
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -339,7 +351,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updateQuestion() : void {
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -356,7 +368,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function updatedQuestion() : void {
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'],['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'],[Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -375,7 +387,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function deleteQuestion() : void {
         $idQuestion = $_GET['idQuestion'];
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -392,7 +404,7 @@ class ControllerQuestion extends AbstractController {
         $idQuestion = $_POST['idQuestion'];
         $motDePasse = $_POST['motDePasse'];
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-        if (!self::hasPermission($idQuestion, ['Organisateur'], ['Période d\'écriture', 'Période de préparation'])) {
+        if (!self::hasPermission($idQuestion, ['Organisateur'], [Periodes::ECRITURE->value, Periodes::PREPARATION->value])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }

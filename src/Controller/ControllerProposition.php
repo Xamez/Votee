@@ -5,6 +5,7 @@ namespace App\Votee\Controller;
 use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Lib\MotDePasse;
 use App\Votee\Lib\Notification;
+use App\Votee\Model\DataObject\Periodes;
 use App\Votee\Model\DataObject\Proposition;
 use App\Votee\Model\DataObject\Texte;
 use App\Votee\Model\DataObject\Vote;
@@ -42,7 +43,7 @@ class ControllerProposition extends AbstractController {
         if (!(count(array_intersect(['Responsable', 'Organisateur', 'Votant'], $roles)) > 0)) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&readAllQuestion");
-        } else if ($question->getPeriodeActuelle() == "Période de vote") {
+        } else if ($question->getPeriodeActuelle() == Periodes::VOTE->value) {
             $vote = (new VoteRepository())->voter($question, $_POST['idVotant'], $_POST['idProposition'], $_POST['noteProposition']);
             if ($vote)
                 (new Notification())->ajouter("success", "Le vote a bien été effectué.");
@@ -65,7 +66,7 @@ class ControllerProposition extends AbstractController {
         } else {
             $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
             $question = (new QuestionRepository())->select($_GET['idQuestion']);
-            if ($question->getPeriodeActuelle() != "Période de vote") {
+            if ($question->getPeriodeActuelle() != Periodes::VOTE->value) {
                 (new Notification())->ajouter("danger", "Vous ne pouvez pas voter pour cette question.");
                 self::redirection("?controller=question&action=all");
             } else {
@@ -101,7 +102,7 @@ class ControllerProposition extends AbstractController {
 
     public static function resultatPropositions(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
-        if ($question->getPeriodeActuelle() != "Période de résultat") {
+        if ($question->getPeriodeActuelle() != Periodes::RESULTAT->value) {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas accéder aux résultats de cette question.");
             self::redirection("?controller=question&readAllQuestion");
         } else {
@@ -359,10 +360,10 @@ class ControllerProposition extends AbstractController {
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         $question = (new QuestionRepository())->select($idQuestion);
         $propsGagnante = (new VoteRepository())->getPropositionsGagantes($question);
-        if (!($question->getPeriodeActuelle() == 'Période d\'écriture' && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur'])) > 0))
-            && !(in_array($question->getPeriodeActuelle(), ['Période de résultat', 'Période de vote']) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
+        if (!($question->getPeriodeActuelle() == Periodes::ECRITURE->value && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur'])) > 0))
+            && !(in_array($question->getPeriodeActuelle(), [Periodes::RESULTAT->value, Periodes::VOTE->value]) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
             && !in_array('Organisateur', $rolesQuestion)
-            && !($question->getPeriodeActuelle() == 'Période de résultat' && in_array($idProposition, $propsGagnante))) {
+            && !($question->getPeriodeActuelle() == Periodes::RESULTAT->value && in_array($idProposition, $propsGagnante))) {
             (new Notification())->ajouter("warning", "Vous ne pouvez pas accéder à cette proposition !");
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         }
@@ -489,7 +490,7 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
-        if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == 'Période d\'écriture') {
+        if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == Periodes::ECRITURE->value) {
             (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée !");
             self::redirection("?controller=question&action=all");
         }
@@ -549,7 +550,7 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
-        if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == 'Période d\'écriture') {
+        if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == Periodes::ECRITURE->value) {
             (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée !");
             self::redirection("?controller=question&action=all");
         }
@@ -615,7 +616,7 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($idQuestion);
         $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
         $proposition = (new PropositionRepository())->select($idProposition);
-        return $question->getPeriodeActuelle() == 'Période d\'écriture' && $proposition->isVisible() && (count(array_intersect($rolesArray, $roles)) > 0);
+        return $question->getPeriodeActuelle() == Periodes::ECRITURE->value && $proposition->isVisible() && (count(array_intersect($rolesArray, $roles)) > 0);
     }
 
 }
