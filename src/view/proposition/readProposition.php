@@ -31,47 +31,8 @@ if ($fils) {
     echo '</div>';
 }
 
-echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
-      <div class="flex flex-col gap-2">
-          <span class="text-main font-semibold">Titre de la proposition :</span>
-          <span>' . htmlspecialchars($titreProposition) . '</span>
-      </div>';
-foreach ($sections as $numParagraphe => $section) {
-    $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-    $sectionDescHTML = $textes[$numParagraphe]->getTexte();
-
-    $paragraph = $sectionDescHTML;
-
-    $paragraph = "";
-    $paragraphRaw = ""; // version sans les span des commentaires
-
-    // le str_split ne marche pas en raison des accents qui sont considérés comme 2 caractères
-    $sectionDescHTMLChars = preg_split('//u', $sectionDescHTML, -1, PREG_SPLIT_NO_EMPTY);
-
-    foreach ($sectionDescHTMLChars as $key => $char) {
-        echo $char . " ";
-        foreach ($commentaires as $commentaire) {
-            if ($commentaire->getNumeroParagraphe() == $numParagraphe) {
-                if ($commentaire->getIndexCharDebut() == $key) {
-                    $paragraph .= '<span id="' . $commentaire->getIdCommentaire() . '" class="commentary cursor-pointer bg-light" data-id="' . htmlspecialchars($commentaire->getTexteCommentaire()) . '">';
-                } else if ($commentaire->getIndexCharFin() == $key)
-                    $paragraph .= '</span>';
-            }
-        }
-
-        $paragraphRaw .= $char;
-        $paragraph .= $char;
-    }
-
-    echo '
-        <h1 class="text-main text-2xl font-bold">'. $numParagraphe + 1 . ' - ' . $sectionTitreHTML . '</h1>
-        <div data-id="' . $sectionDescHTML . '" id="' . $numParagraphe .'" class="proposition-markdown break-all text-justify">
-            ' . $paragraph . '
-        </div>
-    ';
-}
-
-echo '</div>';
+$commentaryEnabled = count(array_intersect(['Organisateur', 'Specialiste'], $rolesQuest)) > 0 || count(array_intersect(['Responsable'], $roles));
+AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
 
 if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == 'Période de vote') {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);

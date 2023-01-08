@@ -1,11 +1,32 @@
-<?php require "propositionHeader.php"; ?>
+<?php use App\Votee\Controller\AbstractController;
+
+require "propositionHeader.php"; ?>
+<script type="text/javascript" src="assets/js/accordion.js"></script>
 <script type="text/javascript" src="assets/js/proposition.js"></script>
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
+    <div class="flex flex-col gap-2">
+        <label class="text-main" for="titre">Titre de la proposition :</label>
+        <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
+    </div>
+
+    <?php
+    if (sizeof($commentaires) > 0) {
+        echo '<div>
+                    <div class="accordion text-left w-full p-2 cursor-pointer flex justify-between p-2 items-center rounded">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-dark">Ancienne proposition</p>
+                        </div>
+                        <span class="accordion-arrow material-symbols-outlined">arrow_forward_ios</span>
+                    </div>                      
+                    <div class="p-4 overflow-hidden hidden panel">';
+                        AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => true, 'inAccordion' => true, 'sections' => $sections, 'textes' => $textesMarkdown, 'commentaires' => $commentaires]);
+             echo '</div>
+              </div>';
+    }
+    ?>
+
+
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
-        <div class="flex flex-col gap-2">
-            <label class="text-main" for="titre">Titre de la proposition :</label>
-            <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
-        </div>
         <?php
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
