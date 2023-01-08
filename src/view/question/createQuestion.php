@@ -52,7 +52,7 @@
         <div>
             <div class="flex gap-10 items-center">
                 <p class="w-36 font-semibold">Type de Vote :</p>
-                <select name="voteType" class="p-2 rounded-md border-2 border-zinc-800">
+                <select name="voteType" class="p-2 rounded-md border-2 border-zinc-800 bg-white">
                     <?php
                     foreach ($voteTypes as $key => $value)
                         echo '<option value="' . $key . '">' . $value . '</option>';
