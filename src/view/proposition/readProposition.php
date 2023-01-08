@@ -57,12 +57,13 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
 
 
         echo '
-            <a class="flex bg-white shadow-around p-2 rounded-2xl cursor-pointer">
-                <div id="commentary-button" class="flex gap-2 justify-center items-center">
-                    <span class="material-symbols-outlined">sticky_note_2</span>
-                    <p class="line-through">Commentaire</p>
-                </div>
-            </a>';
+        <a class="button justify-center flex bg-white border-lightPurple text-main hover:text-white border-2 p-2 rounded-3xl cursor-pointer">
+            <div id="commentary-button" class="flex gap-2">
+                <span class="material-symbols-outlined">sticky_note_2</span>
+                <p class="line-through">Commentaire</p>
+            </div>
+        </a>
+        ';
     }
 
     if ((count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
