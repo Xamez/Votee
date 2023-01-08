@@ -160,16 +160,14 @@ if ($question->getPeriodeActuelle() == 'Période de résultat') {
         }
     }
 } else {
-    if (sizeof($rolesQuestion) > 0) {
-        foreach ($propositions as $proposition) {
-            $idProposition = $proposition->getIdProposition();
-            $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
-            if ($proposition->isVisible()) {
+    foreach ($propositions as $proposition) {
+        $idProposition = $proposition->getIdProposition();
+        $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
+        if ($proposition->isVisible()) {
+            AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
+        } else {
+            if (count(array_intersect(['CoAuteur', 'Responsable'], $roles)) > 0 || in_array("Organisateur", $rolesQuestion)) {
                 AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
-            } else {
-                if (count(array_intersect(['CoAuteur', 'Responsable'], $rolesQuestion)) > 0 || in_array("Organisateur", $rolesQuestion)) {
-                    AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
-                }
             }
         }
     }
