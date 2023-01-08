@@ -37,10 +37,21 @@ class ControllerUtilisateur extends AbstractController {
             self::redirection("?controller=utilisateur&action=inscription");
         }
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
-        (new UtilisateurRepository())->sauvegarder($utilisateur);
-        (new Notification())->ajouter("success","L'utilisateur a été créé");
-        (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
-        self::redirection("?action=home");
+        $isOk = (new UtilisateurRepository())->sauvegarder($utilisateur);
+        if ($isOk) {
+            (new Notification())->ajouter("success","Votre compte a été créé.");
+            if (MotDePasse::verifier($_POST['password'], $utilisateur->getMotDePasse())) {
+                (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
+                self::redirection("?controller=question&action=all");
+            } else {
+                (new Notification())->ajouter("warning","La connexion a échoué.");
+                self::redirection("?controller=utilisateur&action=connexion");
+            }
+        } else {
+            (new Notification())->ajouter("success","L'inscription a échoué.");
+            self::redirection("?controller=utilisateur&action=inscription");
+        }
+
     }
 
     public static function deconnecter(): void {
