@@ -205,7 +205,6 @@ class ControllerQuestion extends AbstractController {
         $newUtilisateurs = array_udiff($utilisateurs, $exeptions, function ($a, $b) {
             return strcmp($a->getLogin(), $b->getLogin());
         });
-
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Ajouter des responsables",
@@ -216,7 +215,7 @@ class ControllerQuestion extends AbstractController {
                 "responsablesPossibles" => $responsablesPossibles,
                 "utilisateurs" => $newUtilisateurs,
                 "idQuestion" => $idQuestion,
-                "type" => $_GET['type']
+                "typeRedi" => array_key_exists('type', $_GET) ? $_GET['type'] : null
             ]);
     }
 
@@ -237,7 +236,7 @@ class ControllerQuestion extends AbstractController {
             $isOk = (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
         }
         foreach ($responsables as $login) {
-            $isOk =  (new PropositionRepository())->enleverScoreProposition($login, $idQuestion);
+            $isOk = (new PropositionRepository())->enleverScoreProposition($login, $idQuestion);
         }
 
         if ($isOk) {
