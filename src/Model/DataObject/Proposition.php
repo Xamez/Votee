@@ -10,7 +10,6 @@ class Proposition extends AbstractDataObject {
     private string $visibilite;
     private ?string $idPropFusionParent;
 
-
     public function __construct(
         ?int $idProposition,
         ?int $idQuestion,
