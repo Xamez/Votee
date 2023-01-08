@@ -810,8 +810,7 @@
             estDansGroupe NUMBER;
         BEGIN
             SELECT COUNT(IDQUESTION) INTO v_nb FROM EXISTE WHERE IDQUESTION = p_idQuestion AND LOGIN = p_login;
-            SELECT COUNT(IDQUESTION) INTO estDansGroupe FROM EXISTERGROUPE eg
-                JOIN APPARTENIR a on eg.IDGROUPE = a.IDGROUPE WHERE IDQUESTION = p_idQuestion AND LOGIN = p_login;
+            SELECT COUNT(IDQUESTION) INTO estDansGroupe FROM EXISTERGROUPE eg JOIN APPARTENIR a on eg.IDGROUPE = a.IDGROUPE WHERE IDQUESTION = p_idQuestion AND LOGIN = p_login;
 
             IF estDansGroupe > 0 OR v_nb > 0 THEN
                 RETURN 1;
