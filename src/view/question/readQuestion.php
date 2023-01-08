@@ -35,6 +35,7 @@
 
             use App\Votee\Controller\AbstractController;
             use App\Votee\Lib\ConnexionUtilisateur;
+            use App\Votee\Model\DataObject\Periodes;
             use App\Votee\Model\Repository\PropositionRepository;
             use App\Votee\Model\Repository\VoteRepository;
 
@@ -120,7 +121,7 @@
 if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 
 
-if ($question->getPeriodeActuelle() == 'Période de résultat') {
+if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
     $resultats = (new VoteRepository())->getResultats($question);
     $propositionsGagnantes = (new VoteRepository())->getPropositionsGagantes($question, $resultats);
     if (sizeof($rolesQuestion) > 0) {
@@ -205,7 +206,7 @@ echo '    </div>
       <div class="flex gap-2 justify-between flex-col md:flex-row">';
 
 AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'all', 'title' => 'Retour', "logo" => 'reply']);
-if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->getPeriodeActuelle() == 'Période de préparation') {
+if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value || $question->getPeriodeActuelle() == Periodes::PREPARATION->value) {
     if (in_array("Organisateur", $rolesQuestion)) {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Editer', "logo" => 'edit']);
         echo '<div class="flex bg-white border-lightPurple text-main">
@@ -225,7 +226,7 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->get
               </div>';
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'deleteQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Supprimer', "logo" => 'delete']);
     }
-    if ($question->getPeriodeActuelle() == 'Période d\'écriture' && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
+    if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
         if (ConnexionUtilisateur::creerProposition($idQuestion) || in_array("Organisateur", $rolesQuestion)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
         } else {
@@ -235,11 +236,11 @@ if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->get
 }
 
 if (sizeof($propositions) > 0) {
-    if ($question->getPeriodeActuelle() == 'Période de vote') {
+    if ($question->getPeriodeActuelle() == Periodes::VOTE->value) {
         if (count(array_intersect(['Votant', 'Organisateur', 'Responsable'], $rolesQuestion)) > 0) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'voterPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voter pour tous', "logo" => 'how_to_vote']);
         }
-    } else if ($question->getPeriodeActuelle() == 'Période de résultat') {
+    } else if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'resultatPropositions', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Voir les résultats', "logo" => 'list_alt']);
     }
 }
