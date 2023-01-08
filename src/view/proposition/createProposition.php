@@ -8,13 +8,16 @@
             <?php echo htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
         </div>
     </div>
-    <input type="text" minlength="10" maxlength="130" placeholder="Titre de la proposition" name="titreProposition" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
+        <div class="flex flex-col gap-2">
+            <label class="text-main" for="titre">Titre de la proposition :</label>
+            <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" required>
+        </div>
         <?php
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
             echo '<h1 class="text-main text-2xl font-bold">'. $index + 1 . ' - ' . $sectionTitreHTML . '</h1>
-                  <textarea class="section border-2 max-h-96 h-52 whitespace-pre-wrap" maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required></textarea>
+                  <textarea class="section border-2 max-h-96 h-52 whitespace-pre-wrap" placeholder="Il est important de rédiger ..." maxlength="2000"  name="section'.$index.'" id="section'.$index.'" required></textarea>
                   <input type="hidden" name="idSection' . $index . '" value="'. $section->getIdSection(). '">';
         }
         ?>

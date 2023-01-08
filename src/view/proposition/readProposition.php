@@ -19,17 +19,23 @@ echo '
 ';
 
 if ($fils) {
-    echo '<div class="flex gap-5">
+    echo '<div class="flex gap-7">
              <p class="text-main font-semibold">Fusionné avec : </p>';
     foreach ($fils as $key=>$f) {
-        echo '<a class="text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
-                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">Proposition ' . $key+1 . '</a>';
+        echo '<a class="flex items-center gap-2 text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
+                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">
+                <span class="material-symbols-outlined">description</span>
+                <span>Proposition ' . $key+1 . '</span>
+              </a>';
     }
     echo '</div>';
 }
 
-echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
-
+echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
+      <div class="flex flex-col gap-2">
+          <span class="text-main font-semibold">Titre de la proposition :</span>
+          <span>' . htmlspecialchars($titreProposition) . '</span>
+      </div>';
 foreach ($sections as $numParagraphe => $section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
     $sectionDescHTML = $textes[$numParagraphe]->getTexte();
