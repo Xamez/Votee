@@ -509,7 +509,8 @@
 			SELECT COUNT(login) INTO isAlreadyResp FROM RedigerR WHERE login = p_login AND idProposition = p_idProposition;
 			SELECT COUNT(login) INTO isInsideCoAuth FROM CoAuteurs WHERE login = p_login;
 			SELECT DISTINCT IDQUESTION INTO idQuestionProp FROM RECEVOIR WHERE IDPROPOSITION = p_idProposition;
-			SELECT COUNT(DISTINCT login) FROM Recevoir r JOIN RedigerR rr ON r.idProposition = rr.idProposition WHERE idQuestion = idQuestionProp AND login = p_login;
+			SELECT COUNT(DISTINCT login) INTO isRespAnywhere FROM Recevoir r JOIN PROPOSITIONS p ON r.IDPROPOSITION = p.IDPROPOSITION
+			JOIN RedigerR rr ON r.idProposition = rr.idProposition WHERE idQuestion = idQuestionProp AND login = p_login AND VISIBILITEPROPOSITION = 'visible';
 
 			IF isAlreadyResp >= 1 THEN
 				RAISE_APPLICATION_ERROR(-20106, 'Cet Utilisateur est déjà Responsable sur cette proposition !');
