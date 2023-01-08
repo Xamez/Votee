@@ -152,10 +152,12 @@ label { font-weight: 600; }
 	margin-right: 10%;
 }
 
+.filter-field {
+	border: none !important;
+}
 
-/* searchbar */
-.search-field {
-	border: none!important;
+.filter-field:focus-visible {
+	outline: none;
 }
 
 /* utilisateurs checkbox */
@@ -177,10 +179,6 @@ input[type=checkbox] {
 .result-element > div:first-child .user {
 	background: #0fde30;
 	color: white;
-}
-
-.search-field:focus-visible {
-	outline: none;
 }
 
 .disable {
