@@ -7,22 +7,28 @@
     DROP PROCEDURE AjouterVotants;
     DROP PROCEDURE AjouterResponsables;
     DROP PROCEDURE AjouterCoAuteurs;
+    DROP PROCEDURE AjouterSpecialistes;
     DROP PROCEDURE AjouterDemandes;
     DROP PROCEDURE AjouterGroupes;
-    DROP PROCEDURE AjouterSpecialistes;
     DROP PROCEDURE AjouterUtilisateurAGroupes;
     DROP PROCEDURE AjouterScorePropositions;
+    DROP PROCEDURE EnleverScorePropositions;
     DROP PROCEDURE AjouterScoreFusion;
     DROP PROCEDURE AjouterVotantAQuestion;
     DROP PROCEDURE AjouterGroupeAQuestion;
 
-    DROP PROCEDURE ModifierGroupes;
-    DROP PROCEDURE ModifierDemandes;
 
-    DROP PROCEDURE SupprimerGroupes;
+    DROP PROCEDURE ModifierDemandes;
+    DROP PROCEDURE ModifierGroupes;
+    DROP PROCEDURE ModifierUtilisateurs;
+
+
     DROP PROCEDURE SupprimerDemandes;
+    DROP PROCEDURE SupprimerGroupes;
+    DROP PROCEDURE SupprimerUtilisateurDeGroupe;
     DROP PROCEDURE SupprimerVotantDeQuestion;
     DROP PROCEDURE SupprimerGroupeDeQuestion;
+
 
 --     DROP SEQUENCE demandes_seq;
 --     DROP SEQUENCE groupes_seq;
@@ -31,10 +37,12 @@
 --     DROP SEQUENCE propositions_seq;
 --     DROP SEQUENCE commentaires_seq;
 
+
     DROP VIEW overviewProposition;
     DROP TRIGGER question_Insert;
     DROP TRIGGER organisateur_ajoutAutomatique;
     DROP TRIGGER ajoutNbQuestionRestant;
+
 
     DROP PROCEDURE AjouterQuestions;
     DROP PROCEDURE AjouterSections;
@@ -46,12 +54,15 @@
     DROP PROCEDURE AjouterRecevoir;
     DROP PROCEDURE AjouterCommentairesEtStocker;
 
+
     DROP PROCEDURE ModifierQuestions;
+    DROP PROCEDURE ModifierHeureQuestion;
     DROP PROCEDURE ModifierSections;
     DROP PROCEDURE ModifierVotes;
     DROP PROCEDURE ModifierRecevoir;
     DROP PROCEDURE ModifierPropositions;
     DROP PROCEDURE ModifierCommentaires;
+
 
     DROP PROCEDURE SupprimerQuestions;
     DROP PROCEDURE SupprimerSections;
@@ -59,14 +70,16 @@
     DROP PROCEDURE SupprimerCommentaires;
     DROP PROCEDURE SupprimerRedigerCA;
 
+
     DROP FUNCTION GetPropositionGagnante;
     DROP FUNCTION estOrganisateur;
     DROP FUNCTION estResponsable;
     DROP FUNCTION estCoAuteur;
     DROP FUNCTION estVotant;
+    DROP FUNCTION estSpecialiste;
     DROP FUNCTION estResponsableProp;
     DROP FUNCTION estCoAuteurProp;
-    DROP FUNCTION estSpecialiste;
+
 
 -- ######################################
 -- #									#
@@ -693,6 +706,7 @@
             DELETE FROM Sections WHERE idQuestion = p_idQuestion;
             DELETE FROM Existe WHERE idQuestion = p_idQuestion;
             DELETE FROM ScorePropositions WHERE idQuestion = p_idQuestion;
+            DELETE FROM EXISTERGROUPE WHERE IDQUESTION = p_idQuestion;
             DELETE FROM Questions WHERE idQuestion = p_idQuestion;
         END;
 
