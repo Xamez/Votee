@@ -1,7 +1,11 @@
 <?php
 
 if (!$inAccordion)
-    echo '<div class="flex flex-col gap-2 border-2 p-8 rounded-3xl">';
+    echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">            
+            <div class="flex flex-col gap-2 pb-3">
+                <span class="text-main font-semibold">Titre de la proposition :</span>
+                <span>' . htmlspecialchars($titreProposition) . '</span>
+            </div>';
 
 foreach ($sections as $numParagraphe => $section) {
     $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
@@ -28,9 +32,11 @@ foreach ($sections as $numParagraphe => $section) {
     }
 
     echo '
-        <h1 class="text-main text-2xl font-bold pb-3">'. $numParagraphe + 1 . ' - ' . $sectionTitreHTML . '</h1>
-        <div data-id="' . $sectionDescHTML . '" id="' . $numParagraphe .'" class="proposition-markdown break-all text-justify">
-            ' . $paragraph . '
+        <div class="flex flex-col">
+            <h1 class="text-main text-2xl font-bold pb-3">'. $numParagraphe + 1 . ' - ' . $sectionTitreHTML . '</h1>
+            <div data-id="' . $sectionDescHTML . '" id="' . $numParagraphe .'" class="proposition-markdown break-all text-justify">
+                ' . $paragraph . '
+            </div>
         </div>
     ';
 }

@@ -4,11 +4,6 @@ require "propositionHeader.php"; ?>
 <script type="text/javascript" src="assets/js/accordion.js"></script>
 <script type="text/javascript" src="assets/js/proposition.js"></script>
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=updatedProposition">
-    <div class="flex flex-col gap-2">
-        <label class="text-main" for="titre">Titre de la proposition :</label>
-        <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
-    </div>
-
     <?php
     if (sizeof($commentaires) > 0) {
         echo '<div>
@@ -25,8 +20,12 @@ require "propositionHeader.php"; ?>
     }
     ?>
 
-
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
+        <div class="flex flex-col gap-2">
+            <label class="text-main" for="titre">Titre de la proposition :</label>
+            <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
+        </div>
+
         <?php
         foreach ($sections as $index=>$section) {
             $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
