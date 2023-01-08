@@ -32,7 +32,7 @@ if ($fils) {
 }
 
 $commentaryEnabled = count(array_intersect(['Organisateur', 'Specialiste'], $rolesQuest)) > 0 || count(array_intersect(['Responsable'], $roles));
-AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
+AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'titreProposition' => $titreProposition,'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
 
 if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == 'Période de vote') {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
