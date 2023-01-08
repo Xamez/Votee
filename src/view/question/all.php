@@ -1,15 +1,10 @@
 <div class="flex md:justify-between md:flex-row flex-col gap-4 items-center">
     <form action="./frontController.php?controller=question&action=all" method="GET" class="flex flex-col lg:flex-row gap-2">
-        <div class="flex px-3 w-70 rounded-3xl border-solid border-lightPurple border-2">
+        <div class="flex px-3 rounded-3xl border-solid border-lightPurple border-2">
             <input class="w-12 bg-transparent rounded-none material-symbols-outlined text-main cursor-pointer" id="submit" type="submit" value="search">
             <input class="filter-field w-full text-main" id="search" name="search" maxlength="100" type="text" placeholder="Titre de question" value="<?= ($_GET['search'] ?? "") ?>">
-        </div>
-        <input type="hidden" name="action" value="all">
-        <input type="hidden" name="controller" value="question">
 
-        <div class="flex px-3 rounded-3xl border-solid border-lightPurple border-2">
-
-            <input class="w-12 bg-transparent rounded-none material-symbols-outlined text-main cursor-pointer" id="submit" type="submit" value="filter_alt">
+            <input class=" w-12 pl-2 border-l border-lightPurple bg-transparent rounded-none material-symbols-outlined text-main cursor-pointer" id="submit" type="submit" value="filter_alt">
             <select name="periode" class="filter-field p-2 rounded-md text-main"">
                 <option value="">Aucun filtre</option>
                 <?php
