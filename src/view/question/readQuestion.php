@@ -25,12 +25,11 @@
           </div>';
     }
     ?>
-    <div>
-        <span class="text-main font-semibold">Période actuelle : </span>
-        <span><?= $question->getPeriodeActuelle() ?></span>
-    </div>
     <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
+        <div class="px-7">
+            <span class="break-all"><?= $question->getDescription() ?></span>
+        </div>
         <div class="p-7 flex flex-col gap-4">
             <?php
 
@@ -52,6 +51,10 @@
     </div>
     <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+        <div class="flex pt-4 gap-2 justify-center">
+            <span class="text-main font-semibold">Période actuelle : </span>
+            <span><?= $question->getPeriodeActuelle() ?></span>
+        </div>
         <div class="flex items-center p-10">
             <?php
             $debutEcriture = $question->getDateDebutQuestion();
@@ -205,15 +208,15 @@ AbstractController::afficheVue('button.php', ['controller' => 'question', 'actio
 if ($question->getPeriodeActuelle() == 'Période d\'écriture' || $question->getPeriodeActuelle() == 'Période de préparation') {
     if (in_array("Organisateur", $rolesQuestion)) {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'updateQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Editer', "logo" => 'edit']);
-        echo '<div class="flex bg-white shadow-around gap-3 rounded-2xl">
-                <a href="./frontController.php?controller=question&action=addVotant&idQuestion=' . $rawIdQuestion . '">
+        echo '<div class="flex bg-white border-lightPurple text-main">
+                <a class="button w-full border-2 border-r-0 border-lightPurple rounded-l-3xl hover:text-white" href="./frontController.php?controller=question&action=addVotant&idQuestion=' . $rawIdQuestion . '">
                     <div class="p-2 flex gap-2 justify-center">
                         <span class="material-symbols-outlined">manage_accounts</span>
                         <p>Votants</p>
                     </div>
                 </a>
-                <div class="opacity-20 bg-dark w-0.5 h-full" ></div>
-                <a href="./frontController.php?controller=question&action=addResp&idQuestion=' . $rawIdQuestion . '">
+                <div class="bg-purple w-1 opacity-75 h-full" ></div>
+                <a class="button w-full border-2 border-l-0 border-lightPurple rounded-r-3xl hover:text-white" href="./frontController.php?controller=question&action=addResp&idQuestion=' . $rawIdQuestion . '">
                     <div class="p-2 flex gap-2 justify-center">
                         <span class="material-symbols-outlined">manage_accounts</span>
                         <p>Responsables</p>

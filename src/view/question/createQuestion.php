@@ -5,7 +5,7 @@
                 <input type="text" placeholder="Titre de la question" minlength="10" maxlength="150" name="titreQuestion" id="systeme_vote_id" required/>
             </div>
             <div class="flex flex-col">
-                <textarea class="max-h-52" minlength="10" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
+                <textarea class="max-h-52" minlength="20" maxlength="2000" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
         <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>

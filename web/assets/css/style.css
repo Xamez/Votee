@@ -41,10 +41,12 @@ main { flex: 1; }
 .nav-button:hover { color: #ddd; }
 .text-main { color: #8080D7; }
 .border-main { border-color: #8080D7; }
+.border-lightPurple { border-color: #bdb6fa; }
 .bg-main { background-color: #8080D7; }
 .bg-dark { background-color: #2E3436; }
 .bg-home { background-color: #AFAFF3; }
 .bg-green { background-color: #a3e6c9; }
+.bg-purple { background-color: #bcb6f5; }
 .bg-red { background-color: #ee8579; }
 .bg-lightPurple { background-color: #f8f6ff; }
 .border-light { border-color: #f8f6ff; }
@@ -205,4 +207,10 @@ input[type=checkbox] {
 	animation: anim 2s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: infinite;
+}
+
+.button:hover {
+	background-color: #8080D7;
+	border-color: #8080D7;
+	transition-duration: 0.08s;
 }
