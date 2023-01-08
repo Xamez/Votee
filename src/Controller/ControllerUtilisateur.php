@@ -157,4 +157,17 @@ class ControllerUtilisateur extends AbstractController {
             ]);
     }
 
+    public static function updateUtilisateur(): void {
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        $groupes = (new GroupeRepository())->selectGroupeByLogin($utilisateur->getLogin());
+        self::afficheVue('view.php',
+            [
+                "utilisateur" => $utilisateur,
+                "groupes" => $groupes,
+                "pagetitle" => "Utilisateur",
+                "cheminVueBody" => "utilisateur/updateUtilisateur.php",
+                "title" => "Utilisateur",
+            ]);
+    }
+
 }
