@@ -16,37 +16,13 @@
     <nav class="flex justify-between items-center gap-10 p-2 mx-10 border-b-2">
         <div class="flex gap-3 items-center">
             <img class="w-14" src="assets//resources/logo_votee.png" alt="logo">
-            <span class="text-xl font-semibold text-dark">Votee</span>
+            <span class="text-xl font-semibold text-dark hidden sm:block">Votee</span>
         </div>
         <div class="flex-grow pl-10 text-xl hidden md:flex gap-10 text-dark">
-            <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-            <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
             <?php
-
             use App\Votee\Controller\AbstractController;
-            use App\Votee\Model\Repository\DemandeRepository;
-            use App\Votee\Lib\ConnexionUtilisateur;
             use App\Votee\Lib\Notification;
-
-                if (ConnexionUtilisateur::estConnecte()) {
-                    echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                            <span class="link-underline link-underline-color">Demande';
-                    $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-                    if ($utilisateur != null) {
-                        $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
-                        if ($result != null) {
-                            if ($result > 0) {
-                                echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
-                            }
-                        }
-                    }
-                    echo '</span></a>';
-                }
-                if (ConnexionUtilisateur::estAdministrateur()) {
-                    echo '<a href="./frontController.php?controller=groupe&action=readAllGroupe">
-                            <span class="link-underline link-underline-color">Groupes</span>
-                          </a>';
-                }
+            AbstractController::afficheVue('navbar.php');
             ?>
         </div>
         <div class="flex items-center gap-4">
@@ -65,23 +41,8 @@
                 <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main w-40 z-10 rounded-lg text-white text-xl p-2 pl-2">
                     <span id="close-icon" class="material-symbols-outlined cursor-pointer cursor-pointer text-red-500 text-right pb-0" style="font-size: 1.5rem;">close</span>
                     <?php
-                    if (ConnexionUtilisateur::estConnecte()) {
-                        echo '<a href="./frontController.php?controller=demande&action=readAllDemande" class="inline-block relative">
-                              <span class="link-underline link-underline-color">Demande';
-                        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
-                        if ($utilisateur != null) {
-                            $result = (new DemandeRepository())->selectNbDemande($utilisateur->getLogin());
-                            if ($result != null) {
-                                if ($result > 0) {
-                                    echo '<span class="bg-main rounded-2xl text-xs text-white w-5 h-5 flex items-center justify-center absolute -top-2 -right-4">' . $result . '</span>';
-                                }
-                            }
-                        }
-                        echo '</span></a>';
-                    }
+                    AbstractController::afficheVue('navbar.php');
                     ?>
-                    <a href="./frontController.php?action=home"><span class="link-underline link-underline-color">Accueil</span></a>
-                    <a href="./frontController.php?controller=question&action=all"><span class="link-underline link-underline-color">Question</span></a>
                 </div>
             </div>
         </div>
@@ -91,7 +52,7 @@
     foreach (['success', 'warning', 'danger'] as $type) {
         if (Notification::contientMessage($type)) {
             foreach (Notification::lireMessages($type) as $key => $message) {
-                echo '<div class="z-10 fixed shadow-lg bottom-14 right-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
+                echo '<div class="z-30 fixed shadow-lg bottom-14 right-14 flex justify-between items-center gap-5 toast toast-' . $type. '">
                         <div class="flex justify-center shadow-lg items-center justify-items-center w-12 h-12 p-2.5 toast-icon toast-icon-'. $type .'">
                         <span class="material-symbols-outlined">';
                             if ($type == 'success')  echo 'check_circle';
@@ -108,7 +69,7 @@
         echo '
         <main class="flex flex-col gap-5 mx-auto w-8/12">
             <div class="flex flex-col items-center pt-6">
-                <h1 class="text-4xl font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
+                <h1 class="text-4xl break-all font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
                 ';
                 if (isset($subtitle)) echo '<p class="text-main">'. htmlspecialchars($subtitle) .'</p>';
             echo '</div>';
@@ -135,7 +96,7 @@
         <div class="w-full pt-10">
             <div class="flex w-4/5 items-center justify-center mx-auto border-t border-main pb-12">
                 <div class="flex flex-row text-main text-md lg:text-xl font-semibold pt-6">
-                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevalier Julie</p>
+                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevallier Julie</p>
                 </div>
             </div>
         </div>
