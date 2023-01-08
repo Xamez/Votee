@@ -69,7 +69,7 @@
         echo '
         <main class="flex flex-col gap-5 mx-auto w-8/12">
             <div class="flex flex-col items-center pt-6">
-                <h1 class="text-4xl font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
+                <h1 class="text-4xl break-all font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
                 ';
                 if (isset($subtitle)) echo '<p class="text-main">'. htmlspecialchars($subtitle) .'</p>';
             echo '</div>';

@@ -20,7 +20,7 @@ if (sizeof($membres) > 0) {
 }
 echo '</div>';
 if (ConnexionUtilisateur::estAdministrateur()) {
-    echo '<div class="flex gap-2 justify-between">';
+    echo '<div class="flex flex-col md:flex-row gap-2 justify-between">';
     AbstractController::afficheVue('button.php', ['controller' => 'groupe', 'action' => 'readAllGroupe', 'title' => 'Retour', "logo" => 'reply']);
     AbstractController::afficheVue('button.php', ['controller' => 'groupe', 'action' => 'updateGroupe', 'params' => 'idGroupe=' . $rawIdGroupe, 'title' => 'Editer', "logo" => 'edit']);
     AbstractController::afficheVue('button.php', ['controller' => 'groupe', 'action' => 'addMembre', 'params' => 'idGroupe=' . $rawIdGroupe, 'title' => 'Membres', "logo" => 'manage_accounts']);
