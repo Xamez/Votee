@@ -3,7 +3,7 @@
 if (!$inAccordion)
     echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">            
             <div class="flex flex-col gap-2 pb-3">
-                <span class="text-main font-semibold">Titre de la proposition :</span>
+                <span class="text-main font-semibold text-lg">Titre de la proposition :</span>
                 <span>' . htmlspecialchars($titreProposition) . '</span>
             </div>';
 

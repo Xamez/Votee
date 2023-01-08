@@ -2,7 +2,7 @@
 
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=createdProposition">
     <div class="flex gap-2 items-center">
-        <p class="text-main font-semibold">Responsable :</p>
+        <p class="text-main text-lg font-semibold">Responsable :</p>
         <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
             <span class="material-symbols-outlined">account_circle</span>
             <?php echo htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
@@ -11,7 +11,7 @@
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <div class="flex flex-col gap-2">
             <label class="text-main" for="titre">Titre de la proposition :</label>
-            <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" required>
+            <input type="text" minlength="10" id="titre" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" required>
         </div>
         <?php
         foreach ($sections as $index=>$section) {
