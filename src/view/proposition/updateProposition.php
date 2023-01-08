@@ -22,8 +22,8 @@ require "propositionHeader.php"; ?>
 
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
         <div class="flex flex-col gap-2">
-            <label class="text-main" for="titre">Titre de la proposition :</label>
-            <input type="text" minlength="10" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
+            <label class="text-main text-lg font-semibold" for="titre">Titre de la proposition :</label>
+            <input type="text" minlength="10" id="titre" maxlength="130" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" value="<?= $proposition->getTitreProposition() ?>" required>
         </div>
 
         <?php
