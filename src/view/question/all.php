@@ -2,10 +2,10 @@
     <form action="./frontController.php?controller=question&action=all" method="GET" class="flex flex-col lg:flex-row gap-2">
         <div class="flex px-3 rounded-3xl border-solid border-lightPurple border-2">
             <input class="w-12 bg-transparent rounded-none material-symbols-outlined text-main cursor-pointer" id="submit" type="submit" value="search">
-            <input class="filter-field w-full text-main" id="search" name="search" maxlength="100" type="text" placeholder="Titre de question" value="<?= ($_GET['search'] ?? "") ?>">
+            <input class="filter-field w-full bg-white text-main" id="search" name="search" maxlength="100" type="text" placeholder="Titre de question" value="<?= ($_GET['search'] ?? "") ?>">
 
             <input class=" w-12 pl-2 border-l border-lightPurple bg-transparent rounded-none material-symbols-outlined text-main cursor-pointer" id="submit" type="submit" value="filter_alt">
-            <select name="periode" class="filter-field p-2 rounded-md text-main"">
+            <select name="periode" class="filter-field p-2 rounded-md bg-white text-main"">
                 <option value="">Aucun filtre</option>
                 <?php
                 use App\Votee\Model\DataObject\Periodes;
