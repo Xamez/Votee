@@ -288,7 +288,8 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($idQuestion);
 
         $exception = (new UtilisateurRepository())->selectAllAdmins();
-        $exception[] = (new UtilisateurRepository())->selectResp($idProposition);
+        $responsables = (new UtilisateurRepository())->selectRespQuestion($idQuestion);
+        $exception = array_merge($responsables, $exception);
 
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
