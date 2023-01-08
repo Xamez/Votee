@@ -11,11 +11,7 @@ use App\Votee\Model\Repository\UtilisateurRepository;
 class ControllerGroupe extends AbstractController {
 
     public static function readAllGroupe():void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
-
+        self::redirectAdmin("?controller=question&action=all");
         $groupes = (new GroupeRepository())->selectAll();
         self::afficheVue('view.php',
             [
@@ -27,11 +23,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function readGroupe():void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger", "Vous n'etes pas connecté !");
-            self::redirection("?controller=question&action=all");
-        }
-
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $groupe = (new GroupeRepository())->select($_GET['idGroupe']);
         $membres =  (new GroupeRepository())->selectMembres($_GET['idGroupe']);
         self::afficheVue('view.php',
@@ -45,10 +37,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function createGroupe():void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Création d'un groupe",
@@ -58,10 +47,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function createdGroupe():void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $groupe = new Groupe(null, $_POST['nomGroupe']);
         $idGroupe = (new GroupeRepository())->sauvegarderSequence($groupe);
         if ($idGroupe) {
@@ -74,10 +60,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function addMembre():void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $exception = (new UtilisateurRepository())->selectAllAdmins();
         $utilisateurs = (new UtilisateurRepository())->selectAll();
         $membres = (new GroupeRepository())->selectMembres($_GET['idGroupe']);
@@ -97,13 +80,9 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function addedMembre():void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $idGroupe = $_POST['idGroupe'];
         $isOk = true;
-
         $oldMembres = (new GroupeRepository())->selectMembres($idGroupe);
         $membres = [];
         foreach ($oldMembres as $membre) $membres[] = $membre->getLogin();
@@ -120,10 +99,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function deleteGroupe(): void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $idGroupe = $_GET['idGroupe'];
         self::afficheVue('view.php',
             [
@@ -135,10 +111,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function deletedGroupe(): void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $idGroupe = $_GET['idGroupe'];
         $isOk = (new GroupeRepository())->supprimer($idGroupe);
         if ($isOk) (new Notification())->ajouter("success", "Le groupe a bien été supprimé !");
@@ -147,10 +120,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function updateGroupe(): void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $idGroupe = $_GET['idGroupe'];
         $groupe = (new GroupeRepository())->select($idGroupe);
         self::afficheVue('view.php',
@@ -165,10 +135,7 @@ class ControllerGroupe extends AbstractController {
     }
 
     public static function updatedGroupe(): void {
-        if (!ConnexionUtilisateur::estAdministrateur()) {
-            (new Notification())->ajouter("danger", "Vous n'avez pas les droits !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectAdmin("?controller=question&action=all");
         $idGroupe = $_POST['idGroupe'];
         $groupe = (new GroupeRepository())->select($idGroupe);
         $groupe->setNomGroupe($_POST['nomGroupe']);

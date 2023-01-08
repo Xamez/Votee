@@ -7,7 +7,8 @@ use PDOException;
 
 abstract class AbstractRepository {
 
-    public function sauvegarderSequence(AbstractDataObject $dataObject) {
+    /** Utilise la méthode {@link sauvegarder} en renvoyant l'id de l'object crée en base de donnée (issue d'une sequence) */
+    public function sauvegarderSequence(AbstractDataObject $dataObject) : ?int {
         $this->sauvegarder($dataObject);
         $pdoLastInsert = DatabaseConnection::getPdo()->prepare("SELECT {$this->getNomSequence()}.CURRVAL AS lastInsertId FROM DUAL");
         $pdoLastInsert->execute();
@@ -15,20 +16,23 @@ abstract class AbstractRepository {
         return $lastInserId ? intval($lastInserId[0]) : null;
     }
 
-    public function sauvegarder(AbstractDataObject $object) : bool {
+    public function sauvegarder(AbstractDataObject $object): bool {
         $sql = "CALL {$this->getProcedureInsert()['procedure']}(:" . implode(', :', array_slice($this->getProcedureInsert(), 1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         foreach ($this->getProcedureInsert() as $value) $values[$value] = $value;
+        print_r($values);
         try {
             $pdoStatement->execute(array_intersect_key($object->formatTableau(), $values));
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
+            foreach (array_intersect_key($object->formatTableau(), $values) as $item) {
+                echo $item . "<br>";
+            }
             return false;
         }
     }
 
-    public function modifier(AbstractDataObject $object) : bool {
+    public function modifier(AbstractDataObject $object): bool {
         $sql = "CALL {$this->getProcedureUpdate()['procedure']} (:" . implode(', :', array_slice($this->getProcedureUpdate(),1)) . ")";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         foreach ($this->getProcedureUpdate() as $value) $values[$value] = $value;
@@ -40,7 +44,7 @@ abstract class AbstractRepository {
         }
     }
 
-    public function supprimer($valeurClePrimaire) : bool {
+    public function supprimer($valeurClePrimaire): bool {
         $sql = "CALL {$this->getProcedureDelete()} (:valueTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $value = array("valueTag" => $valeurClePrimaire);
@@ -52,7 +56,7 @@ abstract class AbstractRepository {
         }
     }
 
-    public function selectAll() : array {
+    public function selectAll(): array {
         $object = [];
         $sql = "SELECT * FROM {$this->getNomTable()}";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -65,7 +69,7 @@ abstract class AbstractRepository {
         return $object;
     }
 
-    public function selectAllByKey($valeurClePrimaire) : array {
+    public function selectAllByKey($valeurClePrimaire): array {
         $object = [];
         $sql = "SELECT * FROM {$this->getNomTable()}  WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -77,7 +81,7 @@ abstract class AbstractRepository {
         return $object;
     }
 
-    public function selectAllByMultiKey(array $valeurAttributs) : array {
+    public function selectAllByMultiKey(array $valeurAttributs): array {
         $object = [];
         $ligne = "";
         foreach ($valeurAttributs as $key => $valeurAttribut) {
@@ -87,14 +91,13 @@ abstract class AbstractRepository {
         $sql = "SELECT * FROM {$this->getNomTable()}  WHERE $ligne";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute($valeurAttributs);
-
         foreach ($pdoStatement as $formatTableau) {
             $object[] = $this->construire($formatTableau);
         }
         return $object;
     }
 
-    public function select($valeurClePrimaire) : ?AbstractDataObject {
+    public function select($valeurClePrimaire): ?AbstractDataObject {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE {$this->getNomClePrimaire() } = :valueTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("valueTag" => $valeurClePrimaire));
@@ -102,21 +105,8 @@ abstract class AbstractRepository {
         return $result ? $this->construire($result) : null;
     }
 
-//    public function selectByMultiKey(array $valeurAttributs) : ?AbstractDataObject {
-//        $ligne = "";
-//        foreach ($valeurAttributs as $key => $valeurAttribut) {
-//            $ligne .= $key . "= :" . $key . ' AND ';
-//        }
-//        $ligne = substr_replace($ligne, "", -5);
-//        $sql = "SELECT * FROM {$this->getNomTable()} WHERE $ligne";
-//        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-//        $pdoStatement->execute($valeurAttributs);
-//        $object = $pdoStatement->fetch();
-//
-//        return $this->construire($object);
-//    }
-
-    public function selectBySearch($search, $cle):array {
+    /** Ensemble des données après l'application d'un filtre de recherche */
+    public function selectBySearch($search, $cle): array {
         $objects = [];
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOWER({$cle}) LIKE :rechercheTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -126,16 +116,10 @@ abstract class AbstractRepository {
     }
 
     protected abstract function getNomTable(): string;
-
     protected abstract function getNomClePrimaire(): string;
-
     protected abstract function getNomSequence(): string;
-
     protected abstract function construire(array $objetFormatTableau) : AbstractDataObject;
-
     protected abstract function getProcedureInsert(): array;
-
     protected abstract function getProcedureUpdate(): array;
-
     protected abstract function getProcedureDelete(): string;
 }
