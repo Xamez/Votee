@@ -117,8 +117,7 @@ class ControllerQuestion extends AbstractController {
                     "size" => sizeof($votants) + sizeof($groupes),
                     "pagetitle" => "Question",
                     "cheminVueBody" => "question/readQuestion.php",
-                    "title" => $question->getTitre(),
-                    "subtitle" => $question->getDescription()
+                    "title" => $question->getTitre()
                 ]);
         } else {
             self::error("La question n'existe pas");
