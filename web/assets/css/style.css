@@ -13,7 +13,6 @@
 }
 
 *, html {
-
 	scroll-behavior: smooth !important;
 }
 
@@ -36,20 +35,25 @@ main { flex: 1; }
 	}
 }
 
-/* Quelques classes pour des couleurs utile */ 
+/* Quelques classes pour des couleurs utile */
 .text-dark { color: #2E3436; }
 .text-light { color: rgba(174, 164, 255, 0.5); }
 .nav-button:hover { color: #ddd; }
 .text-main { color: #8080D7; }
 .border-main { border-color: #8080D7; }
+.border-lightPurple { border-color: #bdb6fa; }
 .bg-main { background-color: #8080D7; }
 .bg-dark { background-color: #2E3436; }
 .bg-home { background-color: #AFAFF3; }
 .bg-green { background-color: #a3e6c9; }
+.bg-purple { background-color: #bcb6f5; }
 .bg-red { background-color: #ee8579; }
+.bg-lightPurple { background-color: #f8f6ff; }
+.border-light { border-color: #f8f6ff; }
 .shadow-button { filter: drop-shadow(8px 8px 0px #B8B8F8); }
-.bg-light {	background: rgba(174, 164, 255, 0.5); }
+.bg-light {	background: #d6d1ff; }
 .shadow-4xl { box-shadow: rgba(0, 0, 0, 0.37) 1px 2px 10px 1px; }
+.shadow-around { box-shadow: rgba(12, 12, 12, 0.23) 1px 1px 4px 0px;}
 
 /* Permet d'avoir un effet quand on passe la souris sur les liens dans le burger-menu*/
 .link-underline {
@@ -148,10 +152,12 @@ label { font-weight: 600; }
 	margin-right: 10%;
 }
 
+.filter-field {
+	border: none !important;
+}
 
-/* searchbar */
-.search-field {
-	border: none!important;
+.filter-field:focus-visible {
+	outline: none;
 }
 
 /* utilisateurs checkbox */
@@ -165,8 +171,14 @@ input[type=checkbox] {
 	display: none;
 }
 
-.search-field:focus-visible {
-	outline: none;
+/* Pour avoir toutes les barres qui font la même taille (le cas ou la somme fait pas 100% à cause des floats) */
+.result-element-bar > div:last-child {
+	flex-grow: 1;
+}
+
+.result-element > div:first-child .user {
+	background: #0fde30;
+	color: white;
 }
 
 .disable {
@@ -182,3 +194,21 @@ input[type=checkbox] {
 }
 
 
+/* animation phase */
+@keyframes anim {
+	0% { background-color: #d6d1ff; }
+	50% { background-color: #8080D7; }
+	100% { background-color: #d6d1ff; }
+}
+
+.animPhase {
+	animation: anim 2s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+}
+
+.button:hover {
+	background-color: #8080D7;
+	border-color: #8080D7;
+	transition-duration: 0.08s;
+}
