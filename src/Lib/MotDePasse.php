@@ -4,7 +4,7 @@ namespace App\Votee\Lib;
 
 class MotDePasse {
 
-    private static string $poivre = "";
+    private static string $poivre = "<3BonneNoteSVPPourLeTempsInvesti<3";
 
     public static function hacher(string $mdpClair): string {
         $mdpPoivre = hash_hmac("sha256", $mdpClair, MotDePasse::$poivre);

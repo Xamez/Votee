@@ -33,12 +33,4 @@ class Session {
     public function supprimer($name): void {
         unset($_SESSION[$name]);
     }
-
-    public function detruire() : void {
-//        session_unset();     // unset $_SESSION variable for the run-time
-//        session_destroy();   // destroy session data in storage
-//        Cookie::supprimer(session_name()); // deletes the session cookie
-//        // Il faudra reconstruire la session au prochain appel de getInstance()
-//        $instance = null;
-    }
 }

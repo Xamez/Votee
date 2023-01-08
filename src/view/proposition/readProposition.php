@@ -3,6 +3,7 @@
 use App\Votee\Controller\AbstractController;
 use App\Votee\Controller\ControllerProposition;
 use App\Votee\Lib\ConnexionUtilisateur;
+use App\Votee\Model\DataObject\Periodes;
 
 require "propositionHeader.php";
 
@@ -19,53 +20,30 @@ echo '
 ';
 
 if ($fils) {
-    echo '<div class="flex gap-5">
+    echo '<div class="flex gap-7">
              <p class="text-main font-semibold">Fusionné avec : </p>';
     foreach ($fils as $key=>$f) {
-        echo '<a class="text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
-                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">Proposition ' . $key+1 . '</a>';
+        echo '<a class="flex items-center gap-2 text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
+                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">
+                <span class="material-symbols-outlined">description</span>
+                <span>Proposition ' . $key+1 . '</span>
+              </a>';
     }
     echo '</div>';
 }
 
-echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
+$commentaryEnabled = count(array_intersect(['Organisateur', 'Specialiste'], $rolesQuest)) > 0 || count(array_intersect(['Responsable'], $roles));
+AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'titreProposition' => $titreProposition,'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
 
-foreach ($sections as $numParagraphe => $section) {
-    $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
-    $sectionDescHTML = $textes[$numParagraphe]->getTexte();
-
-    $paragraph = "";
-    $paragraphRaw = ""; // version sans les span des commentaires
-
-    $sectionDescHTMLChars = str_split($sectionDescHTML);
-
-    foreach ($sectionDescHTMLChars as $key => $char) {
-        foreach ($commentaires as $commentaire) {
-            if ($commentaire->getNumeroParagraphe() == $numParagraphe) {
-                if ($commentaire->getIndexCharDebut() === $key) {
-                    $paragraph .= '<span id="' . $commentaire->getIdCommentaire() . '" class="commentary cursor-pointer bg-light" data-id="' . htmlspecialchars($commentaire->getTexteCommentaire()) . '">';
-                } else if ($commentaire->getIndexCharFin() == $key)
-                    $paragraph .= '</span>';
-            }
-        }
-
-        $paragraphRaw .= $char;
-        $paragraph .= $char;
-    }
-
-    echo '
-        <h1 class="text-main text-2xl font-bold">'. $numParagraphe + 1 . ' - ' . $sectionTitreHTML . '</h1>
-        <div data-id="' . $paragraphRaw . '" id="' . $numParagraphe .'" class="proposition-markdown break-all text-justify">
-            ' . $paragraph . '
-        </div>
-    ';
+if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == Periodes::VOTE->value) {
+    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
 }
 
-echo '</div>
-      <div class="flex flex-col sm:flex-row justify-center gap-2 justify-between">';
-            AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
+echo '<div class="flex flex-col sm:flex-row justify-center gap-2 justify-between">';
 
-if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
+AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
+
+if ($visibilite && $question->getPeriodeActuelle() == Periodes::ECRITURE->value) {
 
     echo '<script type="text/javascript" src="assets/js/commentary.js"></script>';
 
@@ -83,7 +61,7 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
 
 
         echo '
-        <a class="cursor-pointer">
+        <a class="button justify-center flex bg-white border-lightPurple text-main hover:text-white border-2 p-2 rounded-3xl cursor-pointer">
             <div id="commentary-button" class="flex gap-2">
                 <span class="material-symbols-outlined">sticky_note_2</span>
                 <p class="line-through">Commentaire</p>
@@ -96,7 +74,6 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
         AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'updateProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Editer', "logo" => 'edit']);
         if (in_array('Responsable', $roles)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'addCoauteur', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'CoAuteurs', "logo" => 'manage_accounts']);
-            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'deleteProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Supprimer', "logo" => 'delete']);
         }
     }
     if (!in_array('Responsable', $roles)
@@ -107,10 +84,9 @@ if ($visibilite && $question->getPeriodeActuelle() == 'Période d\'écriture') {
             AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=fusion&idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Demander une fusion', "logo" => 'file_copy']);
         }
     }
+    if (in_array('Responsable', $roles) || in_array('Organisateur',$rolesQuest)) {
+        AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'deleteProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Supprimer', "logo" => 'delete']);
+    }
 }
 
-
-if ($visibilite && $question->getPeriodeActuelle() == 'Période de vote') {
-    ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
-}
 echo '</div>';
