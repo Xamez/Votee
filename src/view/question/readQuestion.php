@@ -135,7 +135,7 @@ if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
                                   <div class="' . (in_array($idProposition, $propositionsGagnantes) ? "bg-green-400 text-white" : "bg-white text-main") . ' flex gap-1 shadow-md rounded-2xl w-fit p-2">
                                       <span class="material-symbols-outlined">' . (in_array($idProposition, $propositionsGagnantes) ? "military_tech" : "account_circle") . '</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                                   </div>
-                                  <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
+                                  <span class="text-ellipsis overflow-hidden whitespace-nowrap">' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                               </div>
                               <span class="material-symbols-outlined">arrow_forward_ios</span>
                           </div>

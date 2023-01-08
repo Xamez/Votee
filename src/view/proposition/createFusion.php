@@ -2,8 +2,11 @@
 <script type="text/javascript" src="assets/js/accordion.js"></script>
 <script type="text/javascript" src="assets/js/proposition.js"></script>
 <form method="post" class="flex flex-col gap-7" action="frontController.php?controller=proposition&action=createdFusion">
-    <input type="text" minlength="10" maxlength="130" placeholder="Titre de la proposition" name="titreProposition" required>
     <div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">
+        <div class="flex flex-col gap-2">
+            <label class="text-main text-lg font-semibold" for="titre">Titre de la proposition :</label>
+            <input type="text" minlength="10" maxlength="130" id="titre" placeholder="Rôle de l'État : fonction régalienne" name="titreProposition" required>
+        </div>
     <?php
     foreach ($sections as $index => $section) {
         $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
