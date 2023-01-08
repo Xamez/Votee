@@ -43,7 +43,7 @@
             $idQuestion = rawurldecode($question->getIdQuestion());
 
             foreach ($sections as $key => $section) {
-                echo '<p class="text-xl text-main font-bold">' . $key + 1 . ' - '
+                echo '<p class="text-xl break-all text-main font-bold">' . $key + 1 . ' - '
                     . htmlspecialchars($section->getTitreSection()) . '
                   </p>';
                 }
