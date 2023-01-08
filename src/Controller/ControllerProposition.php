@@ -226,11 +226,23 @@ class ControllerProposition extends AbstractController {
         }
         $question = (new QuestionRepository())->select($idQuestion);
         $textes = (new TexteRepository())->selectAllByKey($idProposition);
+        $textesMarkdown = [];
+        foreach ($textes as $texte) {
+            $parsedown = new Parsedown();
+            $textesMarkdown[] = new Texte(
+                $textes[0]->getIdQuestion(),
+                $textes[0]->getIdSection(),
+                $textes[0]->getIdProposition(),
+                $parsedown->text($texte->getTexte()),
+                $textes[0]->getLike(),
+            );
+        }
         if ($question && $textes) {
             $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
             $responsable = (new UtilisateurRepository())->selectResp($idProposition);
             $coAuteurs = (new UtilisateurRepository())->selectCoAuteur($idProposition);
             $specialiste = (new UtilisateurRepository())->select($question->getLoginSpecialiste());
+            $commentaires = (new CommentaireRepository())->getCommentaireByIdProposition($idProposition);
             self::afficheVue('view.php',
                 [
                     "question" => $question,
@@ -238,9 +250,11 @@ class ControllerProposition extends AbstractController {
                     "idProposition" => $_GET['idProposition'],
                     "sections" => $sections,
                     "coAuteurs" => $coAuteurs,
+                    "textesMarkdown" => $textesMarkdown,
                     "textes" => $textes,
                     "responsable" => $responsable,
                     "specialiste" => $specialiste,
+                    "commentaires" => $commentaires,
                     "pagetitle" => "Edition de proposition",
                     "cheminVueBody" => "proposition/updateProposition.php",
                     "title" => $question->getTitre(),
@@ -263,10 +277,14 @@ class ControllerProposition extends AbstractController {
         $isOk = true;
         $isOk &= (new PropositionRepository())->modifier($proposition);
         for ($i = 0; $i < $_POST['nbSections'] && $isOk; $i++) {
-            $textsection = htmlspecialchars($_POST['section' . $i]);
-            $texte = new Texte($idQuestion, $_POST['idSection' . $i], $idProposition, $textsection, NULL);
-            $isOk = (new TexteRepository())->modifier($texte);
-            $isOk &= (new CommentaireRepository)->supprimerCommentaireSiSectionModifier($_POST['idProposition'], $i);
+            $idSection = $_POST['idSection' . $i];
+            $oldText = (new TexteRepository())->selectAllByMultiKey(array("idQuestion" => $idQuestion, "idSection" => $idSection, "idProposition" => $idProposition))[0];
+            $oldTextSection = $oldText->getTexte();
+            $textSection = htmlspecialchars($_POST['section' . $i]);
+            $text = new Texte($idQuestion, $idSection, $idProposition, $textSection, NULL);
+            $isOk = (new TexteRepository())->modifier($text);
+            if ($oldTextSection != $textSection)
+                $isOk &= (new CommentaireRepository)->supprimerCommentaireSiSectionModifier($_POST['idProposition'], $i);
         }
 
         if ($isOk) {
