@@ -151,9 +151,9 @@ class ControllerUtilisateur extends AbstractController {
             [
                 "utilisateurC" => $utilisateur,
                 "groupes" => $groupes,
-                "pagetitle" => "Utilisateur",
+                "pagetitle" => "Profil utilisateur",
                 "cheminVueBody" => "utilisateur/readUtilisateur.php",
-                "title" => "Utilisateur",
+                "title" => "Profil utilisateur",
             ]);
     }
 
