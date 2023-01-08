@@ -96,7 +96,7 @@
         <div class="w-full pt-10">
             <div class="flex w-4/5 items-center justify-center mx-auto border-t border-main pb-12">
                 <div class="flex flex-row text-main text-md lg:text-xl font-semibold pt-6">
-                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevalier Julie</p>
+                    <p>Tourniayre Maxence - Nalix Thomas - Cazaux Loris - Afonso Alexandre - Chevallier Julie</p>
                 </div>
             </div>
         </div>
