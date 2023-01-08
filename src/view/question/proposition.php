@@ -5,7 +5,7 @@
             <div class="bg-white flex gap-1 text-main shadow-md rounded-2xl w-fit p-2">
                 <span class="material-symbols-outlined">account_circle</span><?=htmlspecialchars($responsable->getPrenom()) . ' ' . htmlspecialchars($responsable->getNom()) ?>
             </div>
-            <span><?= htmlspecialchars($proposition->getTitreProposition()) ?></span>
+            <span class="text-ellipsis overflow-hidden whitespace-nowrap"><?= htmlspecialchars($proposition->getTitreProposition()) ?></span>
         </div>
         <div class="flex gap-2 md:flex-row flex-col">
            <?= (!$proposition->isVisible() ? '<span class="material-symbols-outlined">inventory_2</span>' : '') ?>
