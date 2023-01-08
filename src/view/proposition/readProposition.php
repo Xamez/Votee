@@ -20,17 +20,20 @@ echo '
 ';
 
 if ($fils) {
-    echo '<div class="flex gap-5">
+    echo '<div class="flex gap-7">
              <p class="text-main font-semibold">Fusionné avec : </p>';
     foreach ($fils as $key=>$f) {
-        echo '<a class="text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
-                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">Proposition ' . $key+1 . '</a>';
+        echo '<a class="flex items-center gap-2 text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
+                . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">
+                <span class="material-symbols-outlined">description</span>
+                <span>Proposition ' . $key+1 . '</span>
+              </a>';
     }
     echo '</div>';
 }
 
 $commentaryEnabled = count(array_intersect(['Organisateur', 'Specialiste'], $rolesQuest)) > 0 || count(array_intersect(['Responsable'], $roles));
-AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
+AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => $commentaryEnabled, 'inAccordion' => false, 'titreProposition' => $titreProposition,'sections' => $sections, 'textes' => $textes, 'commentaires' => $commentaires]);
 
 if ($visibilite && count($rolesQuest) > 0 && $question->getPeriodeActuelle() == Periodes::VOTE->value) {
     ControllerProposition::createVote(rawurlencode($question->getIdQuestion()), ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), $idProposition, true);
