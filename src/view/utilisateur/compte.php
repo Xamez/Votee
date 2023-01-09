@@ -1,6 +1,6 @@
 <div class="flex flex-col lg:flex-row justify-between gap-5">
 
-    <a class="cursor-pointer w-full h-96 flex flex-col items-center shadow-md hover:shadow-lg rounded-xl" href="./frontController.php?controller=utilisateur&action=information">
+    <a class="cursor-pointer w-full h-96 flex flex-col items-center shadow-md hover:shadow-lg rounded-xl" href="./frontController.php?controller=utilisateur&action=readAllQuestion">
         <div class="flex items-center justify-center max-w-xs h-48 overflow-hidden">
             <img class="w-full min-w-full min-h-full" src="assets/resources/questionProfil.png" alt="logo">
         </div>
@@ -20,7 +20,7 @@
         </div>
     </a>
 
-    <a class="cursor-pointer w-full h-96 flex flex-col items-center shadow-md hover:shadow-lg rounded-xl" href="./frontController.php?controller=utilisateur&action=readAllQuestion">
+    <a class="cursor-pointer w-full h-96 flex flex-col items-center shadow-md hover:shadow-lg rounded-xl" href="./frontController.php?controller=utilisateur&action=information">
         <div class="flex items-center justify-center max-w-xs h-48 overflow-hidden">
             <img class="w-full min-w-full min-h-full" src="assets/resources/account.png" alt="logo">
         </div>
