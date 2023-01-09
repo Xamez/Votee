@@ -9,6 +9,7 @@ use App\Votee\Model\DataObject\Periodes;
 use App\Votee\Model\DataObject\Question;
 use App\Votee\Model\DataObject\Section;
 use App\Votee\Model\DataObject\VoteTypes;
+use App\Votee\Model\Repository\DemandeRepository;
 use App\Votee\Model\Repository\GroupeRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
@@ -88,28 +89,33 @@ class ControllerQuestion extends AbstractController {
                 }
             }
         }
+        $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),
+                'TITREDEMANDE' => 'question', 'ETATDEMANDE' => 'attente']);
+        $isDemande = sizeof($demandesCours) > 0;
         self::afficheVue('view.php',
             [
                 "pagetitle" => "Liste des questions",
                 "cheminVueBody" => "question/all.php",
                 "title" => "Liste des questions",
-                "questions" => $questions
+                "questions" => $questions,
+                "isDemande" => $isDemande
             ]);
     }
 
     public static function readQuestion(): void {
         self::redirectConnexion("?controller=utilisateur&action=connexion");
-        $question = (new QuestionRepository())->select($_GET['idQuestion']);
+        $idQuestion = $_GET['idQuestion'];
+        $question = (new QuestionRepository())->select($idQuestion);
         if ($question) {
-            $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
-            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$_GET['idQuestion']));
+            $sections = (new SectionRepository())->selectAllByKey($idQuestion);
+            $propositions = (new PropositionRepository())->selectAllByMultiKey(array("idQuestion"=>$idQuestion));
             $responsables = array();
             foreach ($propositions as $proposition) {
                 $idProposition = $proposition->getIdProposition();
                 $responsables[$idProposition] = (new UtilisateurRepository())->selectResp($idProposition);
             }
-            $votants = (new QuestionRepository())->selectVotant($_GET['idQuestion']);
-            $groupesVotants = $groupes = (new GroupeRepository())->selectGroupeQuestion($_GET['idQuestion']);
+            $votants = (new QuestionRepository())->selectVotant($idQuestion);
+            $groupesVotants = $groupes = (new GroupeRepository())->selectGroupeQuestion($idQuestion);
             if (sizeof($groupes) < 10) {
                 for ($i = 0; $i <  sizeof($votants) && $i < 10 - sizeof($groupes); $i++) {
                     $groupesVotants['votant' . $i] = $votants[$i];
@@ -117,6 +123,9 @@ class ControllerQuestion extends AbstractController {
             }
             $organisateur = (new UtilisateurRepository())->select($question->getLogin());
             $specialiste = (new UtilisateurRepository())->select($question->getLoginSpecialiste());
+            $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),
+                    'TITREDEMANDE' => 'proposition', 'ETATDEMANDE' => 'attente', 'idQuestion' => $idQuestion]);
+            $isDemande = sizeof($demandesCours) > 0;
             self::afficheVue('view.php',
                 [
                     "question" => $question,
@@ -126,6 +135,7 @@ class ControllerQuestion extends AbstractController {
                     "responsables" => $responsables,
                     "specialiste" => $specialiste,
                     "groupesVotants" => $groupesVotants,
+                    "isDemande" => $isDemande,
                     "size" => sizeof($votants) + sizeof($groupes),
                     "pagetitle" => "Question",
                     "cheminVueBody" => "question/readQuestion.php",
