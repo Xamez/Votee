@@ -10,6 +10,7 @@ use App\Votee\Model\DataObject\Proposition;
 use App\Votee\Model\DataObject\Texte;
 use App\Votee\Model\DataObject\Vote;
 use App\Votee\Model\Repository\CommentaireRepository;
+use App\Votee\Model\Repository\DemandeRepository;
 use App\Votee\Model\Repository\PropositionRepository;
 use App\Votee\Model\Repository\QuestionRepository;
 use App\Votee\Model\Repository\SectionRepository;
@@ -379,6 +380,9 @@ class ControllerProposition extends AbstractController {
             $parsedown = new Parsedown();
             $texte->setTexte($parsedown->text($texte->getTexte()));
         }
+        $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),
+            'TITREDEMANDE' => 'fusion', 'ETATDEMANDE' => 'attente', 'IDPROPOSITION' => $idProposition, 'IDQUESTION' => $idQuestion]);
+        $isDemande = sizeof($demandesCours) > 0;
         if ($question && $textes) {
             $sections = (new SectionRepository())->selectAllByKey($idQuestion);
             $responsable = (new UtilisateurRepository())->selectResp($idProposition);
@@ -394,8 +398,9 @@ class ControllerProposition extends AbstractController {
                     "sections" => $sections,
                     "coAuteurs" => $coAuteurs,
                     "textes" => $textes,
-                    'titreProposition' => $proposition->getTitreProposition(),
+                    "titreProposition" => $proposition->getTitreProposition(),
                     "responsable" => $responsable,
+                    "isDemande" => $isDemande,
                     "pagetitle" => "Question",
                     "cheminVueBody" => "proposition/readProposition.php",
                     "title" => $question->getTitre(),

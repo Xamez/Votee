@@ -177,7 +177,7 @@ if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
             } else $nbPropInvisibleUtil++;
         }
     }
-    if (sizeof($propositions) == 0 || (($nbPropInvisibleUtil == $nbPropInvisible) && $nbPropInvisible > 0)) echo '<span class="text-center">Aucune proposition</span>';
+    if (sizeof($propositions) == 0 && (($nbPropInvisibleUtil == $nbPropInvisible) && $nbPropInvisible > 0)) echo '<span class="text-center">Aucune proposition</span>';
 }
 
 
@@ -233,10 +233,14 @@ if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value || $question->g
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'deleteQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Supprimer', "logo" => 'delete']);
     }
     if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
-        if (ConnexionUtilisateur::creerProposition($idQuestion) || in_array("Organisateur", $rolesQuestion)) {
-            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
+        if (!$isDemande) {
+            if (ConnexionUtilisateur::creerProposition($idQuestion) || in_array("Organisateur", $rolesQuestion)) {
+                AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
+            } else {
+                AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $rawIdQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
+            }
         } else {
-            AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $rawIdQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
+            AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'historiqueDemande', 'title' => 'Voir mes demande', "logo" => 'info']);
         }
     }
 }

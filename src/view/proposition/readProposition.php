@@ -78,14 +78,18 @@ if ($visibilite && $question->getPeriodeActuelle() == Periodes::ECRITURE->value)
     }
     if (!in_array('Responsable', $roles)
         && (in_array('Responsable', $rolesQuest) && ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion()))) {
-        if (ConnexionUtilisateur::creerFusion($idProposition)) {
-            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createFusion', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Créer une fusion', "logo" => 'upload']);
+        if (!$isDemande) {
+            if (ConnexionUtilisateur::creerFusion($idProposition)) {
+                AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createFusion', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Créer une fusion', "logo" => 'upload']);
+            } else {
+                AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=fusion&idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Demander une fusion', "logo" => 'file_copy']);
+            }
         } else {
             AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=fusion&idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Demander une fusion', "logo" => 'file_copy']);
         }
     }
     if (in_array('Responsable', $roles) || in_array('Organisateur',$rolesQuest)) {
-        AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'deleteProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Supprimer', "logo" => 'delete']);
+        AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'historiqueDemande', 'title' => 'Voir mes demande', "logo" => 'info']);
     }
 }
 
