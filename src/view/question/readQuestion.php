@@ -76,9 +76,10 @@
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période d\'écriture</span>
                 <div class="bg-light h-6 ' . ($widthEcriture == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthEcriture . '%"></div>
             </div>';
-            if ($debutVote - $finEcriture != 0) {
+            $diffTransition = strtotime(date('Y-m-d',$debutVote)) - strtotime(date('Y-m-d', $finEcriture));
+            if ($diffTransition != 0) {
                 $diffTransition = strtotime(date('Y-m-d',$debutVote)) - strtotime(date('Y-m-d', $finEcriture));
-                $widthTransition = max(0, min((($today - strtotime(date('Y-m-d',$finEcriture)))  * 100) / $diffTransition, 100));
+                $widthTransition = max(0, min((($today - strtotime(date('Y-m-d',$finEcriture)))  * 100) / ($diffTransition == 0 ? 1 : $diffTransition), 100));
                 echo '
             <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($now >= $finEcriture ? 'bg-main' : 'bg-light') . ' ' . ($now < $finEcriture && $today == strtotime(date("Y-m-d", $finEcriture)) ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
                 <span class="font-semibold relative top-10">' . date('d/m/Y',$finEcriture) . '</span>
