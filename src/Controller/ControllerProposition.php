@@ -571,6 +571,7 @@ class ControllerProposition extends AbstractController {
         $isOk &= (new PropositionRepository())->modifier($oldPropMerge);
 
         $oldProp = (new PropositionRepository())->select($idOldProp);
+        $oldProp->setVisibilite('invisible');
         $oldProp->setIdPropFusionParent($idNewProp);
         $isOk &= (new PropositionRepository())->modifier($oldProp);
 
@@ -582,13 +583,12 @@ class ControllerProposition extends AbstractController {
             $isOk &= (new PropositionRepository())->ajouterCoauteur($coAuteur, $idNewProp);
         }
         $isOk &= (new PropositionRepository())->ajouterResponsable($respAMerge, $idNewProp, $idOldPropMerge, $_POST['idQuestion'], 1);
-        (new PropositionRepository())->ajouterCoAuteur($respAMerge, $idOldProp);
-        (new PropositionRepository())->ajouterCoAuteur($respCourant, $idOldPropMerge);
-
+        $isOk &= (new PropositionRepository())->ajouterCoAuteur($respAMerge, $idOldProp);
+        $isOk &= (new PropositionRepository())->ajouterCoAuteur($respCourant, $idOldPropMerge);
         if ($isOk) (new Notification())->ajouter("success", "La fusion a été réalisée avec succès.");
         else {
             (new PropositionRepository())->supprimer($idNewProp);
-            (new PropositionRepository())->modifier($proposition);
+            (new PropositionRepository())->modifier($proposition); // Remet la proposition en visible (récupère la version d'origine)
             (new PropositionRepository())->modifier($oldProposition);
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
         }
