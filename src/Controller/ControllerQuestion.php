@@ -447,7 +447,7 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         $question = (new QuestionRepository())->select($idQuestion);
-        $now = strtotime("now");
+        $now = strtotime("now") - 1;
         $today = strtotime("today");
         $debutEcriture = $question->getDateDebutQuestion();
         $finEcriture = $question->getDateFinQuestion();
@@ -462,6 +462,8 @@ class ControllerQuestion extends AbstractController {
             elseif ($now < $finVote && $today == strtotime(date("Y-m-d", $finVote))) $question->setDateFinVote($now);
 
             $isOk = (new QuestionRepository())->modifierHeureQuestion($question);
+            if ($question->getPeriodeActuelle() == Periodes::TRANSITION->value && $now < $debutVote && $today == strtotime(date("Y-m-d", $debutVote))) self::changePhase();
+
             if ($isOk) (new Notification())->ajouter("success", "La phase de la question a été modifiée.");
             else (new Notification())->ajouter("warning", "La modification de la phase de la question a échoué.");
 
