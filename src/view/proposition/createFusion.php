@@ -28,7 +28,7 @@
                     </div>
                 </div>';
         }
-        echo '<textarea class="section border-2 max-h-96 h-52" maxlength="2000"  name="section' . $index . '" id="section' . $index . '" required></textarea>
+        echo '<textarea class="section border-2 max-h-96 h-52" maxlength="2000" placeholder="Il est important de rédiger ..." name="section' . $index . '" id="section' . $index . '" required></textarea>
               <input type="hidden" name="idSection' . $index . '" value="' . $section-> getIdSection() . '">';
     }
     ?>

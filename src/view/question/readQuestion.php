@@ -119,8 +119,6 @@
         <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
         <div class="flex flex-col gap-3 p-7">
 <?php
-if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
-
 
 if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
     $resultats = (new VoteRepository())->getResultats($question);
@@ -165,18 +163,25 @@ if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
         }
     }
 } else {
+    $nbPropInvisibleUtil = 0; // Nombre de propositions invisible pour l'utilisateur (en tenant compte de ses roles)
+    $nbPropInvisible = 0; // Nombre de propositions invisible dans la question
     foreach ($propositions as $proposition) {
         $idProposition = $proposition->getIdProposition();
         $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
         if ($proposition->isVisible()) {
             AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
         } else {
+            $nbPropInvisible++;
             if (count(array_intersect(['CoAuteur', 'Responsable'], $roles)) > 0 || in_array("Organisateur", $rolesQuestion)) {
                 AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
-            }
+            } else $nbPropInvisibleUtil++;
         }
     }
+    if (sizeof($propositions) == 0 || (($nbPropInvisibleUtil == $nbPropInvisible) && $nbPropInvisible > 0)) echo '<span class="text-center">Aucune proposition</span>';
 }
+
+
+
 echo '</div>
       </div>
       <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
