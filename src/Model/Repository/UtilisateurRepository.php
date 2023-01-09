@@ -3,7 +3,6 @@
 namespace App\Votee\Model\Repository;
 
 use App\Votee\Model\DataObject\Utilisateur;
-use PDOException;
 
 class UtilisateurRepository extends AbstractRepository {
 
@@ -12,8 +11,8 @@ class UtilisateurRepository extends AbstractRepository {
     function getNomTable(): string { return "Utilisateurs"; }
     function getNomClePrimaire(): string { return "LOGIN"; }
 
-    function getProcedureInsert(): array { return array('procedure' => 'AjouterUtilisateur', 'LOGIN', 'MOTDEPASSE', 'NOM', 'PRENOM'); }
-    function getProcedureUpdate(): array { return []; }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterUtilisateurs', 'LOGIN', 'MOTDEPASSE', 'NOM', 'PRENOM', 'DESCRIPTION'); }
+    function getProcedureUpdate(): array { return array('procedure' => 'ModifierUtilisateurs', 'LOGIN', 'MOTDEPASSE', 'NOM', 'PRENOM', 'DESCRIPTION'); }
     function getProcedureDelete(): string { return ""; }
 
     public function construire(array $utilisateurFormatTableau) : Utilisateur {

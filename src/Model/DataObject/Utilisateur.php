@@ -30,7 +30,7 @@ class Utilisateur extends AbstractDataObject {
         $this->description = $description;
     }
 
-    public static function construireDepuisFormulaire (array $tableauFormulaire) : Utilisateur {
+    public static function construireDepuisFormulaire(array $tableauFormulaire) : Utilisateur {
         return new Utilisateur($tableauFormulaire['login'],
             MotDePasse::hacher($tableauFormulaire['password']),
             $tableauFormulaire['nom'],
