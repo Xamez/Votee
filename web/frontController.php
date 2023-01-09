@@ -13,6 +13,28 @@ $loader->addNamespace('App\Votee', __DIR__ . '/../src');
 // register the autoloader
 $loader->register();
 
+
+set_exception_handler(function ($exception) {
+    AbstractController::fatalError(
+        ['message' => $exception->getMessage(),
+         'file' => $exception->getFile(),
+         'line' => $exception->getLine(),
+         'trace' => $exception->getTrace()
+        ]);
+});
+
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    AbstractController::fatalError(['message' => $errstr, 'file' => $errfile, 'line' => $errline, 'trace' => []]);
+});
+
+register_shutdown_function(function () {
+    $error = error_get_last();
+    if ($error !== null) {
+        AbstractController::fatalError(['message' => $error['message'], 'file' => $error['file'], 'line' => $error['line'], 'trace' => []]);
+    }
+});
+
+
 $controllerDefaut = 'question';
 $controller = $_GET['controller'] ?? $controllerDefaut;
 
