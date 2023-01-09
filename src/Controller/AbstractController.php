@@ -10,13 +10,25 @@ class AbstractController {
     public static function afficheVue(string $cheminVue, array $parametres = []): void {
         extract($parametres); // Crée des variables à partir du tableau $parametres
         require __DIR__ . "/../view/$cheminVue"; // Charge la vue
+        $error = error_get_last();
+        print_r($error);
+    }
+
+    public static function fatalError(array $error) {
+        self::afficheVue("view.php",
+            [
+                "pagetitle" => "Erreur fatal",
+                "cheminVueBody" => "fatalError.php",
+                "title" => "Un grave problème est survenu",
+                "error" => $error
+            ]);
     }
 
     public static function error(string $errorMessage = "") {
         self::afficheVue("view.php",
             [
                 "pagetitle" => "Erreur",
-                "cheminVueBody" => "question/error.php",
+                "cheminVueBody" => "error.php",
                 "title" => "Un problème est survenu",
                 "subtitle" => $errorMessage
             ]);
