@@ -338,8 +338,10 @@ class ControllerQuestion extends AbstractController {
         foreach ($oldVotants as $votant) $votants[] = $votant->getLogin();
         if (array_key_exists('votants', $_POST)) $votants = array_diff($votants, $_POST['votants']);
         $isOk = true;
-        foreach ($_POST['utilisateurs'] as $login) {
-            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+        if (array_key_exists('utilisateurs', $_POST)) {
+            foreach ($_POST['utilisateurs'] as $login) {
+                $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+            }
         }
         foreach ($votants as $login) {
             $isOk = (new QuestionRepository())->supprimerVotant($idQuestion, $login);
@@ -350,8 +352,10 @@ class ControllerQuestion extends AbstractController {
         $groupes = [];
         foreach ($oldGroupes as $groupe) $groupes[] = $groupe->getIdGroupe();
         if (array_key_exists('groupesExist', $_POST)) $groupes = array_diff($groupes, $_POST['groupesExist']);
-        foreach ($_POST['groupes'] as $idGroupe) {
-            $isOk = (new GroupeRepository())->ajouterGroupeAQuestion($idQuestion, $idGroupe);
+        if (array_key_exists('groupes', $_POST)) {
+            foreach ($_POST['groupes'] as $idGroupe) {
+                $isOk = (new GroupeRepository())->ajouterGroupeAQuestion($idQuestion, $idGroupe);
+            }
         }
         foreach ($groupes as $idGroupe) {
             $isOk = (new GroupeRepository())->supprimerGroupeDeQuestion($idQuestion, $idGroupe);
