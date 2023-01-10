@@ -27,8 +27,10 @@ function performRequest(url, data) {
 
 function getElement(element) {
     let myElement = element;
-    while (myElement.id === "")
+    while (myElement.id === "") {
         myElement = myElement.parentElement;
+        if (myElement === null) return "";
+    }
     return myElement;
 }
 
@@ -62,41 +64,42 @@ window.addEventListener("load", () => {
 
       
     const createEditableCommentary = (span, textCommentaire) => {
-        const tooltip = document.createElement('div');
-        tooltip.classList.add('tooltipEditable', 'flex', 'flex-col', 'justify-center', 'cursor-default', 'z-1', 'absolute', 'shadow-4xl', 'bg-white', 'rounded', 'p-2', 'text-sm', 'gap-3');
-        tooltip.style.top = span.offsetTop + span.offsetHeight + 'px';
-        tooltip.style.left = span.offsetLeft + 'px';
+        const editableCommentary = document.createElement('div');
+        editableCommentary.classList.add('absolute', 'tooltipEditable');
+        const editableCommentaryHTML = `
+        <div class="cursor-default shadow-4xl z-1 bg-white text-main rounded-xl p-4">
+            <div class="flex flex-col items-center justify-center gap-2">
+                <p class="text-md font-bold border-0">Éditer le commentaire</p>
+                <textarea id="text-commentary" class="border-2 text-black resize-none h-36 w-96 rounded-xl ring-0 focus:outline-none" maxlength="750" placeholder="Entrez votre commentaire..." required>` + textCommentaire + `</textarea>
+                <div class="flex flex-row flex-wrap gap-2">
+                    <button id="cancel-commentary" class="cursor-pointer border-none text-lg font-bold p-2 text-white bg-main font-semibold rounded-lg">Annuler</button>
+                    <button id="delete-commentary" class="cursor-pointer border-none text-lg font-bold p-2 text-white bg-red font-semibold rounded-lg">Supprimer</button>
+                    <button id="update-commentary" class="cursor-pointer border-none text-lg font-bold p-2 text-white bg-green-400 font-semibold rounded-lg">Confirmer</button>
+                </div>
+            </div>
+        </div>`;
 
-        const container = document.createElement('div');
-        container.classList.add('flex', 'flex-row', 'justify-between', 'align-top');
+        editableCommentary.innerHTML = editableCommentaryHTML;
+        span.appendChild(editableCommentary);
+        editableCommentary.style.left = (window.innerWidth / 2 - editableCommentary.offsetWidth / 2) + "px";
+        editableCommentary.style.top = (span.getBoundingClientRect().top + span.offsetHeight + window.scrollY) + "px";
 
-        const input = document.createElement('input');
-        input.addEventListener('keyup', debounce( () => {
-            const data = {'idCommentaire': span.id, 'texteCommentaire': input.value};
-            performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(data))
-                .then(() => window.location.reload());
-        }, 1000));
-        input.value = textCommentaire;
+        const cancelCommentary = document.getElementById('cancel-commentary');
+        const deleteCommentary = document.getElementById('delete-commentary');
+        const updateCommentary = document.getElementById('update-commentary');
+        const textCommentary = document.getElementById('text-commentary');
 
-        const closeButton = document.createElement('span');
-        closeButton.classList.add('cursor-pointer', 'material-symbols-outlined', 'text-red-500', 'hover:text-red-600', 'ml-4');
-        closeButton.innerText = 'close';
-        closeButton.addEventListener('click', () => tooltip.remove());
-        container.appendChild(input);
-        container.appendChild(closeButton);
-
-        const deleteCommentary = document.createElement('button');
-        deleteCommentary.classList.add('bg-red-500', 'hover:bg-red-600', 'border-none', 'text-white', 'rounded', 'p-1');
-        deleteCommentary.innerText = 'Supprimer';
+        cancelCommentary.addEventListener('click', () => span.removeChild(editableCommentary));
         deleteCommentary.addEventListener('click', () => {
             const data = {'idCommentaire': span.id};
             performRequest("deletedCommentaire", "commentaire=" + JSON.stringify(data))
                 .then(() => window.location.reload());
         });
-
-        tooltip.appendChild(container);
-        tooltip.appendChild(deleteCommentary);
-        span.appendChild(tooltip);
+        updateCommentary.addEventListener('click', () => {
+            const data = {'idCommentaire': span.id, 'texteCommentaire': textCommentary.value};
+            performRequest("updatedCommentaire", "commentaire=" + JSON.stringify(data))
+                .then(() => window.location.reload());
+        });
     }
 
     commentaries.forEach(commentary => {
@@ -112,7 +115,8 @@ window.addEventListener("load", () => {
 
         commentary.addEventListener("click", e => {
             const id = e.target.getAttribute("data-id");
-            if (id && !pCommentaryButton.classList.contains('line-through')) createEditableCommentary(e.target, id);
+            if (id && !pCommentaryButton.classList.contains('line-through') && document.getElementsByClassName("tooltipEditable").length === 0)
+                createEditableCommentary(e.target, id);
         });
     });
 
@@ -192,12 +196,21 @@ window.addEventListener("load", () => {
 
         popup.style.display = "block";
         popup.style.top = (selectedParagraph.offsetTop + selectedParagraph.offsetHeight - window.scrollY + 5) + "px";
-        popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
+        popup.style.left = (window.innerWidth / 2 - popup.offsetWidth / 2) + "px";
     });
 
 });
 
 window.addEventListener('resize', () => {
+    const tooltips = [...document.getElementsByClassName('tooltipEditable')];
+    tooltips.forEach(tooltip => tooltip.style.left = (window.innerWidth / 2 - tooltip.offsetWidth / 2) + "px");
     if (popup.style.display === 'none') return;
-    popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
+    popup.style.left = (window.innerWidth / 2 - popup.offsetWidth / 2) + "px";
+});
+
+window.addEventListener('scroll', () => {
+    const tooltips = [...document.getElementsByClassName('tooltipEditable')];
+    tooltips.forEach(tooltip => tooltip.style.top += window.scrollY);
+    if (popup.style.display === 'none') return;
+    popup.style.top = (popup.offsetTop + window.scrollY) + "px";
 });
