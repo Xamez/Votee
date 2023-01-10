@@ -254,7 +254,7 @@ class ControllerQuestion extends AbstractController {
         foreach ($oldResp as $resp) $responsables[] = $resp->getLogin();
         if (array_key_exists('resps', $_POST)) $responsables = array_diff($responsables, $_POST['resps']);
         $isOk = true;
-        if (array_key_exists('utilisateurs', $_POST)) {
+        if (isset($_POST['utilisateurs'])) {
             foreach ($_POST['utilisateurs'] as $login) {
                 $isOk &= (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
                 $isOk &= (new QuestionRepository())->ajouterVotant($idQuestion, $login);
@@ -338,8 +338,10 @@ class ControllerQuestion extends AbstractController {
         foreach ($oldVotants as $votant) $votants[] = $votant->getLogin();
         if (array_key_exists('votants', $_POST)) $votants = array_diff($votants, $_POST['votants']);
         $isOk = true;
-        foreach ($_POST['utilisateurs'] as $login) {
-            $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+        if (isset($_POST['utilisateurs'])) {
+            foreach ($_POST['utilisateurs'] as $login) {
+                $isOk = (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+            }
         }
         foreach ($votants as $login) {
             $isOk = (new QuestionRepository())->supprimerVotant($idQuestion, $login);
@@ -350,8 +352,10 @@ class ControllerQuestion extends AbstractController {
         $groupes = [];
         foreach ($oldGroupes as $groupe) $groupes[] = $groupe->getIdGroupe();
         if (array_key_exists('groupesExist', $_POST)) $groupes = array_diff($groupes, $_POST['groupesExist']);
-        foreach ($_POST['groupes'] as $idGroupe) {
-            $isOk = (new GroupeRepository())->ajouterGroupeAQuestion($idQuestion, $idGroupe);
+        if (isset($_POST['groupes'])) {
+            foreach ($_POST['groupes'] as $idGroupe) {
+                $isOk = (new GroupeRepository())->ajouterGroupeAQuestion($idQuestion, $idGroupe);
+            }
         }
         foreach ($groupes as $idGroupe) {
             $isOk = (new GroupeRepository())->supprimerGroupeDeQuestion($idQuestion, $idGroupe);
