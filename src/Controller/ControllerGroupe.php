@@ -88,8 +88,10 @@ class ControllerGroupe extends AbstractController {
         $membres = [];
         foreach ($oldMembres as $membre) $membres[] = $membre->getLogin();
         if (array_key_exists('membres', $_POST)) $membres = array_diff($membres, $_POST['membres']);
-        foreach ($_POST['utilisateurs'] as $login) {
-            $isOk = (new GroupeRepository())->ajouterAGroupe($idGroupe, $login);
+        if (isset($_POST['utilisateurs'])) {
+            foreach ($_POST['utilisateurs'] as $login) {
+                $isOk = (new GroupeRepository())->ajouterAGroupe($idGroupe, $login);
+            }
         }
         foreach ($membres as $login) {
             $isOk = (new GroupeRepository())->supprimerDeGroupe($idGroupe, $login);

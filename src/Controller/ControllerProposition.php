@@ -340,8 +340,10 @@ class ControllerProposition extends AbstractController {
         foreach ($oldCoAuteur as $coAuteur) $coAuteurs[] = $coAuteur->getLogin();
         if (array_key_exists('coAuteurs', $_POST)) $coAuteurs = array_diff($coAuteurs, $_POST['coAuteurs']);
         $isOk = true;
-        foreach ($_POST['utilisateurs'] as $login) {
-            $isOk = (new PropositionRepository())->ajouterCoAuteur($login, $idProposition);
+        if (isset($_POST['utilisateurs'])) {
+            foreach ($_POST['utilisateurs'] as $login) {
+                $isOk = (new PropositionRepository())->ajouterCoAuteur($login, $idProposition);
+            }
         }
         foreach ($coAuteurs as $login) {
             $isOk = (new PropositionRepository())->supprimerCoAuteur( $login, $idProposition);
