@@ -14,14 +14,8 @@ class AbstractController {
         print_r($error);
     }
 
-    public static function fatalError(array $error) {
-        self::afficheVue("view.php",
-            [
-                "pagetitle" => "Erreur fatal",
-                "cheminVueBody" => "fatalError.php",
-                "title" => "Un grave problème est survenu",
-                "error" => $error
-            ]);
+    public static function fatalError(bool $debug, array $error) {
+        self::afficheVue("fatalError.php", ["debug" => $debug, "error" => $error]);
     }
 
     public static function error(string $errorMessage = "") {

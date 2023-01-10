@@ -15,8 +15,4 @@
         </div>
 
     </form>
-    <?php
-    use App\Votee\Controller\AbstractController;
-    AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'readUtilisateur', 'title' => 'Retour', "logo" => 'reply']);
-    ?>
 </div>
