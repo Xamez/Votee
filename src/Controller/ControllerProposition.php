@@ -463,12 +463,12 @@ class ControllerProposition extends AbstractController {
     }
 
     public static function updatedCommentaire(): void {
-        $commentaire = (array) json_decode($_POST['commentaire']);
-        $previousCommentaire = (new CommentaireRepository())->getCommentaireById($commentaire['idCommentaire']);
-        if ($previousCommentaire != null) {
-            if ($previousCommentaire->getTexteCommentaire() != $commentaire['texteCommentaire']) {
-                $previousCommentaire->setTexteCommentaire($commentaire['texteCommentaire']);
-                (new CommentaireRepository())->modifier($previousCommentaire);
+        $commentaireData = (array) json_decode($_POST['commentaire']);
+        $commentaire = (new CommentaireRepository())->getCommentaireById($commentaireData['idCommentaire']);
+        if ($commentaire != null) {
+            if ($commentaire->getTexteCommentaire() != $commentaireData['texteCommentaire']) {
+                $commentaire->setTexteCommentaire($commentaireData['texteCommentaire']);
+                (new CommentaireRepository())->modifier($commentaire);
                 (new Notification())->ajouter("success", "Le commentaire a été modifié.");
             }
         } else {

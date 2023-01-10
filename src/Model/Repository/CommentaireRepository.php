@@ -22,7 +22,7 @@ class CommentaireRepository extends AbstractRepository {
     function getNomClePrimaire(): string { return "IDCOMMENTAIRE"; }
 
     function getProcedureInsert(): array { return []; }
-    function getProcedureUpdate(): array { return array("procedure" =>"ModifierCommentaires"); }
+    function getProcedureUpdate(): array { return array("procedure" => "ModifierCommentaires", "IDCOMMENTAIRE", "NUMEROPARAGRAPHE", "INDEXCHARDEBUT", "INDEXCHARFIN", "TEXTECOMMENTAIRE"); }
     function getProcedureDelete(): string { return "SupprimerCommentaires"; }
 
     public function construire(array $propositionFormatTableau) : Commentaire {

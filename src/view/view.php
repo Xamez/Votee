@@ -39,7 +39,7 @@
             <div class="flex md:hidden gap-4 items-center">
                 <span id="open-icon" class="material-symbols-outlined text-xl cursor-pointer text-dark" style="font-size: 2rem;">menu</span>
                 <div id="nav-burger" class="hidden gap-2 absolute flex flex-col bg-main w-40 z-10 rounded-lg text-white text-xl p-2 pl-2">
-                    <span id="close-icon" class="material-symbols-outlined cursor-pointer cursor-pointer text-red-500 text-right pb-0" style="font-size: 1.5rem;">close</span>
+                    <span id="close-icon" class="material-symbols-outlined cursor-pointer text-red-500 text-right pb-0" style="font-size: 1.5rem;">close</span>
                     <?php
                     AbstractController::afficheVue('navbar.php');
                     ?>
