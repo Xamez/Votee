@@ -16,11 +16,10 @@ echo '
 <div id="ids">
     <input type="hidden" value="' . rawurlencode($question->getIdQuestion()) . '">
     <input type="hidden" value="' . rawurlencode($idProposition) . '">
-</div>
-';
+</div>';
 
 if ($fils) {
-    echo '<div class="flex gap-7">
+    echo '<div class="flex gap-7 flex-col md:items-start items-center md:flex-row">
              <p class="text-main font-semibold">Fusionnée avec : </p>';
     foreach ($fils as $key=>$f) {
         echo '<a class="flex items-center gap-2 text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='

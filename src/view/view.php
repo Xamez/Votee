@@ -68,7 +68,7 @@
 
     if (!isset($mainType)) {
         echo '
-        <main class="flex flex-col gap-5 mx-auto w-8/12">
+        <main class="flex flex-col gap-5 mx-auto w-11/12 md:w-8/12">
             <div class="flex flex-col items-center pt-6">
                 <h1 class="text-4xl break-all font-bold text-center text-dark">'. htmlspecialchars($title).'</h1>
                 ';
