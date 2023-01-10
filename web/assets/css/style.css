@@ -171,7 +171,7 @@ label { font-weight: 600; }
 }
 
 /* utilisateurs checkbox */
-.util-box:has(> input[type="checkbox"]:checked + label) {
+.checkBox-checked {
 	border: solid 2px #39b259;
 	background-color: #7bcc5d;
 	color: white;
