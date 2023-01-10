@@ -51,7 +51,6 @@ class ControllerUtilisateur extends AbstractController {
             (new Notification())->ajouter("warning","L'inscription a échoué.");
             self::redirection("?controller=utilisateur&action=inscription");
         }
-
     }
 
     public static function deconnecter(): void {
@@ -83,15 +82,6 @@ class ControllerUtilisateur extends AbstractController {
             [
                 "pagetitle" => "Compte",
                 "cheminVueBody" => "utilisateur/compte.php",
-                "title" => "Mon compte",
-            ]);
-    }
-
-    public static function information(): void {
-        self::afficheVue("view.php",
-            [
-                "pagetitle" => "Compte",
-                "cheminVueBody" => "utilisateur/information.php",
                 "title" => "Mon compte",
             ]);
     }
@@ -144,17 +134,107 @@ class ControllerUtilisateur extends AbstractController {
     }
 
     public static function readUtilisateur(): void {
-        $login = $_GET['login'];
+        $login = $_GET['login'] ?? ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
         $utilisateur = (new UtilisateurRepository())->select($login);
         $groupes = (new GroupeRepository())->selectGroupeByLogin($login);
         self::afficheVue('view.php',
             [
-                "utilisateurC" => $utilisateur,
+                "utilisateur" => $utilisateur,
+                "groupes" => $groupes,
+                "pagetitle" => "Profil utilisateur",
+                "cheminVueBody" => "utilisateur/readUtilisateur.php",
+                "title" => "Profil utilisateur",
+            ]);
+    }
+
+    public static function updateUtilisateur(): void {
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        $groupes = (new GroupeRepository())->selectGroupeByLogin($utilisateur->getLogin());
+        self::afficheVue('view.php',
+            [
+                "utilisateur" => $utilisateur,
                 "groupes" => $groupes,
                 "pagetitle" => "Utilisateur",
-                "cheminVueBody" => "utilisateur/readUtilisateur.php",
+                "cheminVueBody" => "utilisateur/updateUtilisateur.php",
                 "title" => "Utilisateur",
             ]);
+    }
+
+    public static function updatedUtilisateur(): void {
+        $motDePasse = $_POST['motDePasse'];
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
+            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            self::redirection("?controller=utilisateur&action=updateUtilisateur");
+        } else {
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $description = $_POST['description'];
+            $utilisateur->setNom($nom);
+            $utilisateur->setPrenom($prenom);
+            $utilisateur->setDescription($description);
+            if ((new UtilisateurRepository())->modifier($utilisateur)) {
+                (new Notification())->ajouter("success", "Les informations du profile ont été modifiées !");
+                self::redirection("?controller=utilisateur&action=updateUtilisateur");
+            } else {
+                (new Notification())->ajouter("warning", "Impossible de modifier les informations du profile !");
+                self::redirection("?controller=utilisateur&action=updateUtilisateur");
+            }
+        }
+    }
+
+    public static function confirmUpdateUtilisateur(): void
+    {
+        $nom = $_POST['nom'];
+        $prenom = $_POST['prenom'];
+        $description = $_POST['description'];
+        self::afficheVue('view.php',
+            [
+                "nom" => $nom,
+                "prenom" => $prenom,
+                "description" => $description,
+                "pagetitle" => "Confirmer les modifications",
+                "cheminVueBody" => "utilisateur/confirmUpdateUtilisateur.php",
+                "title" => "Utilisateur",
+            ]);
+    }
+
+    public static function updateMdpUtilisateur(): void {
+        self::afficheVue('view.php',
+            [
+                "pagetitle" => "Changement mot de passe",
+                "cheminVueBody" => "utilisateur/updateMdpUtilisateur.php",
+                "title" => "Utilisateur",
+            ]);
+    }
+
+    public static function updatedMdpUtilisateur(): void {
+        $ancienMotDePasse = $_POST['ancienMotDePasse'];
+        $nouveauMotDePasse = $_POST['nouveauMotDePasse'];
+        $nouveauMotDePasseConfirm = $_POST['nouveauMotDePasseConfirm'];
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+        if (!MotDePasse::verifier($ancienMotDePasse, $utilisateur->getMotDePasse())) {
+            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            self::redirection("?controller=utilisateur&action=updateUtilisateur");
+        } else {
+            if ($nouveauMotDePasse != $nouveauMotDePasseConfirm) {
+                (new Notification())->ajouter("warning", "Les mots de passe sont distincts !");
+                self::redirection("?controller=utilisateur&action=updateUtilisateur");
+            }
+            if ($nouveauMotDePasse == $ancienMotDePasse) {
+                (new Notification())->ajouter("warning", "Le nouveau mot de passe est identique à l'ancien !");
+                self::redirection("?controller=utilisateur&action=updateUtilisateur");
+            } else {
+                $utilisateur->setMotDePasse($nouveauMotDePasse);
+                if ((new UtilisateurRepository())->modifier($utilisateur)) {
+                    (new Notification())->ajouter("success", "Le mot de passe a été modifié !");
+                    self::redirection("?controller=utilisateur&action=updateUtilisateur");
+                } else {
+                    (new Notification())->ajouter("warning", "Impossible de modifier le mot de passe !");
+                    self::redirection("?controller=utilisateur&action=updateUtilisateur");
+                }
+            }
+        }
     }
 
 }
