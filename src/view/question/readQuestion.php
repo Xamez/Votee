@@ -15,22 +15,22 @@
     <?php
     if ($specialiste != null) {
         echo '<div class="flex flex-col sm:flex-row items-center gap-2">
-              <p class="text-main font-semibold">Spécialiste :<p>
-              <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' .
-            rawurlencode($specialiste->getLogin()) . '"
-                 class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                  <span class="material-symbols-outlined">account_circle</span>' .
-            htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
-              </a>
-          </div>';
+                  <p class="text-main font-semibold">Spécialiste :<p>
+                  <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' .
+                rawurlencode($specialiste->getLogin()) . '"
+                     class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                      <span class="material-symbols-outlined">account_circle</span>' .
+                htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
+                  </a>
+              </div>';
     }
     ?>
     <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
         <div class="px-7">
-            <span class="break-all"><?= $question->getDescription() ?></span>
+            <span><?= $question->getDescription() ?></span>
         </div>
-        <div class="p-7 flex flex-col gap-4">
+        <div class="p-7 flex flex-col gap-7">
             <?php
 
             use App\Votee\Controller\AbstractController;
@@ -43,9 +43,12 @@
             $idQuestion = rawurldecode($question->getIdQuestion());
 
             foreach ($sections as $key => $section) {
-                echo '<p class="text-xl break-all text-main font-bold">' . $key + 1 . ' - '
-                    . htmlspecialchars($section->getTitreSection()) . '
-                  </p>';
+                echo '<div class="flex flex-col gap-3">
+                         <p class="text-xl break-all text-main font-bold">' . $key + 1 . ' - '
+                        . htmlspecialchars($section->getTitreSection()) . '
+                         </p>
+                         <span>'. htmlspecialchars($section->getDescriptionSection()) . '</span>
+                     </div>';
                 }
             ?>
         </div>
@@ -177,7 +180,7 @@ if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
             } else $nbPropInvisibleUtil++;
         }
     }
-    if (sizeof($propositions) == 0 && (($nbPropInvisibleUtil == $nbPropInvisible) && $nbPropInvisible > 0)) echo '<span class="text-center">Aucune proposition</span>';
+    if (sizeof($propositions) == 0 || (($nbPropInvisibleUtil == $nbPropInvisible) && $nbPropInvisible > 0) && sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
 }
 
 

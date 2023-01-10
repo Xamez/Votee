@@ -30,7 +30,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function section(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer un vote !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question.");
             self::redirection("?controller=question&action=all");
         }
         self::afficheVue('view.php',
@@ -44,7 +44,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function createQuestion(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question.");
             self::redirection("?controller=question&action=all");
         }
         $nbSections = $_REQUEST['nbSections'];
@@ -80,10 +80,11 @@ class ControllerQuestion extends AbstractController {
             });
         }
 
+        // Si une question est en preparation, elle devient visible pour les utilisateurs automatiquement
         foreach ($questions as $key=>$question) {
             if (!$question->isVisible()) {
                 unset($questions[$key]);
-                if ($question->getDateDebutQuestion() <= date('d/m/y')) {
+                if ($question->getDateDebutQuestion() <= strtotime("now")) {
                     $question->setVisibilite("visible");
                     (new QuestionRepository())->modifier($question);
                 }
@@ -149,7 +150,7 @@ class ControllerQuestion extends AbstractController {
 
     public static function createdQuestion(): void {
         if (ConnexionUtilisateur::estAdministrateur() || !ConnexionUtilisateur::estConnecte() || !ConnexionUtilisateur::creerQuestion()) {
-            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
+            (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question.");
             self::redirection("?controller=question&action=all");
         }
         $question = new Question(NULL,
@@ -183,8 +184,8 @@ class ControllerQuestion extends AbstractController {
 
         if ($loginSpe != '') $isOk &= (new QuestionRepository())->ajouterSpecialiste($loginSpe); // on appel la procédure après la création de la question par précaution
 
-        for ($i = 1; $i <= $_POST['nbSections'] && $isOk; $i++) {
-            $section = new Section(NULL, $_POST['section' . $i], $idQuestion);
+        foreach ($_POST['sections'] as $key=>$section) {
+            $section = new Section(NULL, $section, $idQuestion, $_POST['descriptionsSection'][$key]);
             $isOk = (new SectionRepository())->sauvegarder($section);
         }
         if ($idQuestion != NULL && $isOk) {
@@ -231,7 +232,7 @@ class ControllerQuestion extends AbstractController {
                 "pagetitle" => "Ajouter des responsables",
                 "cheminVueBody" => "question/addResp.php",
                 "title" => "Ajouter des responsables",
-                "subtitle" => "Ajouter un ou plusieurs responsable à la question",
+                "subtitle" => "Ajouter un ou plusieurs responsables à la question",
                 "responsables" => $responsables,
                 "responsablesPossibles" => $responsablesPossibles,
                 "utilisateurs" => $newUtilisateurs,
@@ -253,9 +254,11 @@ class ControllerQuestion extends AbstractController {
         foreach ($oldResp as $resp) $responsables[] = $resp->getLogin();
         if (array_key_exists('resps', $_POST)) $responsables = array_diff($responsables, $_POST['resps']);
         $isOk = true;
-        foreach ($_POST['utilisateurs'] as $login) {
-            $isOk &= (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
-            $isOk &= (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+        if (array_key_exists('utilisateurs', $_POST)) {
+            foreach ($_POST['utilisateurs'] as $login) {
+                $isOk &= (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
+                $isOk &= (new QuestionRepository())->ajouterVotant($idQuestion, $login);
+            }
         }
         foreach ($responsables as $login) {
             $isOk &= (new PropositionRepository())->enleverScoreProposition($login, $idQuestion);
@@ -372,8 +375,7 @@ class ControllerQuestion extends AbstractController {
             [
                  "pagetitle" => "Modifier une question",
                  "cheminVueBody" => "question/updateQuestion.php",
-                 "title" => "Modifier une question",
-                 "subtitle" => $question->getTitre(),
+                 "title" => "Modifier la question",
                  "question" => $question
             ]);
     }
@@ -392,7 +394,7 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("success", "La question a été modifiée.");
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         } else {
-            (new Notification())->ajouter("warning", "La modification de la question a échoué.");
+            (new Notification())->ajouter("warning", "La modification a échoué.");
             self::redirection("?controller=question&action=updateQuestion&idQuestion=$idQuestion");
         }
     }
@@ -407,7 +409,7 @@ class ControllerQuestion extends AbstractController {
             [
                 "pagetitle" => "Suppressions d'une question",
                 "cheminVueBody" => "question/deleteQuestion.php",
-                "title" => "Suppressions d'une question",
+                "title" => "Supprimer la question",
                 "idQuestion" => $idQuestion
             ]);
     }
@@ -421,7 +423,7 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
-            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            (new Notification())->ajouter("warning", "Mot de passe incorrect.");
             self::redirection("?controller=question&action=deleteQuestion&idQuestion=$idQuestion");
         }
         $isOk = (new QuestionRepository())->supprimer($idQuestion);
@@ -429,7 +431,7 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("success", "La question a été supprimée.");
             self::redirection("?controller=question&action=all");
         } else {
-            (new Notification())->ajouter("warning", "La suppression de la question a échoué.");
+            (new Notification())->ajouter("warning", "La suppression a échoué.");
             self::redirection("?controller=question&action=deleteQuestion&idQuestion=$idQuestion");
         }
     }
@@ -477,11 +479,11 @@ class ControllerQuestion extends AbstractController {
             if ($question->getPeriodeActuelle() == Periodes::TRANSITION->value && $now < $debutVote && $today == strtotime(date("Y-m-d", $debutVote))) self::changePhase();
 
             if ($isOk) (new Notification())->ajouter("success", "La phase de la question a été modifiée.");
-            else (new Notification())->ajouter("warning", "La modification de la phase de la question a échoué.");
+            else (new Notification())->ajouter("warning", "La modification de la phase a échoué.");
 
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         } else {
-            (new Notification())->ajouter("danger", "Vous ne pouvez pas changer de phase.");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
     }

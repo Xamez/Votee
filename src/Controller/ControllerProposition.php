@@ -47,7 +47,7 @@ class ControllerProposition extends AbstractController {
         } else if ($question->getPeriodeActuelle() == Periodes::VOTE->value) {
             $vote = (new VoteRepository())->voter($question, $_POST['idVotant'], $_POST['idProposition'], $_POST['noteProposition']);
             if ($vote)
-                (new Notification())->ajouter("success", "Le vote a bien été effectué.");
+                (new Notification())->ajouter("success", "Le vote a été effectué.");
             else
                 (new Notification())->ajouter("warning", "Le vote existe déjà.");
             if (array_key_exists("isRedirected", $_POST))
@@ -68,7 +68,7 @@ class ControllerProposition extends AbstractController {
             $idVotant = ConnexionUtilisateur::getUtilisateurConnecte()->getLogin();
             $question = (new QuestionRepository())->select($_GET['idQuestion']);
             if ($question->getPeriodeActuelle() != Periodes::VOTE->value) {
-                (new Notification())->ajouter("danger", "Vous ne pouvez pas voter pour cette question.");
+                (new Notification())->ajouter("danger", "Impossible de voter sur cette question.");
                 self::redirection("?controller=question&action=all");
             } else {
                 $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -104,7 +104,7 @@ class ControllerProposition extends AbstractController {
     public static function resultatPropositions(): void {
         $question = (new QuestionRepository())->select($_GET['idQuestion']);
         if ($question->getPeriodeActuelle() != Periodes::RESULTAT->value) {
-            (new Notification())->ajouter("danger", "Vous ne pouvez pas accéder aux résultats de cette question.");
+            (new Notification())->ajouter("danger", "Impossible d'accéder aux résultats de cette question.");
             self::redirection("?controller=question&readAllQuestion");
         } else {
             $voteType = $question->getVoteType();
@@ -149,7 +149,7 @@ class ControllerProposition extends AbstractController {
         if (!ConnexionUtilisateur::estConnecte()
             || ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())
             || !(in_array("Organisateur", $rolesQuestion) || ConnexionUtilisateur::creerProposition($question->getIdQuestion()))) {
-            (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition.");
             self::redirection("?controller=question&action=all");
         }
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -162,7 +162,6 @@ class ControllerProposition extends AbstractController {
                     "idQuestion" => $_GET['idQuestion'],
                     "cheminVueBody" => "proposition/createProposition.php",
                     "title" => $question->getTitre(),
-                    "subtitle" => "Création des textes d'une proposition"
                 ]);
         } else {
             self::error("La question n'existe pas");
@@ -176,7 +175,7 @@ class ControllerProposition extends AbstractController {
         if (!ConnexionUtilisateur::estConnecte()
             || ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())
             || !(in_array("Organisateur", $rolesQuestion) || ConnexionUtilisateur::creerProposition($question->getIdQuestion()))) {
-            (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition !");
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas créer une proposition.");
             self::redirection("?controller=question&action=all");
         }
         $proposition = new Proposition(NULL, NULL,  $_POST['titreProposition'], 'visible', NULL );
@@ -214,7 +213,7 @@ class ControllerProposition extends AbstractController {
                 "coAuteurs" => $coAuteurs,
                 "pagetitle" => "Suppression",
                 "cheminVueBody" => "proposition/deleteProposition.php",
-                "title" => "Supression d'un vote",
+                "title" => "Suppression d'un vote",
             ]);
     }
 
@@ -259,8 +258,7 @@ class ControllerProposition extends AbstractController {
                     "commentaires" => $commentaires,
                     "pagetitle" => "Edition de proposition",
                     "cheminVueBody" => "proposition/updateProposition.php",
-                    "title" => $question->getTitre(),
-                    "subtitle" => "Modification des textes de la proposition"
+                    "title" => "Édition de la proposition",
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas.");
@@ -293,7 +291,7 @@ class ControllerProposition extends AbstractController {
             (new Notification())->ajouter("success", "La proposition a été modifiée.");
             self::redirection("?controller=proposition&action=readProposition&idProposition=$idProposition&idQuestion=$idQuestion");
         } else {
-            (new Notification())->ajouter("danger", "La proposition n'a pas pu être modifiée.");
+            (new Notification())->ajouter("danger", "La modification a échoué.");
             self::redirection("?controller=proposition&action=updateProposition&idQuestion=$idQuestion&idProposition=$idProposition");
         }
     }
@@ -319,13 +317,13 @@ class ControllerProposition extends AbstractController {
         });
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Ajouter un co-auteur",
+                "pagetitle" => "Ajouter des co-auteurs",
                 "idProposition" => $idProposition,
                 "idQuestion" => $idQuestion,
                 "utilisateurs" => $utilisateur,
                 "coAuteurs" => $coAuteurs,
                 "cheminVueBody" => "proposition/addCoauteur.php",
-                "title" => $question->getTitre(),
+                "title" => "Ajouter des co-auteurs",
                 "subtitle" => "Ajouter un ou plusieurs co-auteurs à la proposition"
             ]);
     }
@@ -349,8 +347,8 @@ class ControllerProposition extends AbstractController {
             $isOk = (new PropositionRepository())->supprimerCoAuteur( $login, $idProposition);
         }
 
-        if ($isOk) (new Notification())->ajouter("success", "Les co-auteurs ont été ajouté avec succès.");
-        else (new Notification())->ajouter("warning", "Certains co-auteurs n'ont pas pu être ajouté.");
+        if ($isOk) (new Notification())->ajouter("success", "Les co-auteurs ont été mis à jour avec succès.");
+        else (new Notification())->ajouter("warning", "Certains co-auteurs n'ont pas pu être mis à jour.");
         self::redirection("?controller=proposition&action=readProposition&idProposition=$idProposition&idQuestion=$idQuestion");
     }
 
@@ -365,7 +363,7 @@ class ControllerProposition extends AbstractController {
             && !(in_array($question->getPeriodeActuelle(), [Periodes::RESULTAT->value, Periodes::VOTE->value, Periodes::TRANSITION->value]) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
             && !in_array('Organisateur', $rolesQuestion)
             && !($question->getPeriodeActuelle() == Periodes::RESULTAT->value && in_array($idProposition, $propsGagnante))) {
-            (new Notification())->ajouter("warning", "Vous ne pouvez pas accéder à cette proposition !");
+            (new Notification())->ajouter("danger", "Vous ne pouvez pas accéder à cette proposition.");
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         }
 
@@ -404,7 +402,6 @@ class ControllerProposition extends AbstractController {
                     "pagetitle" => "Question",
                     "cheminVueBody" => "proposition/readProposition.php",
                     "title" => $question->getTitre(),
-                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas");
@@ -440,14 +437,14 @@ class ControllerProposition extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
-            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            (new Notification())->ajouter("warning", "Mot de passe incorrect.");
             self::redirection("?controller=proposition&action=deleteProposition&idQuestion=$idQuestion&idProposition=$idProposition");
         }
         $proposition = (new PropositionRepository())->select($idProposition);
         $proposition->setVisibilite('invisible');
         if ((new PropositionRepository())->modifier($proposition)) {
             (new Notification())->ajouter("success", "La proposition a été supprimée.");
-        } else (new Notification())->ajouter("warning", "La proposition n'a pas pu être supprimée.");
+        } else (new Notification())->ajouter("warning", "La suppression à echoué.");
         self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
     }
 
@@ -456,19 +453,19 @@ class ControllerProposition extends AbstractController {
         if ((new CommentaireRepository())->ajouterCommentaireEtStocker($commentaire['idQuestion'], $commentaire['idProposition'],
             $commentaire['numeroParagraphe'], $commentaire['indexCharDebut'],
             $commentaire['indexCharFin'], $commentaire['texteCommentaire'])) {
-            (new Notification())->ajouter("success", "Le commentaire a été créer.");
+            (new Notification())->ajouter("success", "Le commentaire a été ajouté.");
         } else {
-            (new Notification())->ajouter("warning", "Le commentaire n'a pas pu être créer.");
+            (new Notification())->ajouter("warning", "Le commentaire n'a pas pu être ajouté.");
         }
     }
 
     public static function updatedCommentaire(): void {
-        $commentaire = (array) json_decode($_POST['commentaire']);
-        $previousCommentaire = (new CommentaireRepository())->getCommentaireById($commentaire['idCommentaire']);
-        if ($previousCommentaire != null) {
-            if ($previousCommentaire->getTexteCommentaire() != $commentaire['texteCommentaire']) {
-                $previousCommentaire->setTexteCommentaire($commentaire['texteCommentaire']);
-                (new CommentaireRepository())->modifier($previousCommentaire);
+        $commentaireData = (array) json_decode($_POST['commentaire']);
+        $commentaire = (new CommentaireRepository())->getCommentaireById($commentaireData['idCommentaire']);
+        if ($commentaire != null) {
+            if ($commentaire->getTexteCommentaire() != $commentaireData['texteCommentaire']) {
+                $commentaire->setTexteCommentaire($commentaireData['texteCommentaire']);
+                (new CommentaireRepository())->modifier($commentaire);
                 (new Notification())->ajouter("success", "Le commentaire a été modifié.");
             }
         } else {
@@ -496,7 +493,7 @@ class ControllerProposition extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == Periodes::ECRITURE->value) {
-            (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée !");
+            (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée.");
             self::redirection("?controller=question&action=all");
         }
         $sections = (new SectionRepository())->selectAllByKey($_GET['idQuestion']);
@@ -556,7 +553,7 @@ class ControllerProposition extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         if (!$proposition->isVisible() || !$question->getPeriodeActuelle() == Periodes::ECRITURE->value) {
-            (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée !");
+            (new Notification())->ajouter("danger", "La proposition ne peut pas être fusionnée.");
             self::redirection("?controller=question&action=all");
         }
         $isOk = true;
@@ -614,7 +611,6 @@ class ControllerProposition extends AbstractController {
                 "idQuestion" => $idQuestion,
                 "cheminVueBody" => "proposition/readCoauteur.php",
                 "title" => "Co-auteurs",
-                "subtitle" => "Liste des co-auteurs"
             ]);
     }
 

@@ -21,7 +21,7 @@ echo '
 
 if ($fils) {
     echo '<div class="flex gap-7">
-             <p class="text-main font-semibold">Fusionné avec : </p>';
+             <p class="text-main font-semibold">Fusionnée avec : </p>';
     foreach ($fils as $key=>$f) {
         echo '<a class="flex items-center gap-2 text-main" href="./frontController.php?controller=proposition&action=readProposition&idProposition='
                 . rawurlencode($f->getIdProposition()) . '&idQuestion='. rawurlencode($question->getIdQuestion()).'">
