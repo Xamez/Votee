@@ -1,5 +1,6 @@
 <?php
 
+use App\Votee\Controller\AbstractController;
 use App\Votee\Lib\ConnexionUtilisateur;
 
 $traceTitles = ['Fichier', 'Ligne', 'Appel'];
