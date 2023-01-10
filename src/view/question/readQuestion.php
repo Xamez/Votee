@@ -240,7 +240,7 @@ if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value || $question->g
                 AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $rawIdQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
             }
         } else {
-            AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'historiqueDemande', 'title' => 'Voir mes demande', "logo" => 'info']);
+            AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'historiqueDemande', 'title' => 'Voir ma demande', "logo" => 'info']);
         }
     }
 }

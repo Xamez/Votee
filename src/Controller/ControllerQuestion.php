@@ -89,7 +89,8 @@ class ControllerQuestion extends AbstractController {
                 }
             }
         }
-        $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),
+        $demandesCours = [];
+        if (ConnexionUtilisateur::estConnecte()) $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(),
                 'TITREDEMANDE' => 'question', 'ETATDEMANDE' => 'attente']);
         $isDemande = sizeof($demandesCours) > 0;
         self::afficheVue('view.php',
@@ -254,10 +255,12 @@ class ControllerQuestion extends AbstractController {
         if (array_key_exists('resps', $_POST)) $responsables = array_diff($responsables, $_POST['resps']);
         $isOk = true;
         foreach ($_POST['utilisateurs'] as $login) {
-            $isOk = (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
+            $isOk &= (new PropositionRepository())->ajouterScoreProposition($login, $idQuestion);
+            $isOk &= (new QuestionRepository())->ajouterVotant($idQuestion, $login);
         }
         foreach ($responsables as $login) {
-            $isOk = (new PropositionRepository())->enleverScoreProposition($login, $idQuestion);
+            $isOk &= (new PropositionRepository())->enleverScoreProposition($login, $idQuestion);
+            $isOk &= (new QuestionRepository())->supprimerVotant($idQuestion, $login);
         }
 
         if ($isOk) {
@@ -403,9 +406,9 @@ class ControllerQuestion extends AbstractController {
         }
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Supprimer une question",
+                "pagetitle" => "Suppressions d'une question",
                 "cheminVueBody" => "question/deleteQuestion.php",
-                "title" => "Supprimer une question",
+                "title" => "Suppressions d'une question",
                 "idQuestion" => $idQuestion
             ]);
     }
