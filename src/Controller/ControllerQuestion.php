@@ -152,7 +152,6 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("danger","Vous ne pouvez pas créer une question !");
             self::redirection("?controller=question&action=all");
         }
-        var_dump(date_format(date_create($_POST['dateDebutQuestion']), 'd/m/y 23:59:59'));
         $question = new Question(NULL,
             ($_POST['dateDebutQuestion'] > date('Y-m-d') ? 'invisible' : 'visible'),
             $_POST['titreQuestion'],
