@@ -35,7 +35,7 @@ class GroupeRepository extends AbstractRepository {
 
     public function supprimerDeGroupe($idGroupe, $login) {
         $sql = "CALL SupprimerUtilisateurDeGroupe(:idGroupeTag, :loginTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
             $pdoStatement->execute(array("idGroupeTag" => $idGroupe, "loginTag" => $login));
             return true;
@@ -62,7 +62,7 @@ class GroupeRepository extends AbstractRepository {
 
     public function ajouterGroupeAQuestion($idQuestion, $idGroupe) {
         $sql = "CALL AjouterGroupeAQuestion(:idQuestionTag, :idGroupeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
             $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "idGroupeTag" => $idGroupe));
             return true;
@@ -73,7 +73,7 @@ class GroupeRepository extends AbstractRepository {
 
     public function supprimerGroupeDeQuestion($idQuestion, $idGroupe) {
         $sql = "CALL SupprimerGroupeDeQuestion(:idQuestionTag, :idGroupeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         try {
             $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "idGroupeTag" => $idGroupe));
             return true;
@@ -98,6 +98,7 @@ class GroupeRepository extends AbstractRepository {
         }
     }
 
+    /** Retourne tous les groupes dans lesquel l'utilisateur donnée appartient */
     public function selectGroupeByLogin($login): array {
         $sql = "SELECT * FROM Groupes g JOIN Appartenir a ON g.IDGROUPE = a.IDGROUPE WHERE LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);

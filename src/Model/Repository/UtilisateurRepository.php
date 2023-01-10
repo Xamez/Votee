@@ -2,6 +2,7 @@
 
 namespace App\Votee\Model\Repository;
 
+use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Model\DataObject\Utilisateur;
 use PDOException;
 
@@ -26,10 +27,11 @@ class UtilisateurRepository extends AbstractRepository {
         );
     }
 
-    /** Retourne l'ensemble des roles pour une question et un utilisateur donné */
+    /** Ensemble des roles d'un utilisateur pour une question donné */
     public function getRolesQuestion($login, $idQuestion): array {
         $roles = [];
         $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant", "Specialiste"];
+        if (ConnexionUtilisateur::estAdministrateur()) return ["Responsable", "Organisateur", "CoAuteur", "Specialiste"];
         foreach ($procedures as $procedure) {
             $sql = "SELECT :procedureTag(:loginTag, :idQuestionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure, $sql);
@@ -42,10 +44,11 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
-    /** Retourne l'ensemble des roles pour une proposition et un utilisateur donné */
+    /** Ensemble des roles d'un utilisateur pour une proposition donné */
     public function getRolesProposition($login, $idProposition): array {
         $roles = [];
         $procedures = ["Responsable", "CoAuteur"];
+        if (ConnexionUtilisateur::estAdministrateur()) return $procedures;
         foreach ($procedures as $procedure) {
             $sql = "SELECT :procedureTag(:loginTag, :idPropositionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure . 'Prop', $sql);
@@ -58,14 +61,14 @@ class UtilisateurRepository extends AbstractRepository {
         return $roles;
     }
 
-    /** Rajoute 1 point au score s'il y a eu une erreur dans l'insertion d'une question */
+    /** Rajoute 1 point au score (utile s'il y a eu une erreur dans l'insertion d'une question) */
     public function ajouterScoreQuestion($login): void {
         $sql = "UPDATE Utilisateurs SET NBQUESTRESTANT = NBQUESTRESTANT + 1 WHERE login = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("loginTag" => $login));
     }
 
-    // TODO La remplacer a terme par une verification de la table existe
+    /** Tous les acteurs d'une question (responsable, organisateurs et coAuteurs) */
     public function selectAllActorQuestion($idQuestion): array {
         $sql = "SELECT U.* FROM (
     SELECT DISTINCT LOGIN_ORGANISATEUR FROM (
@@ -93,6 +96,7 @@ class UtilisateurRepository extends AbstractRepository {
         return $utilisateurs;
     }
 
+    /** Tous les logins des administrateurs de la base */
     public static function getAdmins() : array {
         $sql = "SELECT * FROM Administrateurs";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -105,16 +109,19 @@ class UtilisateurRepository extends AbstractRepository {
         return $admins;
     }
 
+    /** Tous les administrateurs de la base */
     public function selectAllAdmins() : array {
-        $sql = "SELECT * FROM UTILISATEURS WHERE LOGIN IN (SELECT LOGIN FROM ADMINISTRATEURS)";
+        $administrateurs = [];
+        $sql = "SELECT * FROM UTILISATEURS u JOIN ADMINISTRATEURS a ON u.LOGIN = a.LOGIN";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute();
-        foreach ($pdoStatement as $utilisateur) {
-            $utilisateurs[] = $this->construire($utilisateur);
+        foreach ($pdoStatement as $administrateur) {
+            $administrateurs[] = $this->construire($administrateur);
         }
-        return $utilisateurs;
+        return $administrateurs;
     }
 
+    /** Tous les coAuteurs d'une proposition donnée */
     public function selectCoAuteur($idProposition): array {
         $coAuteurs = [];
         $sql = "SELECT u.* FROM RedigerCA r
@@ -122,7 +129,7 @@ class UtilisateurRepository extends AbstractRepository {
                 JOIN roles ro ON c.login = ro.login
                 JOIN Utilisateurs u ON ro.login = u.login
                 WHERE IDPROPOSITION = :idProposition";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("idProposition" => $idProposition));
         foreach ($pdoStatement as $utilisateur) {
             $coAuteurs[] = $this->construire($utilisateur);
@@ -130,6 +137,7 @@ class UtilisateurRepository extends AbstractRepository {
         return $coAuteurs;
     }
 
+    /** Tous les responsables d'une proposition donnée */
     public function selectResp($idProposition): ?Utilisateur {
         $sql = "SELECT u.* FROM RedigerR r
                 JOIN responsables re ON r.login = re.login
@@ -142,11 +150,39 @@ class UtilisateurRepository extends AbstractRepository {
         return $responsable ? $this->construire($responsable): null;
     }
 
-    public function selectAdministrateur($login) {
+    /** True si l'utilisateur donné est un admin, false sinon */
+    public function selectAdministrateur($login): bool {
         $sql = "SELECT * FROM Administrateurs WHERE login = :loginTag";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);;
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("loginTag" => $login));
         $isAdmin = $pdoStatement->fetch();
         return (bool)$isAdmin;
+    }
+
+    /** Tous les responsables d'une question donnée */
+    public function selectRespQuestion($idQuestion): array {
+        $responsables = [];
+        $sql = "Select DISTINCT U.* FROM Utilisateurs u
+                JOIN RedigerR rr ON u.login = rr.login 
+                JOIN Recevoir r ON rr.idProposition = r.idProposition 
+                WHERE idQuestion = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+        foreach ($pdoStatement as $responsable) {
+            $responsables[] = $this->construire($responsable);
+        }
+        return $responsables;
+    }
+
+    /** Tous les utilisateurs qui peuvent creer une proposition => devenir responsable */
+    public function selectProchainResp($idQuestion): array {
+        $responsables = [];
+        $sql = "SELECT u.* FROM ScorePropositions sp JOIN Utilisateurs u ON u.login = sp.login WHERE nbPropRestant > 0 AND idQuestion = :idQuestionTag";
+        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
+        foreach ($pdoStatement as $responsable) {
+            $responsables[] = $this->construire($responsable);
+        }
+        return $responsables;
     }
 }

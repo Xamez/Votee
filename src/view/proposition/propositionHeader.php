@@ -14,13 +14,17 @@
 <?php
 if (sizeof($coAuteurs) == 0) echo '<p class="text-main">Aucun</p>';
 else {
-    for ($i = 0; $i < sizeof($coAuteurs) && $i < 10; $i++) {
-        echo '<a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($coAuteurs[$i]->getLogin()) . '">
+    $compteur = 0;
+    foreach ($coAuteurs as $coAuteur) {
+        if ($compteur < 10) {
+            echo '<a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($coAuteur->getLogin()) . '">
                 <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
                     <span class="material-symbols-outlined">account_circle</span>'
-            . htmlspecialchars($coAuteurs[$i]->getPrenom()) . ' ' . htmlspecialchars($coAuteurs[$i]->getNom()) . '
+                . htmlspecialchars($coAuteur->getPrenom()) . ' ' . htmlspecialchars($coAuteur->getNom()) . '
                 </div>
               </a>';
+            $compteur++;
+        }
     }
 }
 if (sizeof($coAuteurs) > 10) echo '
@@ -32,10 +36,5 @@ echo '    </div>
       </div>';
 if (isset($visibilite) && !$visibilite) {
     echo '<div class="flex items-center gap-2"><p class="text-main font-semibold">Etat : </p><span class="text-main">Archivée</span></div>';
-}
-
-if (isset($titreProposition)) {
-    echo '<span class="text-main text-center w-28 font-semibold w-28 md:text-left">Titre :</span>
-          <span>' . $titreProposition . '</span>';
 }
 echo '</div>';

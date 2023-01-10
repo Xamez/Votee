@@ -43,13 +43,13 @@ class QuestionRepository extends AbstractRepository {
         );
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est organisateur */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est organisateur */
     public function selectQuestionOrga($login): array {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_organisateur = :paramTag";
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est responsable */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est responsable */
     public function selectQuestionResp(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -59,13 +59,13 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est spécialiste */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est spécialiste */
     public function selectQuestionSpecia($login): array {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE login_specialiste = :paramTag";
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est coAuteur */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est coAuteur */
     public function selectQuestionCoau(string $login) {
         $sql = "SELECT DISTINCT q.*
             FROM Questions q JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -75,7 +75,7 @@ class QuestionRepository extends AbstractRepository {
         return self::selectAllCustom($sql, $login);
     }
 
-    /** Retourne toutes les questions pour les quelle l'utilisateur donnée est votant */
+    /** Toutes les questions pour les quelle l'utilisateur donnée est votant */
     public function selectQuestionVota(string $login) {
         $sql = "SELECT DISTINCT q.* FROM QUESTIONS q
             JOIN Recevoir r ON q.idQuestion = r.idQuestion
@@ -108,7 +108,7 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
-    /** Retourne le nombre de proposition (score) que l'utilisateur donné va pouvoir créer pour la question donnée */
+    /** Nombre de propositions (score) que l'utilisateur donné va pouvoir créer pour la question donnée */
     public function getPropRestant(int $idQuestion, string $login): ?int {
         $sql = "SELECT nbPropRestant FROM ScorePropositions WHERE IDQUESTION = :idQuestionTag AND LOGIN = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -152,37 +152,21 @@ class QuestionRepository extends AbstractRepository {
         }
     }
 
-    public function ajouterGroupe($idQuestion, $idGroupe): bool {
-        $sql = "CALL AjouterGroupeAQuestion(:idQuestionTag, :groupeTag)";
+    public function modifierHeureQuestion($question): bool {
+        $sql = "CALL ModifierHeureQuestion(:idQuestionTag, :debutEcritureTag, :finEcritureTag, :debutVoteTag, :finVoteTag)";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
+        $values = array(
+            "idQuestionTag" => $question->getIdQuestion(),
+            "debutEcritureTag" => date('d/m/Y H:i:s', $question->getDateDebutQuestion()),
+            "finEcritureTag" => date('d/m/Y H:i:s', $question->getDateFinQuestion()),
+            "debutVoteTag" => date('d/m/Y H:i:s', $question->getDateDebutVote()),
+            "finVoteTag" => date('d/m/Y H:i:s', $question->getDateFinVote())
+        );
         try {
-            $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "groupeTag" => $idGroupe));
+            $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
             return false;
         }
     }
-
-    public function supprimerGroupe($idQuestion, $idGroupe): bool {
-        $sql = "CALL SupprimerGroupeDeQuestion(:idQuestionTag, :groupeTag)";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        try {
-            $pdoStatement->execute(array("idQuestionTag" => $idQuestion, "groupeTag" => $idGroupe));
-            return true;
-        } catch (PDOException) {
-            return false;
-        }
-    }
-
-    public function selectGroupe($idQuestion): array {
-        $groupes = [];
-        $sql = "SELECT * FROM Groupes g JOIN ExisterGroupe e ON g.idGroupe = e.idGroupe WHERE IDQUESTION = :idQuestionTag";
-        $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
-        $pdoStatement->execute(array("idQuestionTag"=>$idQuestion));
-        foreach ($pdoStatement as $formatTableau) {
-            $groupes[] = (new GroupeRepository())->construire($formatTableau);
-        }
-        return $groupes;
-    }
-
 }

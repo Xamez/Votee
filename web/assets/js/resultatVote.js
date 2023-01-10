@@ -1,4 +1,4 @@
-window.onload = () => {
+window.addEventListener("load", () => {
 
     const propositions = [...document.getElementsByClassName('proposition')];
     const users = [...document.getElementsByClassName('user')];
@@ -38,4 +38,4 @@ window.onload = () => {
         activeProposition.push(idProposition);
     }
 
-};
+});

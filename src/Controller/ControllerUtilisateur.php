@@ -37,15 +37,26 @@ class ControllerUtilisateur extends AbstractController {
             self::redirection("?controller=utilisateur&action=inscription");
         }
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
-        (new UtilisateurRepository())->sauvegarder($utilisateur);
-        (new Notification())->ajouter("success","L'utilisateur a été créé");
-        (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
-        self::redirection("?action=home");
+        $isOk = (new UtilisateurRepository())->sauvegarder($utilisateur);
+        if ($isOk) {
+            (new Notification())->ajouter("success","Votre compte a été créé.");
+            if (MotDePasse::verifier($_POST['password'], $utilisateur->getMotDePasse())) {
+                (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
+                self::redirection("?controller=question&action=all");
+            } else {
+                (new Notification())->ajouter("warning","La connexion a échoué.");
+                self::redirection("?controller=utilisateur&action=connexion");
+            }
+        } else {
+            (new Notification())->ajouter("warning","L'inscription a échoué.");
+            self::redirection("?controller=utilisateur&action=inscription");
+        }
+
     }
 
     public static function deconnecter(): void {
         (new ConnexionUtilisateur())->deconnecter();
-        (new Notification())->ajouter("success","L'utilisateur est déconnecté");
+        (new Notification())->ajouter("success","Déconnexion réussie");
         self::redirection("?action=home");
     }
 
@@ -106,15 +117,12 @@ class ControllerUtilisateur extends AbstractController {
                 "questionsSpecia" => $questionsSpecia,
                 "pagetitle" => "Liste des questions",
                 "cheminVueBody" => "question/listQuestion.php",
-                "title" => "Liste des votes",
+                "title" => "Liste des questions",
             ]);
     }
 
     public static function historiqueDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=readAllQuestion");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByUtil($utilisateur->getLogin());
         $demandesAccepte = $demandesRefuse = $demandesAttente = [];

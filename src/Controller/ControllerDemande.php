@@ -12,10 +12,7 @@ use App\Votee\Model\Repository\UtilisateurRepository;
 class ControllerDemande extends AbstractController {
 
     public static function readAllDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         $demandes = (new DemandeRepository())->getDemandeByDest($utilisateur->getLogin());
         $demandesAccepte = $demandesRefuse = $demandesAttente = [];
@@ -38,10 +35,7 @@ class ControllerDemande extends AbstractController {
     }
 
     public static function readDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
         $auteur = (new UtilisateurRepository())->select($demande->getLogin());
         self::afficheVue('view.php',
@@ -71,24 +65,28 @@ class ControllerDemande extends AbstractController {
 
         $demande->setEtatDemande($_GET['statut']);
         $isOk = (new DemandeRepository())->modifier($demande);
-        if ($isOk) (new Notification())->ajouter("success","La demande a été mise à jour !");
-        else (new Notification())->ajouter("warning","La demande n'a pas été mise à jour !");
+        if ($isOk) (new Notification())->ajouter("success","La demande a été mise à jour.");
+        else (new Notification())->ajouter("warning","La demande n'a pas été mise à jour.");
         self::redirection("?controller=demande&action=readAllDemande");
     }
 
     public static function createDemande(): void {;
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger","Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
-        }
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
         $titreDemande = $_GET['titreDemande'];
         if (!in_array($titreDemande, ['question','fusion', 'proposition'], true )) {
-            (new Notification())->ajouter("danger","Erreur lors du chargement de la page !");
+            (new Notification())->ajouter("danger","Erreur lors du chargement de la page.");
             self::redirection("?controller=question&action=all");
         }
+        $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), "ETATDEMANDE" => "attente"]);
+        foreach ($demandesCours as $demande) {
+            if ($demande->getTitreDemande() == $_GET['titreDemande']) {
+                (new Notification())->ajouter("danger","Vous avez déjà une demande en cours.");
+                self::redirection("?controller=question&action=all");
+            }
+        }
+
         $idQuestion = array_key_exists('idQuestion', $_GET) ? $_GET['idQuestion'] : null;
         $idProposition = array_key_exists('idProposition', $_GET) ? $_GET['idProposition'] : null;
-        // TODO verifier que idQUestion ne change pas et jsp comment faire
         self::afficheVue('view.php',
             [
                 "idQuestion" => $idQuestion,
@@ -102,9 +100,13 @@ class ControllerDemande extends AbstractController {
     }
 
     public static function createdDemande(): void {
-        if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger", "Vous devez vous connecter !");
-            self::redirection("?controller=question&action=all");
+        self::redirectConnexion("?controller=utilisateur&action=connexion");
+        $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), "ETATDEMANDE" => "attente"]);
+        foreach ($demandesCours as $demande) {
+            if ($demande->getTitreDemande() == $_POST['titreDemande']) {
+                (new Notification())->ajouter("danger","Vous avez déjà une demande en cours.");
+                self::redirection("?controller=question&action=all");
+            }
         }
         $idProposition = $_POST['idProposition'] != "" ? $_POST['idProposition'] : null;
         $idQuestion = $_POST['idQuestion'] != "" ? $_POST['idQuestion'] : null;

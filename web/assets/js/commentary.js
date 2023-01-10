@@ -34,7 +34,7 @@ function getElement(element) {
 
 let popup;
 
-window.onload = () => {
+window.addEventListener("load", () => {
 
     const ids = document.getElementById("ids");
     commentary.idQuestion = ids.children[0].value;
@@ -172,6 +172,7 @@ window.onload = () => {
         // ne devrait jamais arrivé mais au cas où un de ces caractères est dans le texte, on arrête tout pour éviter les bugs
         if (selectedHtml.includes("&amp;") || selectedHtml.includes("&lt;") || selectedHtml.includes("&gt;")) return;
 
+        // avoir le bon nombre de caractère dans la sélection
         const selectedHtmlEntityReference = selectedHtml
             .replaceAll("\"", "&quot;")
             .replaceAll("'", "&#039;")
@@ -179,6 +180,7 @@ window.onload = () => {
         commentary.indexCharDebut = rawText.indexOf(selectedHtml);
         if (commentary.indexCharDebut === -1) return;
 
+        // avoir le bon nombre de caractère avant la sélection
         let nbSpecialChars = 0;
         for (let i = 0; i < commentary.indexCharDebut; i++) {
             if (rawText[i] === '\"') nbSpecialChars++;
@@ -186,10 +188,6 @@ window.onload = () => {
         }
 
         commentary.indexCharDebut += nbSpecialChars * 5;
-
-        console.log(commentary.indexCharDebut);
-        console.log(selectedHtmlEntityReference.toString().length)
-        console.log(selectedHtmlEntityReference);
         commentary.indexCharFin = commentary.indexCharDebut + selectedHtmlEntityReference.toString().length;
 
         popup.style.display = "block";
@@ -197,9 +195,9 @@ window.onload = () => {
         popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
     });
 
-}
+});
 
-window.onresize = () => {
+window.addEventListener('resize', () => {
     if (popup.style.display === 'none') return;
     popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
-}
+});
