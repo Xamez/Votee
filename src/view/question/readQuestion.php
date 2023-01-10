@@ -76,9 +76,10 @@
                 <span class="text-white absolute mix-blend-difference text-center select-none w-full absolute -translate-x-1/2">Période d\'écriture</span>
                 <div class="bg-light h-6 ' . ($widthEcriture == 100 ? '' : 'rounded-r-lg') . '" style="width:' . $widthEcriture . '%"></div>
             </div>';
-            if ($debutVote - $finEcriture != 0) {
+            $diffTransition = strtotime(date('Y-m-d',$debutVote)) - strtotime(date('Y-m-d', $finEcriture));
+            if ($diffTransition != 0) {
                 $diffTransition = strtotime(date('Y-m-d',$debutVote)) - strtotime(date('Y-m-d', $finEcriture));
-                $widthTransition = max(0, min((($today - strtotime(date('Y-m-d',$finEcriture)))  * 100) / $diffTransition, 100));
+                $widthTransition = max(0, min((($today - strtotime(date('Y-m-d',$finEcriture)))  * 100) / ($diffTransition == 0 ? 1 : $diffTransition), 100));
                 echo '
             <div class="w-9 h-9 border-4 border-light rounded-3xl ' . ($now >= $finEcriture ? 'bg-main' : 'bg-light') . ' ' . ($now < $finEcriture && $today == strtotime(date("Y-m-d", $finEcriture)) ? 'animPhase' : '') . ' flex flex-col items-center z-10 -m-2">
                 <span class="font-semibold relative top-10">' . date('d/m/Y',$finEcriture) . '</span>
@@ -118,8 +119,6 @@
         <h1 class="title text-dark text-2xl font-semibold">Proposition</h1>
         <div class="flex flex-col gap-3 p-7">
 <?php
-if (sizeof($propositions) == 0) echo '<span class="text-center">Aucune proposition</span>';
-
 
 if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
     $resultats = (new VoteRepository())->getResultats($question);
@@ -164,18 +163,25 @@ if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
         }
     }
 } else {
+    $nbPropInvisibleUtil = 0; // Nombre de propositions invisible pour l'utilisateur (en tenant compte de ses roles)
+    $nbPropInvisible = 0; // Nombre de propositions invisible dans la question
     foreach ($propositions as $proposition) {
         $idProposition = $proposition->getIdProposition();
         $roles = ConnexionUtilisateur::getRolesProposition($idProposition);
         if ($proposition->isVisible()) {
             AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
         } else {
+            $nbPropInvisible++;
             if (count(array_intersect(['CoAuteur', 'Responsable'], $roles)) > 0 || in_array("Organisateur", $rolesQuestion)) {
                 AbstractController::afficheVue('question/proposition.php', ['idQuestion' => $idQuestion, 'idProposition' => rawurlencode($idProposition), "responsable" => $responsables[$idProposition], "proposition"=>$proposition]);
-            }
+            } else $nbPropInvisibleUtil++;
         }
     }
+    if (sizeof($propositions) == 0 && (($nbPropInvisibleUtil == $nbPropInvisible) && $nbPropInvisible > 0)) echo '<span class="text-center">Aucune proposition</span>';
 }
+
+
+
 echo '</div>
       </div>
       <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
@@ -227,10 +233,14 @@ if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value || $question->g
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'deleteQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Supprimer', "logo" => 'delete']);
     }
     if ($question->getPeriodeActuelle() == Periodes::ECRITURE->value && !ConnexionUtilisateur::hasPropositionVisible($question->getIdQuestion())) {
-        if (ConnexionUtilisateur::creerProposition($idQuestion) || in_array("Organisateur", $rolesQuestion)) {
-            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
+        if (!$isDemande) {
+            if (ConnexionUtilisateur::creerProposition($idQuestion) || in_array("Organisateur", $rolesQuestion)) {
+                AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'createProposition', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Créer une proposition', "logo" => 'add_circle']);
+            } else {
+                AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $rawIdQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
+            }
         } else {
-            AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=proposition&idQuestion=' . $rawIdQuestion, 'title' => 'Faire une demande', "logo" => 'file_copy']);
+            AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'historiqueDemande', 'title' => 'Voir ma demande', "logo" => 'info']);
         }
     }
 }
