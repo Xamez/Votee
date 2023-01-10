@@ -47,7 +47,7 @@ if (!ConnexionUtilisateur::estAdministrateur() && !$debug) {
                 echo '<tr>';
                 foreach ($traceKeys as $key)
                     echo '<td class="border px-4 py-2">' . $trace[$key] . '</td>';
-                echo '<td class="border px-4 py-2">' . $trace['class'] . $trace['type'] . $trace['function'] . '(' . implode(', ', $trace['args'] ?? []) . ')' . '</td>';
+                echo '<td class="border px-4 py-2">' . $trace['class'] . $trace['type'] . $trace['function'] . '()</td>';
                 echo '</tr>';
             }
             echo '</tbody>';
