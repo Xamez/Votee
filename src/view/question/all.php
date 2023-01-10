@@ -37,10 +37,10 @@
 echo '</div>
     </div>
     <div class="flex flex-col gap-3">';
-if (sizeof($questions) == 0) {
-    echo '<h1 class="flex justify-center text-main text-2xl font-bold pt-8">Aucune question trouvée</h1>';
-} else {
+$nbQuestionInvisible = 0;
+if (sizeof($questions) != 0) {
     foreach ($questions as $question) {
+        if ($question->getPeriodeActuelle() != Periodes::PREPARATION->value) {
         echo '<a href="./frontController.php?controller=question&action=readQuestion&idQuestion=' . rawurlencode($question->getIdQuestion()) . '">
             <div class="flex justify-between items-center bg-light p-3 md:p-2 rounded gap-3">
                 <div class="flex flex-col-reverse md:flex-row justify-between w-full gap-3">
@@ -56,6 +56,9 @@ if (sizeof($questions) == 0) {
                 <span class="material-symbols-outlined">arrow_forward_ios</span>
             </div>
          </a>';
+        } else $nbQuestionInvisible++;
     }
 }
+if (sizeof($questions) == $nbQuestionInvisible) echo '<h1 class="flex justify-center text-main text-2xl font-bold pt-8">Aucune question trouvée</h1>';
+
 echo '</div>';

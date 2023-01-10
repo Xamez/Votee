@@ -11,7 +11,7 @@ class SectionRepository extends AbstractRepository {
     function getNomTable(): string { return "Sections"; }
     function getNomClePrimaire(): string { return "IDQUESTION"; }
 
-    function getProcedureInsert(): array { return array('procedure' => 'AjouterSections', 'TITRESECTION', 'IDQUESTION'); }
+    function getProcedureInsert(): array { return array('procedure' => 'AjouterSections', 'TITRESECTION', 'IDQUESTION', 'DESCRIPTIONSECTION'); }
     function getProcedureDelete(): string { return ""; }
     function getProcedureUpdate(): array { return []; }
 
@@ -20,6 +20,7 @@ class SectionRepository extends AbstractRepository {
             $sectionFormatTableau['IDSECTION'],
             $sectionFormatTableau['TITRESECTION'],
             $sectionFormatTableau['IDQUESTION'],
+            $sectionFormatTableau['DESCRIPTIONSECTION'],
         );
     }
 

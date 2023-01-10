@@ -162,7 +162,6 @@ class ControllerProposition extends AbstractController {
                     "idQuestion" => $_GET['idQuestion'],
                     "cheminVueBody" => "proposition/createProposition.php",
                     "title" => $question->getTitre(),
-                    "subtitle" => "Création des textes d'une proposition"
                 ]);
         } else {
             self::error("La question n'existe pas");
@@ -214,7 +213,7 @@ class ControllerProposition extends AbstractController {
                 "coAuteurs" => $coAuteurs,
                 "pagetitle" => "Suppression",
                 "cheminVueBody" => "proposition/deleteProposition.php",
-                "title" => "Supression d'un vote",
+                "title" => "Suppression d'un vote",
             ]);
     }
 
@@ -259,8 +258,7 @@ class ControllerProposition extends AbstractController {
                     "commentaires" => $commentaires,
                     "pagetitle" => "Edition de proposition",
                     "cheminVueBody" => "proposition/updateProposition.php",
-                    "title" => $question->getTitre(),
-                    "subtitle" => "Modification des textes de la proposition"
+                    "title" => "Édition de la proposition",
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas.");
@@ -319,13 +317,13 @@ class ControllerProposition extends AbstractController {
         });
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Ajouter un co-auteur",
+                "pagetitle" => "Ajouter des co-auteurs",
                 "idProposition" => $idProposition,
                 "idQuestion" => $idQuestion,
                 "utilisateurs" => $utilisateur,
                 "coAuteurs" => $coAuteurs,
                 "cheminVueBody" => "proposition/addCoauteur.php",
-                "title" => $question->getTitre(),
+                "title" => "Ajouter des co-auteurs",
                 "subtitle" => "Ajouter un ou plusieurs co-auteurs à la proposition"
             ]);
     }
@@ -404,7 +402,6 @@ class ControllerProposition extends AbstractController {
                     "pagetitle" => "Question",
                     "cheminVueBody" => "proposition/readProposition.php",
                     "title" => $question->getTitre(),
-                    "subtitle" => $question->getDescription()
                 ]);
         } else {
             self::error("La proposition ou la question n'existe pas");
@@ -614,7 +611,6 @@ class ControllerProposition extends AbstractController {
                 "idQuestion" => $idQuestion,
                 "cheminVueBody" => "proposition/readCoauteur.php",
                 "title" => "Co-auteurs",
-                "subtitle" => "Liste des co-auteurs"
             ]);
     }
 
