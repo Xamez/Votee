@@ -16,6 +16,7 @@ $loader->register();
 
 set_exception_handler(function ($exception) {
     AbstractController::fatalError(
+        false,
         ['message' => $exception->getMessage(),
          'file' => $exception->getFile(),
          'line' => $exception->getLine(),
@@ -24,13 +25,13 @@ set_exception_handler(function ($exception) {
 });
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-    AbstractController::fatalError(['message' => $errstr, 'file' => $errfile, 'line' => $errline, 'trace' => []]);
+    AbstractController::fatalError(false, ['message' => $errstr, 'file' => $errfile, 'line' => $errline, 'trace' => []]);
 });
 
 register_shutdown_function(function () {
     $error = error_get_last();
     if ($error !== null) {
-        AbstractController::fatalError(['message' => $error['message'], 'file' => $error['file'], 'line' => $error['line'], 'trace' => []]);
+        AbstractController::fatalError(false, ['message' => $error['message'], 'file' => $error['file'], 'line' => $error['line'], 'trace' => []]);
     }
 });
 
