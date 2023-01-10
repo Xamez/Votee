@@ -19,21 +19,21 @@ class ControllerUtilisateur extends AbstractController {
         if ($utilisateur) {
             if (MotDePasse::verifier($_POST['password'], $utilisateur->getMotDePasse())) {
                 (new ConnexionUtilisateur())->connecter($utilisateur->getLogin());
-                (new Notification())->ajouter("success","L'utilisateur est connecté");
+                (new Notification())->ajouter("success","Connection réussie.");
                 self::redirection("?controller=question&action=all");
             } else {
-                (new Notification())->ajouter("warning","Mot de passe erroné");
+                (new Notification())->ajouter("warning","Mot de passe incorrect.");
                 self::redirection("?controller=utilisateur&action=connexion");
             }
         } else {
-            (new Notification())->ajouter("danger","Utilisateur inconnu");
+            (new Notification())->ajouter("warning","Utilisateur inconnu.");
             self::redirection("?controller=utilisateur&action=connexion");
         }
     }
 
     public static function inscrit(): void {
         if ($_POST['password'] != $_POST['passwordVerif']) {
-            (new Notification())->ajouter("warning", "Mots de passe distincts");
+            (new Notification())->ajouter("warning", "Mots de passe distincts.");
             self::redirection("?controller=utilisateur&action=inscription");
         }
         $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
@@ -55,7 +55,7 @@ class ControllerUtilisateur extends AbstractController {
 
     public static function deconnecter(): void {
         (new ConnexionUtilisateur())->deconnecter();
-        (new Notification())->ajouter("success","Déconnexion réussie");
+        (new Notification())->ajouter("success","Déconnexion réussie.");
         self::redirection("?action=home");
     }
 
@@ -164,7 +164,7 @@ class ControllerUtilisateur extends AbstractController {
         $motDePasse = $_POST['motDePasse'];
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
-            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            (new Notification())->ajouter("warning", "Mot de passe incorrect.");
             self::redirection("?controller=utilisateur&action=updateUtilisateur");
         } else {
             $nom = $_POST['nom'];
@@ -174,17 +174,16 @@ class ControllerUtilisateur extends AbstractController {
             $utilisateur->setPrenom($prenom);
             $utilisateur->setDescription($description);
             if ((new UtilisateurRepository())->modifier($utilisateur)) {
-                (new Notification())->ajouter("success", "Les informations du profile ont été modifiées !");
+                (new Notification())->ajouter("success", "Votre compte a été modifié.");
                 self::redirection("?controller=utilisateur&action=updateUtilisateur");
             } else {
-                (new Notification())->ajouter("warning", "Impossible de modifier les informations du profile !");
+                (new Notification())->ajouter("warning", "La modification à échoué.");
                 self::redirection("?controller=utilisateur&action=updateUtilisateur");
             }
         }
     }
 
-    public static function confirmUpdateUtilisateur(): void
-    {
+    public static function confirmUpdateUtilisateur(): void {
         $nom = $_POST['nom'];
         $prenom = $_POST['prenom'];
         $description = $_POST['description'];
@@ -214,23 +213,23 @@ class ControllerUtilisateur extends AbstractController {
         $nouveauMotDePasseConfirm = $_POST['nouveauMotDePasseConfirm'];
         $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
         if (!MotDePasse::verifier($ancienMotDePasse, $utilisateur->getMotDePasse())) {
-            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            (new Notification())->ajouter("warning", "Mot de passe incorrect.");
             self::redirection("?controller=utilisateur&action=updateUtilisateur");
         } else {
             if ($nouveauMotDePasse != $nouveauMotDePasseConfirm) {
-                (new Notification())->ajouter("warning", "Les mots de passe sont distincts !");
+                (new Notification())->ajouter("warning", "Mots de passe distincts.");
                 self::redirection("?controller=utilisateur&action=updateUtilisateur");
             }
             if ($nouveauMotDePasse == $ancienMotDePasse) {
-                (new Notification())->ajouter("warning", "Le nouveau mot de passe est identique à l'ancien !");
+                (new Notification())->ajouter("warning", "Le nouveau mot de passe est identique à l'ancien.");
                 self::redirection("?controller=utilisateur&action=updateUtilisateur");
             } else {
                 $utilisateur->setMotDePasse($nouveauMotDePasse);
                 if ((new UtilisateurRepository())->modifier($utilisateur)) {
-                    (new Notification())->ajouter("success", "Le mot de passe a été modifié !");
+                    (new Notification())->ajouter("success", "Le mot de passe a été modifié.");
                     self::redirection("?controller=utilisateur&action=updateUtilisateur");
                 } else {
-                    (new Notification())->ajouter("warning", "Impossible de modifier le mot de passe !");
+                    (new Notification())->ajouter("warning", "La modification à échoué.");
                     self::redirection("?controller=utilisateur&action=updateUtilisateur");
                 }
             }

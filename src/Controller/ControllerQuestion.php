@@ -392,7 +392,7 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("success", "La question a été modifiée.");
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         } else {
-            (new Notification())->ajouter("warning", "La modification de la question a échoué.");
+            (new Notification())->ajouter("warning", "La modification a échoué.");
             self::redirection("?controller=question&action=updateQuestion&idQuestion=$idQuestion");
         }
     }
@@ -421,7 +421,7 @@ class ControllerQuestion extends AbstractController {
             self::redirection("?controller=question&action=all");
         }
         if (!MotDePasse::verifier($motDePasse, $utilisateur->getMotDePasse())) {
-            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            (new Notification())->ajouter("warning", "Mot de passe incorrect.");
             self::redirection("?controller=question&action=deleteQuestion&idQuestion=$idQuestion");
         }
         $isOk = (new QuestionRepository())->supprimer($idQuestion);
@@ -429,7 +429,7 @@ class ControllerQuestion extends AbstractController {
             (new Notification())->ajouter("success", "La question a été supprimée.");
             self::redirection("?controller=question&action=all");
         } else {
-            (new Notification())->ajouter("warning", "La suppression de la question a échoué.");
+            (new Notification())->ajouter("warning", "La suppression a échoué.");
             self::redirection("?controller=question&action=deleteQuestion&idQuestion=$idQuestion");
         }
     }
@@ -477,11 +477,11 @@ class ControllerQuestion extends AbstractController {
             if ($question->getPeriodeActuelle() == Periodes::TRANSITION->value && $now < $debutVote && $today == strtotime(date("Y-m-d", $debutVote))) self::changePhase();
 
             if ($isOk) (new Notification())->ajouter("success", "La phase de la question a été modifiée.");
-            else (new Notification())->ajouter("warning", "La modification de la phase de la question a échoué.");
+            else (new Notification())->ajouter("warning", "La modification de la phase a échoué.");
 
             self::redirection("?controller=question&action=readQuestion&idQuestion=$idQuestion");
         } else {
-            (new Notification())->ajouter("danger", "Vous ne pouvez pas changer de phase.");
+            (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
     }

@@ -45,7 +45,7 @@ class AbstractController {
     /** Si l'utilisateur n'est pas connecté, notification et redirection vers l'url */
     public static function redirectConnexion($url): void {
         if (!ConnexionUtilisateur::estConnecte()) {
-            (new Notification())->ajouter("danger", "Vous devez vous connecter !");
+            (new Notification())->ajouter("danger", "Vous devez vous connecter.");
             self::redirection($url);
         }
     }
