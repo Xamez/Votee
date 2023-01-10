@@ -14,7 +14,6 @@ class DatabaseConnection {
         return static::getInstance()->pdo;
     }
 
-
     public function __construct() {
         $dbname = Conf::getDatabase();
         $login = Conf::getLogin();

@@ -2,14 +2,31 @@
 
 use App\Votee\Lib\ConnexionUtilisateur;
 
-echo '<div class="flex items-center gap-2">
-        <p class="text-main font-semibold">Auteur : 
-        <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-            <span class="material-symbols-outlined">account_circle</span>'
-    . htmlspecialchars($auteur->getNom()) . ' ' . htmlspecialchars($auteur->getPrenom()) .
-       '</div>
-        </p>
-     </div>';
+echo '<div class="headerProp md:grid items-center flex flex-col gap-5">
+             <span class="text-main font-semibold w-20">Auteur :</span>
+             <div class="flex">
+                 <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($auteur->getLogin()) . '">
+                     <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                        <span class="material-symbols-outlined">account_circle</span>'
+                            . htmlspecialchars($auteur->getNom()) . ' ' . htmlspecialchars($auteur->getPrenom()) .
+                     '</div>
+                 </a>
+             </div>
+          <span class="text-main font-semibold w-20">Statut :</span>
+          <div class="flex">';
+            if ($demande->getEtatDemande() == 'attente') {
+                echo '<div class="bg-white flex gap-1 hidden sm:block shadow-md rounded-2xl w-fit p-2">
+                          <span>Attente</span>';
+            } else if ($demande->getEtatDemande() == 'accepte') {
+                echo '<div class="bg-green flex gap-1 hidden sm:block shadow-md rounded-2xl w-fit p-2">
+                          <span>Acceptée</span>';
+            } else if ($demande->getEtatDemande() == 'refuse') {
+                echo '<div class="bg-red flex gap-1 hidden sm:block shadow-md rounded-2xl w-fit p-2">
+                          <span>Refusée</span>';
+            }
+echo '      </div></div>
+    </div>';
+
 echo '<div class="flex flex-col gap-5 border-2 p-8 rounded-3xl">';
 if ($demande->getTitreDemande() == 'proposition') {
     echo '<span class="font-semibold text-lg">Demande de création d\'une proposition :</span>';
