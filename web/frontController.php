@@ -13,6 +13,8 @@ $loader->addNamespace('App\Votee', __DIR__ . '/../src');
 // register the autoloader
 $loader->register();
 
+header('Content-Type: charset=utf-8');
+
 
 set_exception_handler(function ($exception) {
     AbstractController::fatalError(
