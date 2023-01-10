@@ -38,10 +38,12 @@ class ControllerDemande extends AbstractController {
         self::redirectConnexion("?controller=utilisateur&action=connexion");
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
         $auteur = (new UtilisateurRepository())->select($demande->getLogin());
+        $destinataire = (new UtilisateurRepository())->select($demande->getLoginDestinataire());
         self::afficheVue('view.php',
             [
                 "demande" => $demande,
                 "auteur" => $auteur,
+                "destinataire" => $destinataire,
                 "pagetitle" => "Demande",
                 "cheminVueBody" => "demande/readDemande.php",
                 "title" => "Demande",

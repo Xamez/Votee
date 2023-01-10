@@ -3,16 +3,25 @@
 use App\Votee\Lib\ConnexionUtilisateur;
 
 echo '<div class="headerProp md:grid items-center flex flex-col gap-5">
-             <span class="text-main font-semibold w-20">Auteur :</span>
-             <div class="flex">
-                 <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($auteur->getLogin()) . '">
-                     <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                        <span class="material-symbols-outlined">account_circle</span>'
-                            . htmlspecialchars($auteur->getNom()) . ' ' . htmlspecialchars($auteur->getPrenom()) .
-                     '</div>
-                 </a>
-             </div>
-          <span class="text-main font-semibold w-20">Statut :</span>
+         <span class="text-main font-semibold w-24">Destinataire :</span>
+         <div class="flex">
+             <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($destinataire->getLogin()) . '">
+                 <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">account_circle</span>'
+                        . htmlspecialchars($destinataire->getNom()) . ' ' . htmlspecialchars($destinataire->getPrenom()) .
+                 '</div>
+             </a>
+         </div>
+         <span class="text-main font-semibold w-24">Auteur :</span>
+         <div class="flex">
+             <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($auteur->getLogin()) . '">
+                 <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">account_circle</span>'
+    . htmlspecialchars($auteur->getNom()) . ' ' . htmlspecialchars($auteur->getPrenom()) .
+    '</div>
+             </a>
+         </div>
+          <span class="text-main font-semibold w-24">Statut :</span>
           <div class="flex">';
             if ($demande->getEtatDemande() == 'attente') {
                 echo '<div class="bg-white flex gap-1 hidden sm:block shadow-md rounded-2xl w-fit p-2">

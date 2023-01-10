@@ -6,6 +6,6 @@
         <input type="hidden" name="titreDemande" value="<?= $titreDemande ?>">
         <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>">
         <input type="hidden" name="idProposition" value="<?= $idProposition;?>">
-        <input class="p-2 w-48 text-white bg-main font-semibold rounded-lg" type="submit" value="Confirmer"/>
+        <input class="p-2 w-48 text-white bg-main font-semibold rounded-lg cursor-pointer" type="submit" value="Confirmer"/>
     </form>
 </div>
