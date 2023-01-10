@@ -7,14 +7,14 @@ require "propositionHeader.php"; ?>
     <?php
     if (sizeof($commentaires) > 0) {
         echo '<div>
-                    <div class="accordion text-left w-full p-2 cursor-pointer flex justify-between p-2 items-center rounded">
-                        <div class="flex items-center gap-2">
-                            <p class="font-bold text-dark">Ancienne proposition</p>
-                        </div>
-                        <span class="accordion-arrow material-symbols-outlined">arrow_forward_ios</span>
-                    </div>                      
-                    <div class="p-4 overflow-hidden hidden panel">';
-                        AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => true, 'inAccordion' => true, 'sections' => $sections, 'textes' => $textesMarkdown, 'commentaires' => $commentaires]);
+                <div class="accordion text-left w-full p-2 cursor-pointer flex justify-between p-2 items-center rounded">
+                    <div class="flex items-center gap-2">
+                        <p class="font-bold text-dark">Ancienne proposition</p>
+                    </div>
+                    <span class="accordion-arrow material-symbols-outlined">arrow_forward_ios</span>
+                </div>                      
+                <div class="p-4 overflow-hidden hidden panel">';
+                    AbstractController::afficheVue('detailProposition.php', ['commentaryEnabled' => true, 'inAccordion' => true, 'sections' => $sections, 'textes' => $textesMarkdown, 'commentaires' => $commentaires]);
              echo '</div>
               </div>';
     }

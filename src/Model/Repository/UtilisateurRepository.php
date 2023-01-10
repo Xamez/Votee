@@ -70,24 +70,25 @@ class UtilisateurRepository extends AbstractRepository {
 
     /** Tous les acteurs d'une question (responsable, organisateurs et coAuteurs) */
     public function selectAllActorQuestion($idQuestion): array {
+        $utilisateurs = [];
         $sql = "SELECT U.* FROM (
-    SELECT DISTINCT LOGIN_ORGANISATEUR FROM (
-        SELECT Q.LOGIN_ORGANISATEUR, Q.IDQUESTION FROM EXISTE E
-        JOIN QUESTIONS Q on E.LOGIN = Q.LOGIN_ORGANISATEUR
-
-        UNION
-
-        SELECT LOGIN, IDQUESTION FROM (
-            SELECT RC.LOGIN, R.IDQUESTION FROM REDIGERCA RC
-            JOIN RECEVOIR R ON RC.IDPROPOSITION = R.IDPROPOSITION
-
-            UNION
-
-            SELECT RR.LOGIN, R.IDQUESTION FROM REDIGERR RR
-            JOIN RECEVOIR R ON RR.IDPROPOSITION = R.IDPROPOSITION
-        )
-    ) WHERE IDQUESTION =:idQuestionTag
-) JOIN UTILISATEURS U ON LOGIN_ORGANISATEUR = U.LOGIN";
+                SELECT DISTINCT LOGIN_ORGANISATEUR FROM (
+                    SELECT Q.LOGIN_ORGANISATEUR, Q.IDQUESTION FROM EXISTE E
+                    JOIN QUESTIONS Q on E.LOGIN = Q.LOGIN_ORGANISATEUR
+            
+                    UNION
+            
+                    SELECT LOGIN, IDQUESTION FROM (
+                        SELECT RC.LOGIN, R.IDQUESTION FROM REDIGERCA RC
+                        JOIN RECEVOIR R ON RC.IDPROPOSITION = R.IDPROPOSITION
+            
+                        UNION
+            
+                        SELECT RR.LOGIN, R.IDQUESTION FROM REDIGERR RR
+                        JOIN RECEVOIR R ON RR.IDPROPOSITION = R.IDPROPOSITION
+                    )
+                ) WHERE IDQUESTION =:idQuestionTag
+            ) JOIN UTILISATEURS U ON LOGIN_ORGANISATEUR = U.LOGIN";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
         $pdoStatement->execute(array("idQuestionTag" => $idQuestion));
         foreach ($pdoStatement as $utilisateur) {

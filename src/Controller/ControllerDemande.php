@@ -38,10 +38,12 @@ class ControllerDemande extends AbstractController {
         self::redirectConnexion("?controller=utilisateur&action=connexion");
         $demande = (new DemandeRepository())->select($_GET['idDemande']);
         $auteur = (new UtilisateurRepository())->select($demande->getLogin());
+        $destinataire = (new UtilisateurRepository())->select($demande->getLoginDestinataire());
         self::afficheVue('view.php',
             [
                 "demande" => $demande,
                 "auteur" => $auteur,
+                "destinataire" => $destinataire,
                 "pagetitle" => "Demande",
                 "cheminVueBody" => "demande/readDemande.php",
                 "title" => "Demande",
@@ -74,7 +76,7 @@ class ControllerDemande extends AbstractController {
         self::redirectConnexion("?controller=utilisateur&action=connexion");
         $titreDemande = $_GET['titreDemande'];
         if (!in_array($titreDemande, ['question','fusion', 'proposition'], true )) {
-            (new Notification())->ajouter("danger","Erreur lors du chargement de la page.");
+            (new Notification())->ajouter("danger","Certains arguments sont incorrects.");
             self::redirection("?controller=question&action=all");
         }
         $demandesCours = (new DemandeRepository())->selectAllByMultiKey(['login' => ConnexionUtilisateur::getUtilisateurConnecte()->getLogin(), "ETATDEMANDE" => "attente"]);
@@ -125,8 +127,8 @@ class ControllerDemande extends AbstractController {
             $idQuestion
         );
         $isOk = (new DemandeRepository())->sauvegarder($demande);
-        if ($isOk) (new Notification())->ajouter("success", "La demande a été envoyée !");
-        else (new Notification())->ajouter("warning", "La demande n'a pas été envoyée !");
+        if ($isOk) (new Notification())->ajouter("success", "La demande a été envoyée.");
+        else (new Notification())->ajouter("warning", "La demande n'a pas pu être envoyée.");
         self::redirection("?controller=utilisateur&action=historiqueDemande");
     }
 }

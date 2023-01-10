@@ -52,10 +52,10 @@ class ControllerGroupe extends AbstractController {
         $groupe = new Groupe(null, $_POST['nomGroupe']);
         $idGroupe = (new GroupeRepository())->sauvegarderSequence($groupe);
         if ($idGroupe) {
-            (new Notification())->ajouter("success", "Le groupe a bien été créé !");
+            (new Notification())->ajouter("success", "Le groupe a bien été créé.");
             self::redirection("?controller=groupe&action=addMembre&idGroupe=$idGroupe");
         } else {
-            (new Notification())->ajouter("danger", "Le groupe n'a pas été créé !");
+            (new Notification())->ajouter("danger", "La création du groupe à échoué.");
             self::redirection("?controller=groupe&action=readAllGroupe");
         }
     }
@@ -94,8 +94,8 @@ class ControllerGroupe extends AbstractController {
         foreach ($membres as $login) {
             $isOk = (new GroupeRepository())->supprimerDeGroupe($idGroupe, $login);
         }
-        if ($isOk) (new Notification())->ajouter("success", "Les membres ont bien été ajouté !");
-        else (new Notification())->ajouter("warning", "Certains membres n'ont pas été ajouté !");
+        if ($isOk) (new Notification())->ajouter("success", "Les membres ont bien été mis a jour.");
+        else (new Notification())->ajouter("warning", "Certains membres n'ont pas été mis à jour.");
         self::redirection("?controller=groupe&action=readGroupe&idGroupe=$idGroupe");
     }
 
@@ -122,8 +122,8 @@ class ControllerGroupe extends AbstractController {
         }
 
         $isOk = (new GroupeRepository())->supprimer($idGroupe);
-        if ($isOk) (new Notification())->ajouter("success", "Le groupe a bien été supprimé !");
-        else (new Notification())->ajouter("danger", "Le groupe n'a pas été supprimé !");
+        if ($isOk) (new Notification())->ajouter("success", "Le groupe a bien été supprimé.");
+        else (new Notification())->ajouter("danger", "La suppression à échoué.");
         self::redirection("?controller=groupe&action=readAllGroupe");
     }
 
@@ -149,10 +149,10 @@ class ControllerGroupe extends AbstractController {
         $groupe->setNomGroupe($_POST['nomGroupe']);
         $isOk = (new GroupeRepository())->modifier($groupe);
         if ($isOk) {
-            (new Notification())->ajouter("success", "Le groupe a bien été modifié !");
+            (new Notification())->ajouter("success", "Le groupe a bien été modifié.");
             self::redirection("?controller=groupe&action=readGroupe&idGroupe=$idGroupe");
         } else {
-            (new Notification())->ajouter("danger", "Le groupe n'a pas été modifié !");
+            (new Notification())->ajouter("danger", "La modification à échoué");
             self::redirection("?controller=groupe&action=updateGroupe&idGroupe=$idGroupe");
         }
     }
