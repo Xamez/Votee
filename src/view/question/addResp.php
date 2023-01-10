@@ -8,27 +8,29 @@
                 <span class="font-normal">Les responsables que vous ajoutez seront automatiquement ajoutés en tant que votant.</span>
             </div>
         </div>
-        <?php
-        foreach ($responsables as $responsable) {
-            echo '<div class="flex items-center gap-2 border-transparent util-box text-main disable shadow-md rounded-2xl w-fit p-2">
-                    <span class="material-symbols-outlined">account_circle</span>' . $responsable->getPrenom() . ' ' . $responsable->getNom() . '</label>
-                  </div>';
-        }
+        <div class="flex flex-wrap gap-2 justify-center">
+            <?php
+            foreach ($responsables as $responsable) {
+                echo '<div class="flex items-center gap-2 border-transparent util-box text-main disable shadow-md rounded-2xl w-fit p-2">
+                        <span class="material-symbols-outlined">account_circle</span>' . $responsable->getPrenom() . ' ' . $responsable->getNom() . '</label>
+                      </div>';
+            }
 
-        foreach ($responsablesPossibles as $key=>$responsable) {
-            echo '<div class="border-2 border-transparent text-main items-center bg-white shadow-md rounded-2xl w-fit p-2">
-                    <input type="checkbox" name="resps[]" id="resp' . $key . '" value="' . $responsable->getLogin() . '" checked/>
-                    <label class="cursor-pointer flex gap-1 items-center" for="resp' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $responsable->getPrenom() . ' ' . $responsable->getNom() . '</label>
-                  </div>';
-        }
+            foreach ($responsablesPossibles as $key=>$responsable) {
+                echo '<div class="border-2 border-transparent util-box text-main items-center bg-white shadow-md rounded-2xl w-fit p-2">
+                        <input type="checkbox" name="resps[]" id="resp' . $key . '" value="' . $responsable->getLogin() . '" checked/>
+                        <label class="cursor-pointer flex gap-1 items-center" for="resp' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $responsable->getPrenom() . ' ' . $responsable->getNom() . '</label>
+                      </div>';
+            }
 
-        foreach ($utilisateurs as $key=>$utilisateur) {
-            echo '<div class="border-2 border-transparent util-box text-main items-center bg-white shadow-md rounded-2xl w-fit p-2">
-                    <input type="checkbox" name="utilisateurs[]" id="util' . $key . '" value="' . $utilisateur->getLogin() . '"/>
-                    <label class="cursor-pointer flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $utilisateur->getPrenom() . ' ' . $utilisateur->getNom() . '</label>
-                  </div>';
-        }
-        ?>
+            foreach ($utilisateurs as $key=>$utilisateur) {
+                echo '<div class="border-2 border-transparent util-box text-main items-center bg-white shadow-md rounded-2xl w-fit p-2">
+                        <input type="checkbox" name="utilisateurs[]" id="util' . $key . '" value="' . $utilisateur->getLogin() . '"/>
+                        <label class="cursor-pointer flex gap-1 items-center" for="util' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $utilisateur->getPrenom() . ' ' . $utilisateur->getNom() . '</label>
+                      </div>';
+            }
+            ?>
+        </div>
     </div>
 
     <div class="flex justify-center">

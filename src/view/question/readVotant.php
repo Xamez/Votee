@@ -13,6 +13,7 @@
                     </div>
                   </a>';
         }
+        if (sizeof($groupes) == 0) echo '<span>Aucun groupe</span>';
         ?>
         </div>
     </div>
@@ -27,6 +28,7 @@
                         </div>
                       </a>';
         }
+        if (sizeof($votants) == 0) echo '<span>Aucun votant</span>';
         ?>
         </div>
     </div>
