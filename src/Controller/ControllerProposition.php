@@ -595,6 +595,8 @@ class ControllerProposition extends AbstractController {
             (new PropositionRepository())->supprimer($idNewProp);
             (new PropositionRepository())->modifier($proposition); // Remet la proposition en visible (récupère la version d'origine)
             (new PropositionRepository())->modifier($oldProposition);
+            (new PropositionRepository())->supprimerCoAuteur($respAMerge, $idOldProp);
+            (new PropositionRepository())->supprimerCoAuteur($respCourant, $idOldPropMerge);
             (new Notification())->ajouter("danger", "La fusion n'a pas pu être réalisée.");
         }
         self::redirection("?controller=question&action=readQuestion&idQuestion=" . $_POST['idQuestion']);
