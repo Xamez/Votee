@@ -18,6 +18,7 @@
                   </div>';
             }
             ?>
+        </div>
     </div>
     <div class="flex justify-center">
         <input type="hidden" name="idGroupe" value="<?= $idGroupe ?>"/>

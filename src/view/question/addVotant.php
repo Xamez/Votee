@@ -19,6 +19,7 @@
                       </div>';
             }
             ?>
+        </div>
     </div>
     <div class="rounded-xl py-4 flex flex-col gap-3 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Utilisateurs</h1>
