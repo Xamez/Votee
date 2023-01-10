@@ -12,7 +12,7 @@
             <?php
             foreach ($coAuteurs as $key=>$coAuteur) {
                 echo '<div class="border-2 border-transparent items-center util-box text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                        <input class="utilCheck" type="checkbox" name="coAuteurs[]" id="coAuteur' . $key . '" value="' . $coAuteur->getLogin() . '" checked/>
+                        <input type="checkbox" name="coAuteurs[]" id="coAuteur' . $key . '" value="' . $coAuteur->getLogin() . '" checked/>
                         <label class="cursor-pointer flex gap-1 items-center" for="coAuteur' . $key . '"><span class="material-symbols-outlined">account_circle</span>' . $coAuteur->getPrenom() . ' ' . $coAuteur->getNom() . '</label>
                       </div>';
             }
