@@ -362,7 +362,7 @@ class ControllerProposition extends AbstractController {
         $question = (new QuestionRepository())->select($idQuestion);
         $propsGagnante = (new VoteRepository())->getPropositionsGagantes($question);
         if (!($question->getPeriodeActuelle() == Periodes::ECRITURE->value && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur'])) > 0))
-            && !(in_array($question->getPeriodeActuelle(), [Periodes::RESULTAT->value, Periodes::VOTE->value]) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
+            && !(in_array($question->getPeriodeActuelle(), [Periodes::RESULTAT->value, Periodes::VOTE->value, Periodes::TRANSITION->value]) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
             && !in_array('Organisateur', $rolesQuestion)
             && !($question->getPeriodeActuelle() == Periodes::RESULTAT->value && in_array($idProposition, $propsGagnante))) {
             (new Notification())->ajouter("warning", "Vous ne pouvez pas accéder à cette proposition !");
@@ -423,9 +423,9 @@ class ControllerProposition extends AbstractController {
             [
                 "idQuestion" => $idQuestion,
                 "idProposition" => $idProposition,
-                "pagetitle" => "Confirmation",
+                "pagetitle" => "Archiver la proposition",
                 "cheminVueBody" => "proposition/deleteProposition.php",
-                "title" => "Confirmation de suppression",
+                "title" => "Archivage",
             ]);
     }
 

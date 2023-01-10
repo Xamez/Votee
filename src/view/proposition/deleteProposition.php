@@ -10,7 +10,7 @@
             <input type="hidden" name="idProposition" value="<?= $idProposition ?>">
             <div class="flex gap-10">
                 <a class="w-28 p-2 text-white bg-main font-semibold rounded-lg text-center" href="frontController.php?controller=proposition&action=readProposition&idQuestion=<?= rawurldecode($idQuestion) ?>&idProposition=<?= rawurldecode($idProposition) ?>">Annuler</a>
-                <input class="w-28 p-2 text-white bg-red font-semibold rounded-lg" type="submit" value="Confirmer" />
+                <input class="w-28 p-2 text-white bg-red font-semibold rounded-lg cursor-pointer" type="submit" value="Confirmer" />
             </div>
         </div>
     </form>
