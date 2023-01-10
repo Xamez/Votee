@@ -71,7 +71,9 @@ if ($visibilite && $question->getPeriodeActuelle() == Periodes::ECRITURE->value)
     }
 
     if ((count(array_intersect(['Responsable', 'CoAuteur'], $roles)) > 0)) {
-        AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'updateProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Editer', "logo" => 'edit']);
+        if (!ConnexionUtilisateur::estAdministrateur()) {
+            AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'updateProposition', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'Editer', "logo" => 'edit']);
+        }
         if (in_array('Responsable', $roles)) {
             AbstractController::afficheVue('button.php', ['controller' => 'proposition', 'action' => 'addCoauteur', 'params' => 'idQuestion=' . $rawIdQuestion . '&idProposition=' . $rawIdProposition, 'title' => 'CoAuteurs', "logo" => 'manage_accounts']);
         }

@@ -222,7 +222,7 @@ class ControllerProposition extends AbstractController {
         $idProposition = $_GET['idProposition'];
         $idQuestion = $_GET['idQuestion'];
         $proposition = (new PropositionRepository())->select($idProposition);
-        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
+        if (ConnexionUtilisateur::estAdministrateur() || !self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }
@@ -270,7 +270,7 @@ class ControllerProposition extends AbstractController {
     public static function updatedProposition(): void {
         $idProposition = $_POST['idProposition'];
         $idQuestion = $_POST['idQuestion'];
-        if (!self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
+        if (ConnexionUtilisateur::estAdministrateur() || !self::hasPermission($idQuestion, $idProposition, ['Responsable', 'CoAuteur'])) {
             (new Notification())->ajouter("danger", "Vous n'avez pas les droits.");
             self::redirection("?controller=question&action=all");
         }

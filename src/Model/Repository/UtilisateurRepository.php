@@ -2,6 +2,7 @@
 
 namespace App\Votee\Model\Repository;
 
+use App\Votee\Lib\ConnexionUtilisateur;
 use App\Votee\Model\DataObject\Utilisateur;
 use PDOException;
 
@@ -30,6 +31,7 @@ class UtilisateurRepository extends AbstractRepository {
     public function getRolesQuestion($login, $idQuestion): array {
         $roles = [];
         $procedures = ["Responsable", "Organisateur", "CoAuteur", "Votant", "Specialiste"];
+        if (ConnexionUtilisateur::estAdministrateur()) return ["Responsable", "Organisateur", "CoAuteur", "Specialiste"];
         foreach ($procedures as $procedure) {
             $sql = "SELECT :procedureTag(:loginTag, :idQuestionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure, $sql);
@@ -46,6 +48,7 @@ class UtilisateurRepository extends AbstractRepository {
     public function getRolesProposition($login, $idProposition): array {
         $roles = [];
         $procedures = ["Responsable", "CoAuteur"];
+        if (ConnexionUtilisateur::estAdministrateur()) return $procedures;
         foreach ($procedures as $procedure) {
             $sql = "SELECT :procedureTag(:loginTag, :idPropositionTag) FROM DUAL";
             $sql = str_replace(":procedureTag", 'est' . $procedure . 'Prop', $sql);
