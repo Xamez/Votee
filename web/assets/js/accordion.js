@@ -1,4 +1,4 @@
-window.onload = () => {
+window.addEventListener("load", () => {
 
     const accordions = document.getElementsByClassName("accordion");
 
@@ -9,5 +9,4 @@ window.onload = () => {
             panel.style.display = (panel.style.display === "block") ? "none" : "block";
         });
     }
-
-};
+});
