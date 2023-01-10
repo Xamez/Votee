@@ -1,30 +1,26 @@
 <div class="flex flex-col gap-8 mt-10">
-    <div class="flex flex-col sm:flex-row items-center gap-2">
-        <div class="flex items-center gap-2">
-            <div class="flex gap-3 items-center">
-                <span class="text-main font-semibold">Organisateur :</span>
-                <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=<?= rawurlencode($organisateur->getLogin()) ?>">
-                    <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                        <span class="material-symbols-outlined">account_circle</span>
-                        <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
-                    </div>
-                </a>
-            </div>
+    <div class="flex items-center justify-center sm:justify-start gap-2">
+        <div class="headerProp grid items-center gap-5">
+            <span class="text-main font-semibold w-28">Organisateur :</span>
+            <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=<?= rawurlencode($organisateur->getLogin()) ?>">
+                <div class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    <?= htmlspecialchars($organisateur->getPrenom()) . ' ' . htmlspecialchars($organisateur->getNom()) ?>
+                </div>
+            </a>
+            <?php
+            if ($specialiste != null) {
+                echo '<span class="text-main font-semibold">Spécialiste :</span>
+                      <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' . rawurlencode($specialiste->getLogin()) . '"
+                            class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
+                        <span class="material-symbols-outlined">account_circle</span>' .
+                            htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
+                      </a>';
+            }
+            ?>
         </div>
     </div>
-    <?php
-    if ($specialiste != null) {
-        echo '<div class="flex flex-col sm:flex-row items-center gap-2">
-                  <p class="text-main font-semibold">Spécialiste :<p>
-                  <a href="./frontController.php?controller=utilisateur&action=readUtilisateur&login=' .
-                rawurlencode($specialiste->getLogin()) . '"
-                     class="flex gap-1 text-main bg-white shadow-md rounded-2xl w-fit p-2">
-                      <span class="material-symbols-outlined">account_circle</span>' .
-                htmlspecialchars($specialiste->getPrenom()) . ' ' . htmlspecialchars($specialiste->getNom()) . '
-                  </a>
-              </div>';
-    }
-    ?>
+
     <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
         <div class="px-7">
