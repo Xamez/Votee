@@ -27,8 +27,8 @@
         </div>
         <div class="flex flex-col gap-7 rounded-xl py-4 p-7 bg-lightPurple">
             <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
-            <div>
-                <div class="flex gap-10 items-center">
+            <div class="flex flex-col md:flex-col sm:flex-row justify-center gap-5">
+                <div class="flex gap-4 md:gap-10 items-center flex-col md:flex-row">
                     <p class="w-36 font-semibold"><?= Periodes::ECRITURE->value ?> :</p>
                     <div class="flex flex-col">
                         <label for="date_debut_question_id">Débute le </label>
@@ -39,7 +39,7 @@
                         <input type="date" min="<?=date('Y-m-d')?>" name="dateFinQuestion" id="date_fin_question_id" required/>
                     </div>
                 </div>
-                <div class="flex gap-10 items-center">
+                <div class="flex gap-4 md:gap-10 items-center flex-col md:flex-row">
                     <p class="w-36 font-semibold"><?= Periodes::VOTE->value ?> :</p>
                     <div class="flex flex-col">
                         <label for="date_debut_vote_id">Débute le </label>
@@ -55,7 +55,7 @@
         <div class="flex flex-col gap-7 rounded-xl py-4 p-7 bg-lightPurple">
             <h1 class="title text-dark text-2xl font-semibold">Type de Vote<h2/>
             <div>
-                <div class="flex gap-10 items-center">
+                <div class="flex gap-10 items-center flex-col md:flex-row">
                     <p class="w-36 font-semibold">Type de Vote :</p>
                     <select name="voteType" class="p-2 rounded-md border-2 border-zinc-800 bg-white">
                         <?php
@@ -69,8 +69,8 @@
         <div class="flex flex-col gap-7 rounded-xl py-4 p-7 bg-lightPurple">
             <h1 class="title text-dark text-2xl font-semibold">Spécialiste<h2/>
             <div>
-                <div class="flex gap-10 items-center">
-                    <label for="loginSpe" class="w-36 font-semibold">Ajouter un spécialiste</label>
+                <div class="flex gap-10 items-center flex-col md:flex-row">
+                    <label for="loginSpe" class="w-36 font-semibold">Ajouter un spécialiste :</label>
                     <input list="users" name="loginSpe" class="p-2 rounded-md border-2 border-zinc-800">
                     <datalist id="users">
                         <?php
