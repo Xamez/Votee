@@ -24,6 +24,7 @@
                   </div>';
         }
         ?>
+        </div>
     </div>
     <input type="hidden" name="idProposition" value="<?= $idProposition ?>"/>
     <input type="hidden" name="idQuestion" value="<?= $idQuestion ?>"/>
