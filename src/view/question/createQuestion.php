@@ -5,14 +5,15 @@
                 <input type="text" placeholder="Titre de la question" minlength="10" maxlength="150" name="titreQuestion" id="systeme_vote_id" required/>
             </div>
             <div class="flex flex-col">
-                <textarea class="max-h-52" minlength="10" maxlength="750" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
+                <textarea class="max-h-52" minlength="20" maxlength="2000" placeholder="Description" name="descriptionQuestion" id="vote_desc_id" required></textarea>
             </div>
         </div>
-        <h1 class="title text-dark text-2xl font-semibold">Organisation</h1>
+        <h2 class="title text-dark text-2xl font-semibold">Organisation</h2>
         <div>
             <?php
 
             use App\Votee\Lib\ConnexionUtilisateur;
+            use App\Votee\Model\DataObject\Periodes;
 
             for ($i = 1; $i <= $nbSections; $i++) {
                 echo '<div class="flex flex-col">
@@ -22,10 +23,10 @@
             }
             ?>
         </div>
-        <h1 class="title text-dark text-2xl font-semibold">Calendrier</h1>
+        <h2 class="title text-dark text-2xl font-semibold">Calendrier</h2>
         <div>
             <div class="flex gap-10 items-center">
-                <p class="w-36 font-semibold">Période d'écriture :</p>
+                <p class="w-36 font-semibold"><?= Periodes::ECRITURE->value ?> :</p>
                 <div class="flex flex-col">
                     <label for="date_debut_question_id">Débute le </label>
                     <input type="date" min="<?=date('Y-m-d')?>" value="<?= date('Y-m-d') ?>" name="dateDebutQuestion" id="date_debut_question_id" required/>
@@ -36,7 +37,7 @@
                 </div>
             </div>
             <div class="flex gap-10 items-center">
-                <p class="w-36 font-semibold">Période de vote :</p>
+                <p class="w-36 font-semibold"><?= Periodes::VOTE->value ?> :</p>
                 <div class="flex flex-col">
                     <label for="date_debut_vote_id">Débute le </label>
                     <input type="date" min="<?=date('Y-m-d')?>" name="dateDebutVote" id="date_debut_vote_id" required/>
@@ -47,31 +48,29 @@
                 </div>
             </div>
         </div>
-        <h1 class="title text-dark text-2xl font-semibold">Type de Vote<h1/>
+        <h2 class="title text-dark text-2xl font-semibold">Type de Vote<h2/>
         <div>
             <div class="flex gap-10 items-center">
                 <p class="w-36 font-semibold">Type de Vote :</p>
-                <select name="voteType" class="p-2 rounded-md">
+                <select name="voteType" class="p-2 rounded-md border-2 border-zinc-800 bg-white">
                     <?php
-                    foreach ($voteTypes as $key => $value) {
+                    foreach ($voteTypes as $key => $value)
                         echo '<option value="' . $key . '">' . $value . '</option>';
-                    }
                     ?>
                 </select>
             </div>
         </div>
-        <h1 class="title text-dark text-2xl font-semibold">Spécialiste<h1/>
+        <h2 class="title text-dark text-2xl font-semibold">Spécialiste<h2/>
             <div>
                 <div class="flex gap-10 items-center">
-                    <p class="w-36 font-semibold">Ajouter un spécialiste</p>
-                    <select name="loginSpe" class="p-2 rounded-md">
-                        <option value="">Aucun</option>
+                    <label for="loginSpe" class="w-36 font-semibold">Ajouter un spécialiste</label>
+                    <input list="users" name="loginSpe" class="p-2 rounded-md border-2 border-zinc-800">
+                    <datalist id="users">
                         <?php
-                        foreach ($users as $user) {
+                        foreach ($users as $user)
                             echo '<option value="' . $user->getLogin() . '">' . $user->getNom() . ' ' . $user->getPrenom() . '</option>';
-                        }
                         ?>
-                    </select>
+                    </datalist>
                 </div>
             </div>
     </div>

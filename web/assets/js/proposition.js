@@ -1,4 +1,4 @@
-window.onload = () => {
+window.addEventListener("load", () => {
 
     const textAreas = [...document.getElementsByClassName('section')];
 
@@ -14,4 +14,4 @@ window.onload = () => {
         });
     });
 
-}
+});

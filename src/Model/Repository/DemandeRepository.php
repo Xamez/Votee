@@ -30,7 +30,7 @@ class DemandeRepository extends AbstractRepository {
     function getProcedureDelete(): string { return ""; }
 
 
-    /** Retourne la liste des toutes les demandes dont l'utilisateur est le destinataire */
+    /** Liste de toutes les demandes dont l'utilisateur est le destinataire */
     public function getDemandeByDest($login): array {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOGINDESTINATAIRE = :loginTag";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -42,7 +42,7 @@ class DemandeRepository extends AbstractRepository {
         return $demandes;
     }
 
-    /** Retourne la liste de toutes les demandes personnelle d'un utilisateur donné */
+    /** Liste de toutes les demandes personnelle d'un utilisateur donné */
     public function getDemandeByUtil($login): array {
         $sql = "SELECT * FROM {$this->getNomTable()} WHERE LOGIN = :loginTag";;
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
@@ -54,9 +54,7 @@ class DemandeRepository extends AbstractRepository {
         return $demandes;
     }
 
-    /**
-     * Retourne le nombre de demande en attente pour l'utilisateur donnée
-     */
+    /** Nombre de demandes en attente pour l'utilisateur donnée */
     public function selectNbDemande($login): ?int {
         $sql = "SELECT COUNT(*) FROM {$this->getNomTable()} WHERE LOGINDESTINATAIRE = :loginTag AND ETATDEMANDE = 'attente'";
         $pdoStatement = DatabaseConnection::getPdo()->prepare($sql);
