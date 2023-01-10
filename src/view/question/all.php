@@ -28,7 +28,11 @@
     if (!ConnexionUtilisateur::estAdministrateur() && ConnexionUtilisateur::estConnecte() && ConnexionUtilisateur::creerQuestion()) {
         AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'section', 'title' => 'Créer une question', "logo" => 'add_circle']);
     } else if (!ConnexionUtilisateur::estAdministrateur() && ConnexionUtilisateur::estConnecte() && !ConnexionUtilisateur::creerQuestion()) {
-        AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=question', 'title' => 'Faire une demande', "logo" => 'file_copy']);
+        if (!$isDemande) {
+            AbstractController::afficheVue('button.php', ['controller' => 'demande', 'action' => 'createDemande', 'params' => 'titreDemande=question', 'title' => 'Faire une demande', "logo" => 'file_copy']);
+        } else {
+            AbstractController::afficheVue('button.php', ['controller' => 'utilisateur', 'action' => 'historiqueDemande', 'title' => 'Voir ma demande', "logo" => 'info']);
+        }
     }
 echo '</div>
     </div>

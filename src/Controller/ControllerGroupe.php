@@ -3,6 +3,7 @@
 namespace App\Votee\Controller;
 
 use App\Votee\Lib\ConnexionUtilisateur;
+use App\Votee\Lib\MotDePasse;
 use App\Votee\Lib\Notification;
 use App\Votee\Model\DataObject\Groupe;
 use App\Votee\Model\Repository\GroupeRepository;
@@ -103,16 +104,23 @@ class ControllerGroupe extends AbstractController {
         $idGroupe = $_GET['idGroupe'];
         self::afficheVue('view.php',
             [
-                "pagetitle" => "Confirmation de suppression",
+                "pagetitle" => "Suppression",
                 "cheminVueBody" => "groupe/deleteGroupe.php",
-                "title" => "Confirmation",
+                "title" => "Suppression d'un groupe",
                 "idGroupe" => $idGroupe
             ]);
     }
 
     public static function deletedGroupe(): void {
         self::redirectAdmin("?controller=question&action=all");
-        $idGroupe = $_GET['idGroupe'];
+        $idGroupe = $_POST['idGroupe'];
+        $utilisateur = ConnexionUtilisateur::getUtilisateurConnecte();
+
+        if (!MotDePasse::verifier($_POST['motDePasse'], $utilisateur->getMotDePasse())) {
+            (new Notification())->ajouter("warning", "Mot de passe incorrect !");
+            self::redirection("?controller=groupe&action=deleteGroupe&idGroupe=$idGroupe");
+        }
+
         $isOk = (new GroupeRepository())->supprimer($idGroupe);
         if ($isOk) (new Notification())->ajouter("success", "Le groupe a bien été supprimé !");
         else (new Notification())->ajouter("danger", "Le groupe n'a pas été supprimé !");
