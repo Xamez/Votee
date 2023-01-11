@@ -24,7 +24,7 @@
     <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
         <div class="px-7">
-            <span><?= $question->getDescription() ?></span>
+            <p class="break-words text-justify"><?= $question->getDescription() ?></p>
         </div>
         <div class="p-7 flex flex-col gap-7">
             <?php
@@ -154,7 +154,7 @@ if ($question->getPeriodeActuelle() == Periodes::RESULTAT->value) {
                           <div class="bg-green-400 text-white flex gap-1 shadow-md rounded-2xl w-fit p-2">
                               <span class="material-symbols-outlined">military_tech</span>' . htmlspecialchars($responsables[$idProposition]->getPrenom()) . ' ' . htmlspecialchars($responsables[$idProposition]->getNom()) . '
                           </div>
-                          <span>' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
+                          <span class="text-ellipsis overflow-hidden whitespace-nowrap">' . htmlspecialchars($proposition->getTitreProposition()) . '</span>
                       </div>
                       <span class="material-symbols-outlined">arrow_forward_ios</span>
                   </div>

@@ -45,7 +45,7 @@ if (sizeof($questions) != 0) {
             <div class="flex justify-between items-center bg-light p-3 md:p-2 rounded gap-3">
                 <div class="flex flex-col-reverse md:flex-row justify-between w-full gap-3">
                     <div class="flex flex-col md:flex-row gap-3 md:items-center items-left"> 
-                        <span>' . htmlspecialchars($question->getTitre()) . '</span>
+                        <span class="text-ellipsis overflow-hidden whitespace-nowrap">' . htmlspecialchars($question->getTitre()) . '</span>
                     </div>
                     <div class="flex flex-col items-start gap-2">
                         <div class="bg-white flex text-main shadow-md rounded-2xl w-fit p-1.5">

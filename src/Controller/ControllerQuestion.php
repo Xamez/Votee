@@ -157,7 +157,7 @@ class ControllerQuestion extends AbstractController {
             ($_POST['dateDebutQuestion'] > date('Y-m-d') ? 'invisible' : 'visible'),
             $_POST['titreQuestion'],
             $_POST['descriptionQuestion'],
-            date_format(date_create($_POST['dateDebutQuestion']), 'd/m/y 23:59:59'),
+            date_format(date_create($_POST['dateDebutQuestion']), 'd/m/y 00:00:00'),
             date_format(date_create($_POST['dateFinQuestion']), 'd/m/y 23:59:59'),
             date_format(date_create($_POST['dateDebutVote']), 'd/m/y 23:59:59'),
             date_format(date_create($_POST['dateFinVote']), 'd/m/y 23:59:59'),
