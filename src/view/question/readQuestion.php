@@ -24,7 +24,7 @@
     <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
         <h1 class="title text-dark text-2xl font-semibold">Plan</h1>
         <div class="px-7">
-            <p class="break-words text-justify"><?= $question->getDescription() ?></p>
+            <p class="break-words"><?= $question->getDescription() ?></p>
         </div>
         <div class="p-7 flex flex-col gap-7">
             <?php
@@ -43,7 +43,7 @@
                          <p class="text-xl break-all text-main font-bold">' . $key + 1 . ' - '
                         . htmlspecialchars($section->getTitreSection()) . '
                          </p>
-                         <span>'. htmlspecialchars($section->getDescriptionSection()) . '</span>
+                         <span class="break-words">'. htmlspecialchars($section->getDescriptionSection()) . '</span>
                      </div>';
                 }
             ?>
