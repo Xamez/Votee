@@ -100,10 +100,12 @@ CREATE TABLE Questions(
 CREATE TABLE Sections(
    idSection INT,
    titreSection VARCHAR(2000) NOT NULL,
+   descriptionSection VARCHAR(2000) NOT NULL,
    idQuestion INT NOT NULL,
    PRIMARY KEY(idSection),
    FOREIGN KEY(idQuestion) REFERENCES Questions(idQuestion)
 );
+
 
 CREATE TABLE Voter(
    login VARCHAR(50),
