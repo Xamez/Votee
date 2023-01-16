@@ -10,7 +10,7 @@
     </div>
     <span class="text-main text-center w-28 font-semibold w-28 md:text-left">Co-auteur :</span>
     <div>
-        <div class="flex items-center flex-wrap gap-2 pt-0">
+        <div class="flex md:justify-start justify-center items-center flex-wrap gap-2 pt-0">
 <?php
 if (sizeof($coAuteurs) == 0) echo '<p class="text-main">Aucun</p>';
 else {

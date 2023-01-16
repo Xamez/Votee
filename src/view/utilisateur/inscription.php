@@ -11,7 +11,7 @@
                 <input class="w-80 border-2" type="text" placeholder="Nom" name="nom" required/>
             </div>
             <div>
-                <textarea class="w-80 border-2 border-gray-200 rounded-md max-h-40 resize-none" placeholder="Description" name="description" id="description" rows="10"></textarea>
+                <textarea class="w-80 border-2 border-gray-200 rounded-md max-h-40 resize-none" placeholder="Je suis un étudiant..." name="description" id="description" rows="10" required></textarea>
             </div>
             <div>
                 <input class="w-80 border-2" type="password" placeholder="Mot de passe" name="password" required/>
