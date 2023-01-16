@@ -9,6 +9,7 @@ $resultatGagnant = $resultats[array_key_first($resultats)];
 $resultatGagnant = $resultatGagnant[1];
 
 ControllerProposition::afficheVue($voteUrl, ["propositions" => $propositions, "resultats" => $resultats, "resultatGagnant" => $resultatGagnant, "responsables" => $responsables, "sections" => $sections, "textes" => $textes]);
-
-AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $rawIdQuestion, 'title' => 'Retour', "logo" => 'reply']);
+echo '<div class="w-24">';
+AbstractController::afficheVue('button.php', ['controller' => 'question', 'action' => 'readQuestion', 'params' => 'idQuestion=' . $idQuestion, 'title' => 'Retour', "logo" => 'reply']);
+echo '</div>';
 ?>
