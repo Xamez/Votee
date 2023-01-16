@@ -12,7 +12,6 @@ if (!ConnexionUtilisateur::estAdministrateur() && !$debug) {
             <h2>Une erreur critique est survenue !</h2>
             <h2>Merci de contacter un administrateur.</h2>
           </div>';
-    AbstractController::afficheVue('footer.php', ['footerType' => 0]);
     echo '<div class="flex flex-col p-6 text-dark gap-4 hidden">';
 } else {
     echo '<div class="flex flex-col p-6 text-dark gap-4">';
