@@ -50,10 +50,10 @@ class ControllerProposition extends AbstractController {
                 (new Notification())->ajouter("success", "Le vote a été effectué.");
             else
                 (new Notification())->ajouter("warning", "Le vote existe déjà.");
-            if (array_key_exists("isRedirected", $_POST))
-                self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
-            else
+            if (array_key_exists("isRedirected", $_POST) && $_POST['isRedirected'])
                 self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . "&idProposition=" . $_POST['idProposition']);
+            else
+                self::redirection("?controller=proposition&action=voterPropositions&idQuestion=" . $_POST['idQuestion']);
         } else {
             (new Notification())->ajouter("danger", "Vous ne pouvez pas voter en dehors de la période de vote.");
             self::redirection("?controller=proposition&action=readProposition&idQuestion=" . $_POST['idQuestion'] . '&idProposition=' . $_POST['idProposition']);
