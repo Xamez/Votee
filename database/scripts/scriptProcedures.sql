@@ -501,9 +501,9 @@
 		END;
 
 
-		CREATE OR REPLACE PROCEDURE AjouterSections(p_titreSection Sections.titreSection%TYPE, p_idQuestion Questions.idQuestion%TYPE) IS
+		CREATE OR REPLACE PROCEDURE AjouterSections(p_titreSection Sections.titreSection%TYPE, p_idQuestion Questions.idQuestion%TYPE, p_descriptionSection Sections.descriptionSection%TYPE) IS
 		BEGIN
-				INSERT INTO Sections(idSection, titreSection, idQuestion) VALUES(sections_seq.NEXTVAL, p_titreSection, p_idQuestion);
+				INSERT INTO Sections(idSection, titreSection, idQuestion, DESCRIPTIONSECTION) VALUES(sections_seq.NEXTVAL, p_titreSection, p_idQuestion, p_descriptionSection);
 		END;
 
 
@@ -513,36 +513,32 @@
         END;
 
 
-        CREATE OR REPLACE PROCEDURE AjouterRedigerCA(p_login CoAuteurs.login%TYPE, p_idProposition Propositions.idProposition%TYPE) IS
-            isAlreadyResp NUMBER;
-            isInsideCoAuth NUMBER;
-            idQuestionProp NUMBER;
-            isRespAnywhere NUMBER;
-            isInvisible NUMBER;
-        BEGIN
-            SELECT COUNT(login) INTO isAlreadyResp FROM RedigerR WHERE login = p_login AND idProposition = p_idProposition;
-            SELECT COUNT(login) INTO isInsideCoAuth FROM CoAuteurs WHERE login = p_login;
-            SELECT DISTINCT IDQUESTION INTO idQuestionProp FROM RECEVOIR WHERE IDPROPOSITION = p_idProposition;
-            SELECT COUNT(DISTINCT login) INTO isRespAnywhere FROM Recevoir r JOIN PROPOSITIONS p ON r.IDPROPOSITION = p.IDPROPOSITION
-                                                                             JOIN RedigerR rr ON r.idProposition = rr.idProposition WHERE idQuestion = idQuestionProp AND login = p_login AND VISIBILITEPROPOSITION = 'visible';
-            SELECT COUNT(*) INTO isInvisible FROM PROPOSITIONS WHERE IDPROPOSITION = p_idProposition;
+		CREATE OR REPLACE PROCEDURE AjouterRedigerCA(p_login CoAuteurs.login%TYPE, p_idProposition Propositions.idProposition%TYPE) IS
+			isAlreadyResp NUMBER;
+			isInsideCoAuth NUMBER;
+			idQuestionProp NUMBER;
+			isRespAnywhere NUMBER;
+		BEGIN
+			SELECT COUNT(login) INTO isAlreadyResp FROM RedigerR WHERE login = p_login AND idProposition = p_idProposition;
+			SELECT COUNT(login) INTO isInsideCoAuth FROM CoAuteurs WHERE login = p_login;
+			SELECT DISTINCT IDQUESTION INTO idQuestionProp FROM RECEVOIR WHERE IDPROPOSITION = p_idProposition;
+			SELECT COUNT(DISTINCT login) INTO isRespAnywhere FROM Recevoir r JOIN PROPOSITIONS p ON r.IDPROPOSITION = p.IDPROPOSITION
+			JOIN RedigerR rr ON r.idProposition = rr.idProposition WHERE idQuestion = idQuestionProp AND login = p_login AND VISIBILITEPROPOSITION = 'visible';
 
-            IF isInvisible < 1 THEN
-                IF isAlreadyResp >= 1 THEN
-                    RAISE_APPLICATION_ERROR(-20106, 'Cet Utilisateur est déjà Responsable sur cette proposition !');
-                ELSIF isRespAnywhere >= 1 THEN
-                    RAISE_APPLICATION_ERROR(-20110, 'Cet Utilisateur est déjà Responsable sur cette question !');
-                END IF;
-            ELSE
-                IF isInsideCoAuth < 1 THEN
-                    AjouterCoAuteurs(p_login);
-                    INSERT INTO RedigerCA VALUES(p_login, p_idProposition);
-                ELSE
-                    INSERT INTO RedigerCA VALUES(p_login, p_idProposition);
-                END IF;
-                AJOUTERVOTANTAQUESTION(idQuestionProp, p_login);
-            END IF;
-        END;
+			IF isAlreadyResp >= 1 THEN
+				RAISE_APPLICATION_ERROR(-20106, 'Cet Utilisateur est déjà Responsable sur cette proposition !');
+			ELSIF isRespAnywhere >= 1 THEN
+				RAISE_APPLICATION_ERROR(-20110, 'Cet Utilisateur est déjà Responsable sur cette question !');
+			ELSE
+				IF isInsideCoAuth < 1 THEN
+					AjouterCoAuteurs(p_login);
+					INSERT INTO RedigerCA VALUES(p_login, p_idProposition);
+				ELSE
+					INSERT INTO RedigerCA VALUES(p_login, p_idProposition);
+				END IF;
+				AJOUTERVOTANTAQUESTION(idQuestionProp, p_login);
+			END IF;
+		END;
 
 
 		CREATE OR REPLACE PROCEDURE AjouterRedigerR(p_login Responsables.login%TYPE, p_idProposition Propositions.idProposition%TYPE, p_idQuestion Questions.idQuestion%TYPE) IS
@@ -660,9 +656,9 @@
         END;
 
 
-		CREATE OR REPLACE PROCEDURE ModifierSections(p_idSection Sections.idSection%TYPE, p_titreSection Sections.titreSection%TYPE, p_idQuestion Questions.idQuestion%TYPE) IS
+		CREATE OR REPLACE PROCEDURE ModifierSections(p_idSection Sections.idSection%TYPE, p_titreSection Sections.titreSection%TYPE, p_idQuestion Questions.idQuestion%TYPE, p_descriptionSection Sections.descriptionSection%TYPE) IS
 		BEGIN
-			UPDATE Sections SET titreSection = p_titreSection
+			UPDATE Sections SET titreSection = p_titreSection, DESCRIPTIONSECTION = p_descriptionSection
 			WHERE idSection = p_idSection
 			AND idQuestion = p_idQuestion;
 		END;
