@@ -36,6 +36,7 @@
             use App\Votee\Controller\AbstractController;
             use App\Votee\Lib\ConnexionUtilisateur;
             use App\Votee\Model\DataObject\Periodes;
+            use App\Votee\Model\DataObject\VoteTypes;
             use App\Votee\Model\Repository\PropositionRepository;
             use App\Votee\Model\Repository\VoteRepository;
 
@@ -189,6 +190,10 @@ echo '</div>
       </div>
       <div class="flex flex-col gap-3 rounded-xl py-4 bg-lightPurple">
          <h1 class="title text-dark text-2xl font-semibold">Votants</h1>
+             <div class="flex pt-4 gap-2 justify-center">
+                <span class="text-main font-semibold">Type de vote : </span>
+                <span>' . VoteTypes::getFromKey($question->getVoteType())->value . '</span>
+            </div>
             <div class="flex flex-wrap gap-2 justify-center gap-2 p-7">';
 if (sizeof($groupesVotants) == 0) echo '<span class="text-center">Aucun votant</span>';
 foreach ($groupesVotants as $key => $groupeVotant) {
