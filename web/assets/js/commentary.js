@@ -7,14 +7,6 @@ const commentary = {
     texteCommentaire: "",
 };
 
-function debounce(callback, wait) {
-    let timeout;
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(function () { callback.apply(this, args); }, wait);
-    };
-}
-
 function performRequest(url, data) {
     return fetch('frontController.php?controller=proposition&action=' + url, {
         method: "POST",
