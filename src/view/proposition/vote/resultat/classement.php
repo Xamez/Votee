@@ -1,9 +1,9 @@
 <?php
 
-$values = ['-2', '2', '0'];
-$textesLabel = ['de vote favorable', 'de vote défavorable', 'd\'abstention'];
-$colors = ['f87171', '22c55e', 'facc15'];
-$labels = ['Défavorable', 'Favorable', 'Abstention'];
+$values = ['2', '0'];
+$textesLabel = ['de vote favorable', 'd\'abstention'];
+$colors = ['22c55e', 'facc15'];
+$labels = ['Favorable', 'Abstention'];
 
 echo '<div class="flex flex-col gap-4 result-element">';
 
@@ -56,7 +56,6 @@ foreach ($resultats as $idProposition => $resultat) {
     }
     echo '</div>';
     echo '</div>';
-
 }
 
 echo '<div class="flex flex-col justify-center items-center gap-2">';
@@ -67,5 +66,4 @@ for ($i = 0; $i < sizeof($values); $i++) {
 }
 echo '</div>';
 echo '</div>';
-
 echo '</div>';
