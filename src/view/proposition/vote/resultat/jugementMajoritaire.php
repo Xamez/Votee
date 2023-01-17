@@ -10,7 +10,7 @@ foreach ($resultats as $idProposition => $resultat) {
 
     echo '<div data-id="' . $idProposition . '" class="proposition hidden absolute w-3/5 z-10 left-1/2" style="transform: translateX(-50%)">';
     echo '<span class="absolute material-symbols-outlined text-red-500 top-4 right-6 cursor-pointer">close</span>';
-    echo '<div class="flex flex-col gap-5 p-8 rounded-3xl bg-home overflow-y-auto" style="max-height: 60vh">';
+    echo '<div class="flex flex-col gap-5 p-8 rounded-3xl bg-white shadow-4xl overflow-y-auto" style="max-height: 60vh">';
     foreach ($sections as $index=>$section) {
         $sectionTitreHTML = htmlspecialchars($section->getTitreSection());
         $sectionTexteHTML = $textes[$idProposition][$index]->getTexte();
