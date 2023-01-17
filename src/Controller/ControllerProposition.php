@@ -361,7 +361,7 @@ class ControllerProposition extends AbstractController {
         $rolesQuestion = ConnexionUtilisateur::getRolesQuestion($idQuestion);
         $question = (new QuestionRepository())->select($idQuestion);
         $propsGagnante = (new VoteRepository())->getPropositionsGagantes($question);
-        if (!($question->getPeriodeActuelle() == Periodes::ECRITURE->value && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur'])) > 0))
+        if (!($question->getPeriodeActuelle() == Periodes::ECRITURE->value && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Specialiste'])) > 0))
             && !(in_array($question->getPeriodeActuelle(), [Periodes::RESULTAT->value, Periodes::VOTE->value, Periodes::TRANSITION->value]) && (count(array_intersect($rolesQuestion, ['Responsable', 'CoAuteur', 'Votant'])) > 0))
             && !in_array('Organisateur', $rolesQuestion)
             && !($question->getPeriodeActuelle() == Periodes::RESULTAT->value && in_array($idProposition, $propsGagnante))) {
