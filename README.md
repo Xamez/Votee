@@ -8,11 +8,11 @@ SAE S3 (RACDV) - Outil de décision collective
 
 ## Auteurs
 
-- Loris Cazaux
-- Maxence Tourniayre
-- Julie Chevallier
-- Thomas Nalix
-- Alexandre Afonso
+- C. Loris
+- T. Maxence
+- C. Julie
+- N. Thomas
+- A. Alexandre
 
 ## Liens
 
